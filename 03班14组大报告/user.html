@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人中心 - 石大克拉玛依校区开源资源库</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="nav-logo">
+            <a href="index.html">石大开源库</a>
+        </div>
+        <div class="nav-search">
+            <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
+        </div>
+        <div class="nav-actions" id="navActions">
+            <a href="upload.html" class="btn-upload">上传资料</a>
+            <a href="user.html" class="btn-user">用户入口</a>
+        </div>
+        <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
+    </nav>
+    <div class="nav-links-mobile" id="navLinks">
+        <a href="courses.html">课程</a>
+        <a href="academics.html">学业</a>
+        <a href="clubs.html">社团</a>
+        <a href="life.html">生活</a>
+        <a href="contribute.html">贡献</a>
+        <a href="about.html">关于</a>
+    </div>
+    <main>
+        <h1>个人中心</h1>
+        
+        <div id="notLoggedIn" class="not-logged-in" style="display:none;">
+            <p>您还未登录，请先 <a href="login.html">登录</a></p>
+        </div>
+        
+        <div id="userProfile" class="user-profile">
+            <div class="profile-header">
+                <div class="profile-avatar" id="profileAvatar">用户名</div>
+                <div class="profile-info">
+                    <h2 id="profileUsername">用户名</h2>
+                    <p id="profileCollege">学院</p>
+                    <p id="profileMajor">专业</p>
+                    <p id="profileGrade">年级</p>
+                </div>
+            </div>
+            
+            <div class="profile-stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="uploadCount">0</div>
+                    <div class="stat-label">上传资料数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="downloadCount">0</div>
+                    <div class="stat-label">下载次数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalDownloads">0</div>
+                    <div class="stat-label">资料被下载</div>
+                </div>
+            </div>
+            
+            <div class="profile-actions">
+                <button class="btn-action" onclick="logout()">退出登录</button>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>我的上传记录</h2>
+            <div id="uploadList" class="upload-list">
+                <p class="empty-message">暂无上传记录</p>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>最近浏览</h2>
+            <div id="browseHistory" class="upload-list">
+                <p class="empty-message">暂无浏览记录</p>
+            </div>
+        </div>
+    </main>
+    <footer class="footer">
+        <p>Copyright &copy; 2025 石大克拉玛依校区开源资源库</p>
+        <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
+    </footer>
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        checkLoginStatus();
+        hideLoading();
+        
+        // 等待 DataStore 初始化完成后再加载数据
+        waitForDataStore(function() {
+            loadUserProfile();
+        });
+        
+        function loadUserProfile() {
+            var currentUser = localStorage.getItem("currentUser");
+            var notLoggedIn = document.getElementById("notLoggedIn");
+            var userProfile = document.getElementById("userProfile");
+
+            if (!currentUser) {
+                notLoggedIn.style.display = "block";
+                userProfile.style.display = "none";
+                return;
+            }
+
+            var user = JSON.parse(currentUser);
+            document.getElementById("profileAvatar").textContent = user.username.charAt(0).toUpperCase();
+            document.getElementById("profileUsername").textContent = user.username;
+            document.getElementById("profileCollege").textContent = user.college || "";
+            document.getElementById("profileMajor").textContent = user.major || "";
+            document.getElementById("profileGrade").textContent = (user.grade || "") + "级";
+            
+            // 使用 DataStore 获取用户上传的资源
+            var uploads = DataStore.getResourcesByUploader(user.id || user.username);
+            document.getElementById("uploadCount").textContent = uploads.length;
+            document.getElementById("downloadCount").textContent = user.downloadCount || 0;
+            
+            var totalDownloads = 0;
+            var totalViews = 0;
+            for (var i = 0; i < uploads.length; i++) {
+                totalDownloads += uploads[i].downloads || 0;
+                totalViews += uploads[i].views || 0;
+            }
+            document.getElementById("totalDownloads").textContent = totalDownloads;
+            
+            var uploadList = document.getElementById("uploadList");
+            if (uploads.length === 0) {
+                uploadList.innerHTML = '<p class="empty-message">暂无上传记录</p>';
+            } else {
+                var html = '<div class="record-list">';
+                for (var j = 0; j < uploads.length; j++) {
+                    var upload = uploads[j];
+                    html += '<div class="record-item" onclick="goToDetail(\'' + upload.id + '\')" style="cursor:pointer;">';
+                    html += '<div class="record-title"><a href="detail.html?id=' + upload.id + '" onclick="event.stopPropagation();">' + upload.title + '</a></div>';
+                    html += '<div class="record-meta">上传时间：' + upload.uploadTime + '</div>';
+                    html += '<div class="record-meta">下载次数：' + (upload.downloads || 0) + '</div>';
+                    html += '</div>';
+                }
+                html += '</div>';
+                uploadList.innerHTML = html;
+            }
+            
+            var browseHistory = JSON.parse(localStorage.getItem("browseHistory") || "[]");
+            var historyContainer = document.getElementById("browseHistory");
+            if (browseHistory.length === 0) {
+                historyContainer.innerHTML = '<p class="empty-message">暂无浏览记录</p>';
+            } else {
+                var historyHtml = '<div class="record-list">';
+                for (var k = 0; k < browseHistory.length && k < 5; k++) {
+                    var item = browseHistory[k];
+                    var itemId = item.id || 'browse_' + k;
+                    historyHtml += '<div class="record-item" onclick="goToDetail(\'' + itemId + '\')" style="cursor:pointer;">';
+                    historyHtml += '<div class="record-title"><a href="detail.html?id=' + itemId + '" onclick="event.stopPropagation();">' + item.title + '</a></div>';
+                    historyHtml += '<div class="record-meta">浏览时间：' + item.time + '</div>';
+                    historyHtml += '</div>';
+                }
+                historyHtml += '</div>';
+                historyContainer.innerHTML = historyHtml;
+            }
+        }
+        
+        function logout() {
+            localStorage.removeItem("currentUser");
+            window.location.href = "index.html";
+        }
+        
+        function goToDetail(id) {
+            window.location.href = "detail.html?id=" + id;
+        }
+        
+        window.onscroll = function() {
+            var navbar = document.getElementById("navbar");
+            if (navbar) {
+                if (window.pageYOffset > 50) {
+                    navbar.classList.add("scrolled");
+                } else {
+                    navbar.classList.remove("scrolled");
+                }
+            }
+        };
+        
+    </script>
+</body>
+</html>

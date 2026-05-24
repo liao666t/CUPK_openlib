@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生活指南 - 石大克拉玛依校区开源资源库</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="nav-logo">
+            <a href="index.html">石大开源库</a>
+        </div>
+        <div class="nav-search">
+            <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
+        </div>
+        <div class="nav-actions" id="navActions">
+            <a href="upload.html" class="btn-upload">上传资料</a>
+            <a href="login.html" class="btn-user">用户入口</a>
+        </div>
+        <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
+    </nav>
+    <div class="nav-links-mobile" id="navLinks">
+        <a href="courses.html">课程</a>
+        <a href="academics.html">学业</a>
+        <a href="clubs.html">社团</a>
+        <a href="life.html">生活</a>
+        <a href="contribute.html">贡献</a>
+        <a href="about.html">关于</a>
+    </div>
+    <main>
+        <h1>生活指南</h1>
+
+        <div class="section">
+            <h2>校园美食</h2>
+            <ul class="resource-list">
+                <li><a href="#">第一食堂美食推荐</a></li>
+                <li><a href="#">第二食堂美食推荐</a></li>
+                <li><a href="#">校外美食攻略</a></li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>校园服务</h2>
+            <ul class="resource-list">
+                <li><a href="#">校园网使用指南</a></li>
+                <li><a href="#">学生卡使用指南</a></li>
+                <li><a href="#">图书馆使用指南</a></li>
+                <li><a href="#">快递点分布</a></li>
+            </ul>
+        </div>
+    </main>
+    <footer class="footer">
+        <p>Copyright &copy; 2025 石大克拉玛依校区开源资源库</p>
+        <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
+    </footer>
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        checkLoginStatus();
+        hideLoading();
+        window.onscroll = function() {
+            var navbar = document.getElementById("navbar");
+            if (navbar) {
+                if (window.pageYOffset > 50) {
+                    navbar.classList.add("scrolled");
+                } else {
+                    navbar.classList.remove("scrolled");
+                }
+            }
+        };
+    </script>
+</body>
+</html>

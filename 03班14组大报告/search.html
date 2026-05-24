@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索 - 石大克拉玛依校区开源资源库</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="nav-logo">
+            <a href="index.html">石大开源库</a>
+        </div>
+        <div class="nav-search">
+            <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
+        </div>
+        <div class="nav-actions" id="navActions">
+            <a href="upload.html" class="btn-upload">上传资料</a>
+            <a href="login.html" class="btn-user">用户入口</a>
+        </div>
+        <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
+    </nav>
+    <div class="nav-links-mobile" id="navLinks">
+        <a href="courses.html">课程</a>
+        <a href="academics.html">学业</a>
+        <a href="clubs.html">社团</a>
+        <a href="life.html">生活</a>
+        <a href="contribute.html">贡献</a>
+        <a href="about.html">关于</a>
+    </div>
+    <main>
+        <h1>搜索资源</h1>
+        <div class="search-box">
+            <input type="text" id="searchInputPage" placeholder="输入关键词搜索..." onkeypress="handleSearchKeyPress(event)">
+            <button type="button" onclick="doPageSearch()">搜索</button>
+        </div>
+        
+        <div class="search-filters">
+            <label>分类筛选：</label>
+            <select id="filterCategory" onchange="doPageSearch()">
+                <option value="">全部</option>
+                <option value="math">数学</option>
+                <option value="cs">计算机</option>
+                <option value="physics">物理</option>
+                <option value="language">语言</option>
+                <option value="economics">经济</option>
+                <option value="humanities">人文</option>
+            </select>
+            <label>排序：</label>
+            <select id="sortBy" onchange="doPageSearch()">
+                <option value="relevance">相关度</option>
+                <option value="downloads">下载量</option>
+                <option value="time">上传时间</option>
+            </select>
+        </div>
+        
+        <div id="results"></div>
+    </main>
+    <footer class="footer">
+        <p>Copyright &copy; 2025 石大克拉玛依校区开源资源库</p>
+        <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
+    </footer>
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        checkLoginStatus();
+        hideLoading();
+        initSearchPage();
+        
+        function doPageSearch() {
+            var query = document.getElementById("searchInputPage").value.trim();
+            var category = document.getElementById("filterCategory").value;
+            var sortBy = document.getElementById("sortBy").value;
+            
+            if (query) {
+                window.location.href = "search.html?q=" + encodeURIComponent(query) + "&cat=" + category + "&sort=" + sortBy;
+            } else {
+                window.location.href = "search.html" + (category ? "?cat=" + category : "") + (sortBy !== "relevance" ? (category ? "&" : "?") + "sort=" + sortBy : "");
+            }
+        }
+        
+        function handleSearchKeyPress(e) {
+            if (e.keyCode === 13) {
+                doPageSearch();
+            }
+        }
+        
+        window.onscroll = function() {
+            var navbar = document.getElementById("navbar");
+            if (navbar) {
+                if (window.pageYOffset > 50) {
+                    navbar.classList.add("scrolled");
+                } else {
+                    navbar.classList.remove("scrolled");
+                }
+            }
+        };
+        
+    </script>
+</body>
+</html>

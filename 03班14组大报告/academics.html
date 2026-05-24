@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学业指导 - 石大克拉玛依校区开源资源库</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="nav-logo">
+            <a href="index.html">石大开源库</a>
+        </div>
+        <div class="nav-search">
+            <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
+        </div>
+        <div class="nav-actions" id="navActions">
+            <a href="upload.html" class="btn-upload">上传资料</a>
+            <a href="login.html" class="btn-user">用户入口</a>
+        </div>
+        <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
+    </nav>
+    <div class="nav-links-mobile" id="navLinks">
+        <a href="courses.html">课程</a>
+        <a href="academics.html">学业</a>
+        <a href="clubs.html">社团</a>
+        <a href="life.html">生活</a>
+        <a href="contribute.html">贡献</a>
+        <a href="about.html">关于</a>
+    </div>
+    <main>
+        <h1>学业指导</h1>
+
+        <div class="section">
+            <h2 id="freshman">新生须知</h2>
+            <ul class="resource-list">
+                <li><a href="#">入学必看</a></li>
+                <li><a href="#">必备物品清单</a></li>
+                <li><a href="#">常见问题解答</a></li>
+                <li><a href="#">校园地图</a></li>
+                <li><a href="#">校园网使用指南</a></li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>专业培养方案</h2>
+            <ul class="resource-list">
+                <li><a href="#">工学院各专业培养方案</a></li>
+                <li><a href="#">文理学院各专业培养方案</a></li>
+                <li><a href="#">商学院各专业培养方案</a></li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>转专业相关</h2>
+            <ul class="resource-list">
+                <li><a href="#">转专业政策</a></li>
+                <li><a href="#">历年转专业情况</a></li>
+                <li><a href="#">转专业经验分享</a></li>
+            </ul>
+        </div>
+    </main>
+    <footer class="footer">
+        <p>Copyright &copy; 2025 石大克拉玛依校区开源资源库</p>
+        <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
+    </footer>
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        checkLoginStatus();
+        hideLoading();
+        window.onscroll = function() {
+            var navbar = document.getElementById("navbar");
+            if (navbar) {
+                if (window.pageYOffset > 50) {
+                    navbar.classList.add("scrolled");
+                } else {
+                    navbar.classList.remove("scrolled");
+                }
+            }
+        };
+    </script>
+</body>
+</html>

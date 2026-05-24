@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>课程资源 - 石大克拉玛依校区开源资源库</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="nav-logo">
+            <a href="index.html">石大开源库</a>
+        </div>
+        <div class="nav-search">
+            <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
+        </div>
+        <div class="nav-actions" id="navActions">
+            <a href="upload.html" class="btn-upload">上传资料</a>
+            <a href="login.html" class="btn-user">用户入口</a>
+        </div>
+        <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
+    </nav>
+    <div class="nav-links-mobile" id="navLinks">
+        <a href="courses.html">课程</a>
+        <a href="academics.html">学业</a>
+        <a href="clubs.html">社团</a>
+        <a href="life.html">生活</a>
+        <a href="contribute.html">贡献</a>
+        <a href="about.html">关于</a>
+    </div>
+    <main>
+        <h1>课程资源</h1>
+        <div class="search-box">
+            <input type="text" id="courseSearch" placeholder="搜索课程..." onkeypress="handleKeyPress(event)">
+            <button type="button" onclick="doSearch()">搜索</button>
+        </div>
+
+        <div class="section">
+            <h2>公共基础课</h2>
+            <ul class="resource-list">
+                <li><a href="#">高等数学</a></li>
+                <li><a href="#">大学英语</a></li>
+                <li><a href="#">大学物理</a></li>
+                <li><a href="#">计算机基础</a></li>
+                <li><a href="#">思想道德与法治</a></li>
+                <li><a href="#">毛泽东思想和中国特色社会主义理论体系概论</a></li>
+                <li><a href="#">中国近现代史纲要</a></li>
+                <li><a href="#">马克思主义基本原理</a></li>
+                <li><a href="#">大学体育</a></li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>石油学院</h2>
+            <h3>地质系</h3>
+            <ul class="resource-list">
+                <li><a href="#">资源勘查工程</a></li>
+                <li><a href="#">勘查技术与工程</a></li>
+            </ul>
+            <h3>石油工程系</h3>
+            <ul class="resource-list">
+                <li><a href="#">石油工程</a></li>
+            </ul>
+            <h3>计算机系</h3>
+            <ul class="resource-list">
+                <li><a href="#">软件工程</a></li>
+                <li><a href="#">数据科学与大数据技术</a></li>
+                <li><a href="#">人工智能</a></li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>工学院</h2>
+            <h3>化工与环境系</h3>
+            <ul class="resource-list">
+                <li><a href="#">油气储运工程</a></li>
+                <li><a href="#">化学工程与工艺</a></li>
+                <li><a href="#">能源化学工程</a></li>
+                <li><a href="#">环境工程(油气生产加工环境保护)</a></li>
+            </ul>
+            <h3>机械与过程系</h3>
+            <ul class="resource-list">
+                <li><a href="#">机械设计制造及其自动化</a></li>
+                <li><a href="#">过程装备与控制工程</a></li>
+                <li><a href="#">材料科学与工程</a></li>
+            </ul>
+            <h3>储运与自动化系</h3>
+            <ul class="resource-list">
+                <li><a href="#">自动化</a></li>
+                <li><a href="#">安全工程</a></li>
+                <li><a href="#">新能源科学与工程</a></li>
+                <li><a href="#">能源与动力工程</a></li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>文理学院·文化艺术学院</h2>
+            <h3>数学系</h3>
+            <ul class="resource-list">
+                <li><a href="#">数学与应用数学</a></li>
+                <li><a href="#">统计学</a></li>
+            </ul>
+            <h3>物理系</h3>
+            <ul class="resource-list">
+                <li>（无本科专业，仅承担公共课教学）</li>
+            </ul>
+            <h3>语言与艺术系</h3>
+            <ul class="resource-list">
+                <li><a href="#">俄语</a></li>
+                <li><a href="#">俄语(石油与天然气工程)</a></li>
+                <li><a href="#">英语</a></li>
+                <li><a href="#">英语(语言与计算科学)</a></li>
+                <li><a href="#">汉语言文学</a></li>
+            </ul>
+            <h3>体育系</h3>
+            <ul class="resource-list">
+                <li>（无本科专业，仅承担公共课教学）</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>工商管理学院·马克思主义学院</h2>
+            <h3>经济与金融系</h3>
+            <ul class="resource-list">
+                <li><a href="#">经济学</a></li>
+                <li><a href="#">金融学</a></li>
+            </ul>
+            <h3>会计与行政管理系</h3>
+            <ul class="resource-list">
+                <li><a href="#">会计学</a></li>
+                <li><a href="#">行政管理</a></li>
+            </ul>
+            <h3>马克思主义系</h3>
+            <ul class="resource-list">
+                <li><a href="#">思想政治教育</a></li>
+            </ul>
+        </div>
+    </main>
+    <footer class="footer">
+        <p>Copyright &copy; 2025 石大克拉玛依校区开源资源库</p>
+        <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
+    </footer>
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        checkLoginStatus();
+        hideLoading();
+        window.onscroll = function() {
+            var navbar = document.getElementById("navbar");
+            if (navbar) {
+                if (window.pageYOffset > 50) {
+                    navbar.classList.add("scrolled");
+                } else {
+                    navbar.classList.remove("scrolled");
+                }
+            }
+        };
+    </script>
+</body>
+</html>
