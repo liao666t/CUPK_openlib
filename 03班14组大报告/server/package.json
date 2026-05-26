@@ -1,7 +1,7 @@
 {
   "name": "fcup-resource-server",
   "version": "1.0.0",
-  "description": "石大克拉玛依校区开源资源库后端服务",
+  "description": "中石大克校区资源共享论坛后端服务",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

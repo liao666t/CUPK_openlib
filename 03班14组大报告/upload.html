@@ -3,20 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>上传资料 - 石大克拉玛依校区开源资源库</title>
+    <title>上传资料 - 中石大克校区资源共享论坛</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <nav class="navbar" id="navbar">
         <div class="nav-logo">
-            <a href="index.html">石大开源库</a>
+            <a href="landing.html" class="page-link">克校区资源共享论坛</a>
+            <a href="index.html" class="home-icon" title="返回主页">🏠</a>
         </div>
         <div class="nav-search">
             <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
         </div>
         <div class="nav-actions" id="navActions">
             <a href="upload.html" class="btn-upload">上传资料</a>
-            <a href="login.html" class="btn-user">用户入口</a>
+            <div class="user-dropdown" id="userDropdown">
+                <div class="user-avatar" id="userAvatarBtn" onclick="toggleUserMenu()">?</div>
+                <div class="user-dropdown-menu" id="userDropdownMenu">
+                    <a href="user.html" class="user-dropdown-item">
+                        <span class="icon">👤</span>
+                        <span id="dropdownUsername">个人中心</span>
+                    </a>
+                    <button class="user-dropdown-item" onclick="logout()">
+                        <span class="icon">🚪</span>
+                        <span>退出登录</span>
+                    </button>
+                </div>
+            </div>
+            <a href="login.html" class="btn-user" id="loginLink">登录</a>
         </div>
         <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
     </nav>
@@ -28,7 +42,7 @@
         <a href="contribute.html">贡献</a>
         <a href="about.html">关于</a>
     </div>
-    <main>
+    <main class="page-transition">
         <h1>上传资料</h1>
         <p>欢迎贡献优质学习资源，帮助更多同学！</p>
 
@@ -168,9 +182,19 @@
         </div>
     </main>
     <footer class="footer">
-        <p>Copyright &copy; 2025 石大克拉玛依校区开源资源库</p>
+        <p>Copyright &copy; 2025 中石大克校区资源共享论坛</p>
         <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
     </footer>
+    <div class="mobile-tip-bar" id="mobileTipBar" style="display: none;">
+        <span>💻 电脑访问体验更佳</span>
+    </div>
+    <div class="mobile-tip-popup" id="mobileTipPopup" style="display: none;">
+        <div class="mobile-tip-popup-content">
+            <div class="mobile-tip-popup-icon">💻</div>
+            <div class="mobile-tip-popup-text">为了更好的浏览体验<br>建议使用电脑访问</div>
+            <button onclick="closeMobileTipPopup()">我知道了</button>
+        </div>
+    </div>
     <script src="js/data.js"></script>
     <script src="js/main.js"></script>
     <script>

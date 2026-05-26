@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>资料详情 - 石大克拉玛依校区开源资源库</title>
+    <title>资料详情 - 中石大克校区资源共享论坛</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
         .detail-container {
@@ -531,14 +531,28 @@
 <body>
     <nav class="navbar" id="navbar">
         <div class="nav-logo">
-            <a href="index.html">石大开源库</a>
+            <a href="landing.html" class="page-link">克校区资源共享论坛</a>
+            <a href="index.html" class="home-icon" title="返回主页">🏠</a>
         </div>
         <div class="nav-search">
             <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
         </div>
         <div class="nav-actions" id="navActions">
             <a href="upload.html" class="btn-upload">上传资料</a>
-            <a href="login.html" class="btn-user">用户入口</a>
+            <div class="user-dropdown" id="userDropdown">
+                <div class="user-avatar" id="userAvatarBtn" onclick="toggleUserMenu()">?</div>
+                <div class="user-dropdown-menu" id="userDropdownMenu">
+                    <a href="user.html" class="user-dropdown-item">
+                        <span class="icon">👤</span>
+                        <span id="dropdownUsername">个人中心</span>
+                    </a>
+                    <button class="user-dropdown-item" onclick="logout()">
+                        <span class="icon">🚪</span>
+                        <span>退出登录</span>
+                    </button>
+                </div>
+            </div>
+            <a href="login.html" class="btn-user" id="loginLink">登录</a>
         </div>
         <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
     </nav>
@@ -551,7 +565,7 @@
         <a href="about.html">关于</a>
     </div>
 
-    <main>
+    <main class="page-transition">
         <div class="detail-container">
             <div class="detail-main">
                 <div class="detail-header">
@@ -661,12 +675,22 @@
     </main>
 
     <footer class="footer">
-        <p>Copyright &copy; 2025 石大克拉玛依校区开源资源库</p>
+        <p>Copyright &copy; 2025 中石大克校区资源共享论坛</p>
         <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
     </footer>
+    <div class="mobile-tip-bar" id="mobileTipBar" style="display: none;">
+        <span>💻 电脑访问体验更佳</span>
+    </div>
+    <div class="mobile-tip-popup" id="mobileTipPopup" style="display: none;">
+        <div class="mobile-tip-popup-content">
+            <div class="mobile-tip-popup-icon">💻</div>
+            <div class="mobile-tip-popup-text">为了更好的浏览体验<br>建议使用电脑访问</div>
+            <button onclick="closeMobileTipPopup()">我知道了</button>
+        </div>
+    </div>
 
-    <script src="js/data.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/data.js" defer></script>
+    <script src="js/main.js" defer></script>
     <script>
         var isPreviewVisible = false;
         var isFavoriteActive = false;
@@ -695,14 +719,21 @@
             var mockData = null;
             
             if (resource) {
+                // 获取评论
+                var comments = DataStore.getComments(id);
+                // 获取相关资源
+                var related = DataStore.getRelatedResources(id);
+                
                 // 找到资源，使用 DataStore 中的数据
                 mockData = {
                     id: resource.id,
                     title: resource.title,
                     author: {
                         name: resource.uploader,
-                        avatar: resource.uploader ? resource.uploader.charAt(0) : '?'
+                        avatar: resource.uploader ? resource.uploader.charAt(0) : '?',
+                        uploaderId: resource.uploaderId
                     },
+                    uploaderId: resource.uploaderId,
                     uploadTime: resource.uploadTime || '-',
                     viewCount: resource.views || 0,
                     downloadCount: resource.downloads || 0,
@@ -713,8 +744,8 @@
                     filePath: resource.filePath || '',
                     file: resource.filePath ? { name: resource.fileName, path: resource.filePath } : null,
                     rating: null,
-                    comments: DataStore.getComments(resource.id),
-                    related: DataStore.getRelatedResources(resource.id)
+                    comments: comments,
+                    related: related
                 };
             } else {
                 // 没找到资源
@@ -750,8 +781,9 @@
             document.getElementById('resourceTitle').textContent = data.title || '资料详情';
             
             if (data.author) {
+                var userLink = data.uploaderId ? 'user.html?userId=' + encodeURIComponent(data.uploaderId) : 'user.html';
                 var authorHtml = '<div class="author-avatar">' + (data.author.name ? data.author.name.charAt(0) : '?') + '</div>' +
-                    '<span>上传者：<a href="user.html">' + (data.author.name || '未知') + '</a></span>';
+                    '<span>上传者：<a href="' + userLink + '">' + (data.author.name || '未知') + '</a></span>';
                 document.getElementById('resourceAuthor').innerHTML = authorHtml;
             }
             
@@ -779,12 +811,8 @@
                 document.getElementById('fileSize').textContent = data.file.size ? '文件大小：' + formatFileSize(data.file.size) : '';
             }
             
-            // 评分
-            if (data.rating) {
-                document.getElementById('ratingDisplay').style.display = 'flex';
-                document.getElementById('avgRating').textContent = data.rating.average || '-';
-                document.getElementById('ratingCount').textContent = '(' + (data.rating.count || 0) + '条评价)';
-            }
+            // 检查是否已收藏
+            checkFavoriteStatus();
             
             // 评论
             var commentsContainer = document.getElementById('commentsList');
@@ -804,6 +832,23 @@
                     var itemEl = createRelatedElement(item);
                     relatedContainer.appendChild(itemEl);
                 });
+            }
+        }
+        
+        function checkFavoriteStatus() {
+            var currentUser = localStorage.getItem("currentUser");
+            if (!currentUser) return;
+            
+            var user = JSON.parse(currentUser);
+            var resourceId = getResourceId();
+            
+            var isFav = DataStore.isFavorited(user.id || user.username, resourceId);
+            var btn = document.getElementById('favoriteBtn');
+            
+            if (isFav) {
+                isFavoriteActive = true;
+                btn.classList.add('active');
+                btn.innerHTML = '<span>&#10084;</span> 已收藏';
             }
         }
 
@@ -890,23 +935,75 @@
 
         function toggleFavorite() {
             var btn = document.getElementById('favoriteBtn');
-            isFavoriteActive = !isFavoriteActive;
+            var currentUser = localStorage.getItem("currentUser");
+            
+            if (!currentUser) {
+                alert('请先登录后再收藏');
+                window.location.href = 'login.html';
+                return;
+            }
 
+            var user = JSON.parse(currentUser);
+            var resourceId = getResourceId();
+            
             if (isFavoriteActive) {
-                btn.classList.add('active');
-                btn.innerHTML = '<span>&#10084;</span> 已收藏';
+                // 取消收藏
+                DataStore.removeFavorite(user.id || user.username, resourceId, function(success) {
+                    if (success) {
+                        isFavoriteActive = false;
+                        btn.classList.remove('active');
+                        btn.innerHTML = '<span>&#9829;</span> 收藏';
+                        var favCount = document.getElementById('favoriteCount');
+                        if (favCount) {
+                            var count = parseInt(favCount.textContent) || 0;
+                            favCount.textContent = Math.max(0, count - 1);
+                        }
+                    }
+                });
             } else {
-                btn.classList.remove('active');
-                btn.innerHTML = '<span>&#9829;</span> 收藏';
+                // 添加收藏
+                DataStore.addFavorite(user.id || user.username, resourceId, function(success) {
+                    if (success) {
+                        isFavoriteActive = true;
+                        btn.classList.add('active');
+                        btn.innerHTML = '<span>&#10084;</span> 已收藏';
+                        var favCount = document.getElementById('favoriteCount');
+                        if (favCount) {
+                            var count = parseInt(favCount.textContent) || 0;
+                            favCount.textContent = count + 1;
+                        }
+                    }
+                });
             }
         }
 
         function downloadFile() {
-            if (!currentResource || !currentResource.file) {
+            if (!currentResource) {
                 alert('暂无文件可下载');
                 return;
             }
-            alert('开始下载文件...');
+            
+            var resourceId = getResourceId();
+            DataStore.incrementDownloads(resourceId, function(result) {
+                if (result && result.downloads) {
+                    var dlCount = document.getElementById('downloadCount');
+                    if (dlCount) {
+                        dlCount.textContent = result.downloads;
+                    }
+                }
+                
+                // 获取文件路径
+                var resource = DataStore.getResourceByAnyId(resourceId);
+                if (resource && resource.filePath) {
+                    // 实际下载文件
+                    var link = document.createElement('a');
+                    link.href = resource.filePath;
+                    link.download = resource.fileName || resource.title;
+                    link.click();
+                } else {
+                    alert('下载已开始：' + (currentResource.file ? currentResource.file.name : 'file'));
+                }
+            });
         }
 
         function reportResource() {
@@ -918,6 +1015,14 @@
 
         function submitComment() {
             var commentText = document.getElementById('commentText').value.trim();
+            var currentUser = localStorage.getItem("currentUser");
+            
+            if (!currentUser) {
+                alert('请先登录后再发表评论');
+                window.location.href = 'login.html';
+                return;
+            }
+            
             if (!commentText) {
                 alert('请输入评价内容');
                 return;
@@ -926,9 +1031,32 @@
                 alert('请选择评分');
                 return;
             }
-            alert('评价提交成功！感谢您的反馈');
-            document.getElementById('commentText').value = '';
-            resetRating();
+            
+            var user = JSON.parse(currentUser);
+            var resourceId = getResourceId();
+            
+            DataStore.addComment({
+                resourceId: resourceId,
+                userId: user.id || user.username,
+                userName: user.username,
+                content: commentText,
+                rating: currentRating
+            }, function(comment) {
+                if (comment) {
+                    alert('评价提交成功！感谢您的反馈');
+                    document.getElementById('commentText').value = '';
+                    resetRating();
+                    
+                    // 刷新评论列表
+                    var commentsContainer = document.getElementById('commentsList');
+                    var newComment = createCommentElement(comment);
+                    var emptyState = commentsContainer.querySelector('.empty-state');
+                    if (emptyState) {
+                        emptyState.remove();
+                    }
+                    commentsContainer.appendChild(newComment);
+                }
+            });
         }
 
         function resetRating() {

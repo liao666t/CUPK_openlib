@@ -1,4 +1,4 @@
-# 石大克拉玛依校区开源资源库 - Railway 部署教程
+# 中石大克校区资源共享论坛 - Railway 部署教程
 
 本教程将帮助你把项目部署到 Railway 云端，让你可以通过互联网访问你的资源库网站。
 
@@ -33,7 +33,7 @@
 1. 登录 GitHub，点击右上角的 **+** 号，选择 **New repository**
 2. 填写仓库信息：
    - **Repository name**: `resource-library`（或其他名称）
-   - **Description**: `石大克拉玛依校区开源资源库`
+   - **Description**: `中石大克校区资源共享论坛`
    - **Private/Public**: 选择 Public（公开仓库，Railway 免费版需要）
 3. 点击 **Create repository**
 

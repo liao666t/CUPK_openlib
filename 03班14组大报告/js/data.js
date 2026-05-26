@@ -1,5 +1,5 @@
 /**
- * 数据管理模块 - 石大克拉玛依校区开源资源库
+ * 数据管理模块 - 中石大克校区资源共享论坛
  * 支持本地模式（localStorage）和服务器模式（API）
  */
 
@@ -34,10 +34,11 @@ var DataStore = {
         physics: "物理",
         language: "语言",
         economics: "经济",
-        humanities: "人文",
-        clubs: "社团",
-        life: "生活"
+        humanities: "人文"
     },
+
+    // 资源文件基础路径
+    resourceBasePath: 'files/',
 
     // 初始化
     init: function(callback) {
@@ -56,6 +57,7 @@ var DataStore = {
                 console.log('服务器未连接，使用本地模式');
                 // 从 localStorage 加载数据
                 self._loadFromLocalStorage();
+                self._initSampleUsers();
                 self._initSampleData();
                 if (callback) callback();
             }
@@ -183,24 +185,50 @@ var DataStore = {
         }));
     },
 
+    // 初始化示例用户（6个石油学院软件工程专业同学）
+    _initSampleUsers: function() {
+        if (this._data.users.length === 0) {
+            this._counters.user = 6;
+            this._data.users = [
+                { id: "USR_000001", username: "廖同学", password: "admin", email: "liao@cupk.edu.cn", school: "cupk", college: "石油学院", major: "软件工程", grade: "2024" },
+                { id: "USR_000002", username: "浩同学", password: "admin", email: "hao@cupk.edu.cn", school: "cupk", college: "石油学院", major: "软件工程", grade: "2024" },
+                { id: "USR_000003", username: "泽同学", password: "admin", email: "ze@cupk.edu.cn", school: "cupk", college: "石油学院", major: "软件工程", grade: "2024" },
+                { id: "USR_000004", username: "马同学", password: "admin", email: "ma@cupk.edu.cn", school: "cupk", college: "石油学院", major: "软件工程", grade: "2024" },
+                { id: "USR_000005", username: "胡同学", password: "admin", email: "hu@cupk.edu.cn", school: "cupk", college: "石油学院", major: "软件工程", grade: "2024" },
+                { id: "USR_000006", username: "高同学", password: "admin", email: "gao@cupk.edu.cn", school: "cupk", college: "石油学院", major: "软件工程", grade: "2024" }
+            ];
+        }
+    },
+
     // 初始化示例数据
     _initSampleData: function() {
         if (this._data.resources.length === 0) {
             this._counters.resource = 12;
             this._data.resources = [
-                { id: "RES_000001", title: "高等数学笔记", category: "math", description: "大一高等数学完整笔记整理", uploader: "张同学", uploaderId: "USR_000001", uploadTime: "2025-06-10", downloads: 128, views: 456, favorites: 45 },
-                { id: "RES_000002", title: "线性代数资料", category: "math", description: "线性代数知识点总结与习题", uploader: "李同学", uploaderId: "USR_000002", uploadTime: "2025-06-09", downloads: 96, views: 234, favorites: 23 },
-                { id: "RES_000003", title: "C语言程序设计教程", category: "cs", description: "C语言基础教程和示例代码", uploader: "王同学", uploaderId: "USR_000003", uploadTime: "2025-06-08", downloads: 215, views: 567, favorites: 67 },
-                { id: "RES_000004", title: "数据结构与算法", category: "cs", description: "常见数据结构与算法实现", uploader: "赵同学", uploaderId: "USR_000004", uploadTime: "2025-06-07", downloads: 87, views: 345, favorites: 34 },
-                { id: "RES_000005", title: "Python入门指南", category: "cs", description: "Python编程入门教程", uploader: "钱同学", uploaderId: "USR_000005", uploadTime: "2025-06-06", downloads: 156, views: 423, favorites: 56 },
-                { id: "RES_000006", title: "大学物理公式汇总", category: "physics", description: "大学物理常用公式整理", uploader: "孙同学", uploaderId: "USR_000006", uploadTime: "2025-06-05", downloads: 203, views: 512, favorites: 78 },
-                { id: "RES_000007", title: "电路分析基础", category: "physics", description: "电路分析学习资料", uploader: "周同学", uploaderId: "USR_000007", uploadTime: "2025-06-04", downloads: 432, views: 876, favorites: 89 },
-                { id: "RES_000008", title: "英语四六级词汇", category: "language", description: "四六级核心词汇表", uploader: "吴同学", uploaderId: "USR_000008", uploadTime: "2025-06-03", downloads: 74, views: 198, favorites: 15 },
-                { id: "RES_000009", title: "大学英语教程答案", category: "language", description: "大学英语教材习题答案", uploader: "郑同学", uploaderId: "USR_000009", uploadTime: "2025-06-02", downloads: 156, views: 432, favorites: 32 },
-                { id: "RES_000010", title: "经济学原理笔记", category: "economics", description: "微观经济学与宏观经济学笔记", uploader: "冯同学", uploaderId: "USR_000010", uploadTime: "2025-06-01", downloads: 203, views: 543, favorites: 54 },
-                { id: "RES_000011", title: "心理学概论", category: "humanities", description: "心理学基础知识点整理", uploader: "陈同学", uploaderId: "USR_000011", uploadTime: "2025-05-30", downloads: 98, views: 267, favorites: 21 },
-                { id: "RES_000012", title: "中国近代史纲要", category: "humanities", description: "中国近代史重要事件时间线", uploader: "林同学", uploaderId: "USR_000012", uploadTime: "2025-05-29", downloads: 112, views: 321, favorites: 28 }
+                { id: "RES_000001", title: "高等数学笔记", category: "math", description: "大一高等数学完整笔记整理，包含各章节重点公式和典型例题", uploader: "廖同学", uploaderId: "USR_000001", uploadTime: "2025-06-10", downloads: 128, views: 456, favorites: 45, fileName: "高等数学笔记.pdf", filePath: "files/math/高等数学笔记.pdf" },
+                { id: "RES_000002", title: "线性代数资料", category: "math", description: "线性代数知识点总结与习题，含矩阵、行列式、特征值等", uploader: "浩同学", uploaderId: "USR_000002", uploadTime: "2025-06-09", downloads: 96, views: 234, favorites: 23, fileName: "线性代数资料.pdf", filePath: "files/math/线性代数资料.pdf" },
+                { id: "RES_000003", title: "C语言程序设计教程", category: "cs", description: "C语言基础教程和示例代码，适合初学者入门", uploader: "泽同学", uploaderId: "USR_000003", uploadTime: "2025-06-08", downloads: 215, views: 567, favorites: 67, fileName: "C语言程序设计.pdf", filePath: "files/cs/C语言程序设计.pdf" },
+                { id: "RES_000004", title: "数据结构与算法", category: "cs", description: "常见数据结构与算法实现，含代码示例", uploader: "马同学", uploaderId: "USR_000004", uploadTime: "2025-06-07", downloads: 87, views: 345, favorites: 34, fileName: "数据结构与算法.pdf", filePath: "files/cs/数据结构与算法.pdf" },
+                { id: "RES_000005", title: "Python入门指南", category: "cs", description: "Python编程入门教程，含基础语法和实战项目", uploader: "胡同学", uploaderId: "USR_000005", uploadTime: "2025-06-06", downloads: 156, views: 423, favorites: 56, fileName: "Python入门指南.pdf", filePath: "files/cs/Python入门指南.pdf" },
+                { id: "RES_000006", title: "大学物理公式汇总", category: "physics", description: "大学物理常用公式整理，力学、热学、电磁学全覆盖", uploader: "高同学", uploaderId: "USR_000006", uploadTime: "2025-06-05", downloads: 203, views: 512, favorites: 78, fileName: "大学物理公式汇总.pdf", filePath: "files/physics/大学物理公式汇总.pdf" },
+                { id: "RES_000007", title: "电路分析基础", category: "physics", description: "电路分析学习资料，含电路定理和分析方法", uploader: "廖同学", uploaderId: "USR_000001", uploadTime: "2025-06-04", downloads: 432, views: 876, favorites: 89, fileName: "电路分析基础.pdf", filePath: "files/physics/电路分析基础.pdf" },
+                { id: "RES_000008", title: "英语四六级词汇", category: "language", description: "四六级核心词汇表，分类记忆更高效", uploader: "浩同学", uploaderId: "USR_000002", uploadTime: "2025-06-03", downloads: 74, views: 198, favorites: 15, fileName: "英语四六级词汇.pdf", filePath: "files/language/英语四六级词汇.pdf" },
+                { id: "RES_000009", title: "大学英语教程答案", category: "language", description: "大学英语教材习题答案，附详细解析", uploader: "泽同学", uploaderId: "USR_000003", uploadTime: "2025-06-02", downloads: 156, views: 432, favorites: 32, fileName: "大学英语教程答案.pdf", filePath: "files/language/大学英语教程答案.pdf" },
+                { id: "RES_000010", title: "经济学原理笔记", category: "economics", description: "微观经济学与宏观经济学笔记，含图表分析", uploader: "马同学", uploaderId: "USR_000004", uploadTime: "2025-06-01", downloads: 203, views: 543, favorites: 54, fileName: "经济学原理笔记.pdf", filePath: "files/economics/经济学原理笔记.pdf" },
+                { id: "RES_000011", title: "心理学概论", category: "humanities", description: "心理学基础知识点整理，含案例分析", uploader: "胡同学", uploaderId: "USR_000005", uploadTime: "2025-05-30", downloads: 98, views: 267, favorites: 21, fileName: "心理学概论.pdf", filePath: "files/humanities/心理学概论.pdf" },
+                { id: "RES_000012", title: "中国近代史纲要", category: "humanities", description: "中国近代史重要事件时间线，重点事件梳理", uploader: "高同学", uploaderId: "USR_000006", uploadTime: "2025-05-29", downloads: 112, views: 321, favorites: 28, fileName: "中国近代史纲要.pdf", filePath: "files/humanities/中国近代史纲要.pdf" }
             ];
+            
+            // 初始化示例评论
+            this._counters.comment = 5;
+            this._data.comments = [
+                { id: "CMT_000001", resourceId: "RES_000001", userId: "USR_000002", userName: "浩同学", content: "笔记非常详细，对复习帮助很大！", rating: 5, time: "2025-06-11 10:30", helpful: 12 },
+                { id: "CMT_000002", resourceId: "RES_000001", userId: "USR_000003", userName: "泽同学", content: "高数救星，感谢分享！", rating: 5, time: "2025-06-10 15:20", helpful: 8 },
+                { id: "CMT_000003", resourceId: "RES_000003", userId: "USR_000004", userName: "马同学", content: "代码示例很实用，推荐初学者看看", rating: 4, time: "2025-06-09 09:15", helpful: 15 },
+                { id: "CMT_000004", resourceId: "RES_000006", userId: "USR_000005", userName: "胡同学", content: "公式总结得很全面，复习时省了不少时间", rating: 5, time: "2025-06-06 14:45", helpful: 20 },
+                { id: "CMT_000005", resourceId: "RES_000010", userId: "USR_000001", userName: "廖同学", content: "经济学入门好资料，适合预习和复习", rating: 4, time: "2025-06-02 11:30", helpful: 6 }
+            ];
+            
             this._saveToLocalStorage();
         }
     },
@@ -221,6 +249,14 @@ var DataStore = {
     // 获取所有资源
     getAllResources: function() {
         return this._data.resources;
+    },
+
+    // 根据ID获取用户
+    getUser: function(userId) {
+        var user = this._data.users.find(function(u) { return u.id === userId; });
+        if (user) return user;
+        // 也支持通过用户名查找
+        return this._data.users.find(function(u) { return u.username === userId; });
     },
 
     // 根据ID获取资源
@@ -534,6 +570,7 @@ var DataStore = {
         localStorage.removeItem('DataStore');
         this._data = { resources: [], users: [], comments: [], favorites: [] };
         this._counters = { resource: 0, user: 0, comment: 0, favorite: 0 };
+        this._initSampleUsers();
         this._initSampleData();
     },
 

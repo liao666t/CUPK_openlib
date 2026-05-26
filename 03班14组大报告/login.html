@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>登录 - 石大克拉玛依校区开源资源库</title>
+    <title>登录 - 中石大克校区资源共享论坛</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <nav class="navbar" id="navbar">
         <div class="nav-logo">
-            <a href="index.html">石大开源库</a>
+            <a href="landing.html" class="page-link">克校区资源共享论坛</a>
+            <a href="index.html" class="home-icon" title="返回主页">🏠</a>
         </div>
         <div class="nav-search">
             <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
@@ -31,8 +32,8 @@
     <main class="auth-main">
         <div class="auth-container">
             <div class="auth-tabs">
-                <button class="auth-tab active" onclick="showTab('login')">登录</button>
-                <button class="auth-tab" onclick="showTab('register')">注册</button>
+                <button class="auth-tab active" id="loginTab" onclick="showTab('login')">登录</button>
+                <button class="auth-tab" id="registerTab" onclick="showTab('register')">注册</button>
             </div>
             
             <div id="loginForm" class="auth-form">
@@ -50,10 +51,10 @@
                             <input type="checkbox" id="rememberMe">
                             <span>记住我</span>
                         </label>
-                        <a href="#" class="forgot-link">忘记密码？</a>
+                        <a href="mailto:contact@cupk.edu.cn?subject=忘记密码" class="forgot-link">忘记密码？</a>
                     </div>
                     <div class="form-group">
-                        <button type="submit" class="btn-auth">登录</button>
+                        <button type="submit" class="btn-auth" id="loginBtn">登录</button>
                     </div>
                 </form>
             </div>
@@ -110,18 +111,28 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <button type="submit" class="btn-auth">注册</button>
+                        <button type="submit" class="btn-auth" id="registerBtn">注册</button>
                     </div>
                 </form>
             </div>
             
-            <div id="formMessage" class="form-message"></div>
+            <div id="formMessage" class="form-message" style="display: none;"></div>
         </div>
     </main>
     <footer class="footer">
-        <p>Copyright &copy; 2025 石大克拉玛依校区开源资源库</p>
+        <p>Copyright &copy; 2025 中石大克校区资源共享论坛</p>
         <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
     </footer>
+    <div class="mobile-tip-bar" id="mobileTipBar" style="display: none;">
+        <span>💻 电脑访问体验更佳</span>
+    </div>
+    <div class="mobile-tip-popup" id="mobileTipPopup" style="display: none;">
+        <div class="mobile-tip-popup-content">
+            <div class="mobile-tip-popup-icon">💻</div>
+            <div class="mobile-tip-popup-text">为了更好的浏览体验<br>建议使用电脑访问</div>
+            <button onclick="closeMobileTipPopup()">我知道了</button>
+        </div>
+    </div>
     <script src="js/data.js"></script>
     <script src="js/main.js"></script>
     <script>
@@ -138,18 +149,24 @@
             var registerForm = document.getElementById("registerForm");
             var message = document.getElementById("formMessage");
             
-            message.innerHTML = "";
+            message.style.display = "none";
             
             if (tab === "login") {
                 tabs[0].classList.add("active");
                 tabs[1].classList.remove("active");
                 loginForm.style.display = "block";
+                loginForm.style.animation = "none";
+                loginForm.offsetHeight; // 触发重排以重新应用动画
+                loginForm.style.animation = "formFadeIn 0.4s ease-out";
                 registerForm.style.display = "none";
             } else {
                 tabs[0].classList.remove("active");
                 tabs[1].classList.add("active");
                 loginForm.style.display = "none";
                 registerForm.style.display = "block";
+                registerForm.style.animation = "none";
+                registerForm.offsetHeight; // 触发重排以重新应用动画
+                registerForm.style.animation = "formFadeIn 0.4s ease-out";
             }
         }
         
@@ -179,57 +196,90 @@
         }
         
         function validateLogin() {
-            var username = document.getElementById("loginUsername").value.trim();
-            var password = document.getElementById("loginPassword").value;
+            var username = document.getElementById("loginUsername");
+            var password = document.getElementById("loginPassword");
             var rememberMe = document.getElementById("rememberMe").checked;
             var message = document.getElementById("formMessage");
+            var btn = document.getElementById("loginBtn");
             
-            if (username === "") {
+            // 清除之前的错误状态
+            username.classList.remove("error");
+            password.classList.remove("error");
+            
+            if (username.value.trim() === "") {
                 message.innerHTML = "请输入用户名或邮箱";
                 message.className = "form-message error";
+                message.style.display = "flex";
+                username.classList.add("error");
+                username.focus();
                 return false;
             }
             
-            if (password === "") {
+            if (password.value === "") {
                 message.innerHTML = "请输入密码";
                 message.className = "form-message error";
+                message.style.display = "flex";
+                password.classList.add("error");
+                password.focus();
                 return false;
             }
 
+            // 添加按钮加载状态
+            btn.classList.add("loading");
+            btn.textContent = "登录中...";
+            
             // 尝试使用服务器登录
             if (DataStore.isServerMode()) {
                 var xhr = new XMLHttpRequest();
                 xhr.open('POST', '/api/users/login', true);
                 xhr.setRequestHeader('Content-Type', 'application/json');
                 xhr.onload = function() {
+                    btn.classList.remove("loading");
+                    btn.textContent = "登录";
                     if (xhr.status === 200) {
                         var user = JSON.parse(xhr.responseText);
                         localStorage.setItem("currentUser", JSON.stringify(user));
-                        message.innerHTML = "登录成功！即将跳转到首页...";
+                        message.innerHTML = "✓ 登录成功！即将跳转到首页...";
                         message.className = "form-message success";
+                        message.style.display = "flex";
                         setTimeout(function() {
                             window.location.href = "index.html";
                         }, 1000);
                     } else {
                         message.innerHTML = "用户名或密码错误";
                         message.className = "form-message error";
+                        message.style.display = "flex";
+                        password.classList.add("error");
                     }
                 };
                 xhr.onerror = function() {
+                    btn.classList.remove("loading");
+                    btn.textContent = "登录";
                     // 服务器请求失败，使用本地登录
-                    localLogin(username, password, rememberMe, message);
+                    localLogin(username.value.trim(), password.value, rememberMe, message, btn);
                 };
-                xhr.send(JSON.stringify({ username: username, password: password }));
+                xhr.send(JSON.stringify({ username: username.value.trim(), password: password.value }));
             } else {
                 // 使用本地登录
-                localLogin(username, password, rememberMe, message);
+                localLogin(username.value.trim(), password.value, rememberMe, message, btn);
             }
             
             return false;
         }
         
-        function localLogin(username, password, rememberMe, message) {
-            var users = JSON.parse(localStorage.getItem("users") || "[]");
+        function localLogin(username, password, rememberMe, message, btn) {
+            // 预置的6个演示账号
+            var presetUsers = [
+                { id: "USR_000001", username: "廖同学", password: "admin", email: "liao@cupk.edu.cn", school: "cupk", college: "石油学院", major: "软件工程", grade: "2024" },
+                { id: "USR_000002", username: "浩同学", password: "admin", email: "hao@cupk.edu.cn", school: "cupk", college: "石油学院", major: "软件工程", grade: "2024" },
+                { id: "USR_000003", username: "泽同学", password: "admin", email: "ze@cupk.edu.cn", school: "cupk", college: "石油学院", major: "软件工程", grade: "2024" },
+                { id: "USR_000004", username: "马同学", password: "admin", email: "ma@cupk.edu.cn", school: "cupk", college: "石油学院", major: "软件工程", grade: "2024" },
+                { id: "USR_000005", username: "胡同学", password: "admin", email: "hu@cupk.edu.cn", school: "cupk", college: "石油学院", major: "软件工程", grade: "2024" },
+                { id: "USR_000006", username: "高同学", password: "admin", email: "gao@cupk.edu.cn", school: "cupk", college: "石油学院", major: "软件工程", grade: "2024" }
+            ];
+            // 合并预置用户、本地注册用户
+            var localUsers = JSON.parse(localStorage.getItem("users") || "[]");
+            var users = presetUsers.concat(localUsers);
             var userFound = null;
             for (var i = 0; i < users.length; i++) {
                 if (users[i].username === username) {
@@ -242,11 +292,22 @@
                 if (userFound.password !== password) {
                     message.innerHTML = "密码错误";
                     message.className = "form-message error";
+                    message.style.display = "flex";
+                    document.getElementById("loginPassword").classList.add("error");
+                    if (btn) {
+                        btn.classList.remove("loading");
+                        btn.textContent = "登录";
+                    }
                     return;
                 }
             } else {
                 message.innerHTML = "用户不存在，请先注册";
                 message.className = "form-message error";
+                message.style.display = "flex";
+                if (btn) {
+                    btn.classList.remove("loading");
+                    btn.textContent = "登录";
+                }
                 return;
             }
             
@@ -258,8 +319,14 @@
             
             localStorage.setItem("currentUser", JSON.stringify(userFound));
             
-            message.innerHTML = "登录成功！即将跳转到首页...";
+            message.innerHTML = "✓ 登录成功！即将跳转到首页...";
             message.className = "form-message success";
+            message.style.display = "flex";
+            
+            if (btn) {
+                btn.classList.remove("loading");
+                btn.textContent = "登录";
+            }
             
             setTimeout(function() {
                 window.location.href = "index.html";
@@ -334,6 +401,10 @@
                 registerTime: new Date().toISOString()
             };
             
+            var btn = document.getElementById("registerBtn");
+            btn.classList.add("loading");
+            btn.textContent = "注册中...";
+            
             // 尝试使用服务器注册
             if (DataStore.isServerMode()) {
                 var xhr = new XMLHttpRequest();
@@ -341,8 +412,9 @@
                 xhr.setRequestHeader('Content-Type', 'application/json');
                 xhr.onload = function() {
                     if (xhr.status === 200 || xhr.status === 201) {
-                        message.innerHTML = "注册成功！请登录";
+                        message.innerHTML = "✓ 注册成功！即将跳转到登录...";
                         message.className = "form-message success";
+                        message.style.display = "flex";
                         showTab("login");
                         document.getElementById("loginUsername").value = username;
                     } else {
@@ -353,9 +425,12 @@
                             message.innerHTML = "注册失败";
                         }
                         message.className = "form-message error";
+                        message.style.display = "flex";
                     }
                 };
                 xhr.onerror = function() {
+                    btn.classList.remove("loading");
+                    btn.textContent = "注册";
                     // 服务器请求失败，使用本地注册
                     localRegister(newUser, message);
                 };
@@ -374,6 +449,7 @@
                 if (users[i].username === newUser.username) {
                     message.innerHTML = "用户名已存在";
                     message.className = "form-message error";
+                    message.style.display = "flex";
                     return;
                 }
             }
@@ -381,8 +457,15 @@
             users.push(newUser);
             localStorage.setItem("users", JSON.stringify(users));
             
-            message.innerHTML = "注册成功！请登录";
+            var btn = document.getElementById("registerBtn");
+            if (btn) {
+                btn.classList.remove("loading");
+                btn.textContent = "注册";
+            }
+            
+            message.innerHTML = "✓ 注册成功！请登录";
             message.className = "form-message success";
+            message.style.display = "flex";
             showTab("login");
             document.getElementById("loginUsername").value = newUser.username;
         }

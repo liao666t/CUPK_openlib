@@ -3,20 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>个人中心 - 石大克拉玛依校区开源资源库</title>
+    <title>个人中心 - 中石大克校区资源共享论坛</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <nav class="navbar" id="navbar">
         <div class="nav-logo">
-            <a href="index.html">石大开源库</a>
+            <a href="landing.html" class="page-link">克校区资源共享论坛</a>
+            <a href="index.html" class="home-icon" title="返回主页">🏠</a>
         </div>
         <div class="nav-search">
             <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
         </div>
         <div class="nav-actions" id="navActions">
             <a href="upload.html" class="btn-upload">上传资料</a>
-            <a href="user.html" class="btn-user">用户入口</a>
+            <div class="user-dropdown" id="userDropdown">
+                <div class="user-avatar" id="userAvatarBtn" onclick="toggleUserMenu()">?</div>
+                <div class="user-dropdown-menu" id="userDropdownMenu">
+                    <a href="user.html" class="user-dropdown-item">
+                        <span class="icon">👤</span>
+                        <span id="dropdownUsername">个人中心</span>
+                    </a>
+                    <button class="user-dropdown-item" onclick="logout()">
+                        <span class="icon">🚪</span>
+                        <span>退出登录</span>
+                    </button>
+                </div>
+            </div>
+            <a href="login.html" class="btn-user" id="loginLink">登录</a>
         </div>
         <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
     </nav>
@@ -28,7 +42,7 @@
         <a href="contribute.html">贡献</a>
         <a href="about.html">关于</a>
     </div>
-    <main>
+    <main class="page-transition">
         <h1>个人中心</h1>
         
         <div id="notLoggedIn" class="not-logged-in" style="display:none;">
@@ -81,14 +95,26 @@
         </div>
     </main>
     <footer class="footer">
-        <p>Copyright &copy; 2025 石大克拉玛依校区开源资源库</p>
+        <p>Copyright &copy; 2025 中石大克校区资源共享论坛</p>
         <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
     </footer>
+    <div class="mobile-tip-bar" id="mobileTipBar" style="display: none;">
+        <span>💻 电脑访问体验更佳</span>
+    </div>
+    <div class="mobile-tip-popup" id="mobileTipPopup" style="display: none;">
+        <div class="mobile-tip-popup-content">
+            <div class="mobile-tip-popup-icon">💻</div>
+            <div class="mobile-tip-popup-text">为了更好的浏览体验<br>建议使用电脑访问</div>
+            <button onclick="closeMobileTipPopup()">我知道了</button>
+        </div>
+    </div>
     <script src="js/data.js"></script>
     <script src="js/main.js"></script>
     <script>
-        checkLoginStatus();
         hideLoading();
+        
+        // 更新导航栏用户状态
+        updateNavUserState();
         
         // 等待 DataStore 初始化完成后再加载数据
         waitForDataStore(function() {
@@ -96,36 +122,55 @@
         });
         
         function loadUserProfile() {
-            var currentUser = localStorage.getItem("currentUser");
+            // 检查是否有指定查看的用户ID
+            var urlParams = new URLSearchParams(window.location.search);
+            var viewUserId = urlParams.get('userId');
+            
+            var currentUserStr = localStorage.getItem("currentUser");
             var notLoggedIn = document.getElementById("notLoggedIn");
             var userProfile = document.getElementById("userProfile");
-
-            if (!currentUser) {
+            
+            // 确定要显示的用户
+            var userToShow = null;
+            var isOwnProfile = true;
+            
+            if (viewUserId) {
+                // 查看指定用户
+                userToShow = DataStore.getUser(viewUserId);
+                isOwnProfile = false;
+            } else if (currentUserStr) {
+                // 查看当前登录用户
+                userToShow = JSON.parse(currentUserStr);
+            }
+            
+            if (!userToShow) {
                 notLoggedIn.style.display = "block";
                 userProfile.style.display = "none";
                 return;
             }
-
-            var user = JSON.parse(currentUser);
-            document.getElementById("profileAvatar").textContent = user.username.charAt(0).toUpperCase();
-            document.getElementById("profileUsername").textContent = user.username;
-            document.getElementById("profileCollege").textContent = user.college || "";
-            document.getElementById("profileMajor").textContent = user.major || "";
-            document.getElementById("profileGrade").textContent = (user.grade || "") + "级";
             
-            // 使用 DataStore 获取用户上传的资源
-            var uploads = DataStore.getResourcesByUploader(user.id || user.username);
+            notLoggedIn.style.display = "none";
+            userProfile.style.display = "block";
+            
+            // 显示用户信息
+            document.getElementById("profileAvatar").textContent = userToShow.username ? userToShow.username.charAt(0).toUpperCase() : '?';
+            document.getElementById("profileUsername").textContent = userToShow.username || "未知用户";
+            document.getElementById("profileCollege").textContent = userToShow.college || "";
+            document.getElementById("profileMajor").textContent = userToShow.major || "";
+            document.getElementById("profileGrade").textContent = (userToShow.grade || "") + "级";
+            
+            // 获取用户上传的资源
+            var uploads = DataStore.getResourcesByUploader(userToShow.id || userToShow.username);
             document.getElementById("uploadCount").textContent = uploads.length;
-            document.getElementById("downloadCount").textContent = user.downloadCount || 0;
+            document.getElementById("downloadCount").textContent = userToShow.downloadCount || 0;
             
             var totalDownloads = 0;
-            var totalViews = 0;
             for (var i = 0; i < uploads.length; i++) {
                 totalDownloads += uploads[i].downloads || 0;
-                totalViews += uploads[i].views || 0;
             }
             document.getElementById("totalDownloads").textContent = totalDownloads;
             
+            // 显示上传记录
             var uploadList = document.getElementById("uploadList");
             if (uploads.length === 0) {
                 uploadList.innerHTML = '<p class="empty-message">暂无上传记录</p>';
@@ -143,27 +188,35 @@
                 uploadList.innerHTML = html;
             }
             
-            var browseHistory = JSON.parse(localStorage.getItem("browseHistory") || "[]");
-            var historyContainer = document.getElementById("browseHistory");
-            if (browseHistory.length === 0) {
-                historyContainer.innerHTML = '<p class="empty-message">暂无浏览记录</p>';
-            } else {
-                var historyHtml = '<div class="record-list">';
-                for (var k = 0; k < browseHistory.length && k < 5; k++) {
-                    var item = browseHistory[k];
-                    var itemId = item.id || 'browse_' + k;
-                    historyHtml += '<div class="record-item" onclick="goToDetail(\'' + itemId + '\')" style="cursor:pointer;">';
-                    historyHtml += '<div class="record-title"><a href="detail.html?id=' + itemId + '" onclick="event.stopPropagation();">' + item.title + '</a></div>';
-                    historyHtml += '<div class="record-meta">浏览时间：' + item.time + '</div>';
+            // 仅在查看自己的主页时显示浏览历史
+            var browseHistoryContainer = document.getElementById("browseHistory").parentElement;
+            if (isOwnProfile && currentUserStr) {
+                browseHistoryContainer.style.display = "block";
+                var browseHistory = JSON.parse(localStorage.getItem("browseHistory") || "[]");
+                var historyContainer = document.getElementById("browseHistory");
+                if (browseHistory.length === 0) {
+                    historyContainer.innerHTML = '<p class="empty-message">暂无浏览记录</p>';
+                } else {
+                    var historyHtml = '<div class="record-list">';
+                    for (var k = 0; k < browseHistory.length && k < 5; k++) {
+                        var item = browseHistory[k];
+                        var itemId = item.id || 'browse_' + k;
+                        historyHtml += '<div class="record-item" onclick="goToDetail(\'' + itemId + '\')" style="cursor:pointer;">';
+                        historyHtml += '<div class="record-title"><a href="detail.html?id=' + itemId + '" onclick="event.stopPropagation();">' + item.title + '</a></div>';
+                        historyHtml += '<div class="record-meta">浏览时间：' + item.time + '</div>';
+                        historyHtml += '</div>';
+                    }
                     historyHtml += '</div>';
+                    historyContainer.innerHTML = historyHtml;
                 }
-                historyHtml += '</div>';
-                historyContainer.innerHTML = historyHtml;
+            } else {
+                browseHistoryContainer.style.display = "none";
             }
         }
         
         function logout() {
             localStorage.removeItem("currentUser");
+            localStorage.removeItem("savedUsername");
             window.location.href = "index.html";
         }
         

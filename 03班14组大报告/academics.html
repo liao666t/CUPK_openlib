@@ -3,20 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>学业指导 - 石大克拉玛依校区开源资源库</title>
+    <title>学业指导 - 中石大克校区资源共享论坛</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <nav class="navbar" id="navbar">
         <div class="nav-logo">
-            <a href="index.html">石大开源库</a>
+            <a href="landing.html" class="page-link">克校区资源共享论坛</a>
+            <a href="index.html" class="home-icon" title="返回主页">🏠</a>
         </div>
         <div class="nav-search">
             <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
         </div>
         <div class="nav-actions" id="navActions">
             <a href="upload.html" class="btn-upload">上传资料</a>
-            <a href="login.html" class="btn-user">用户入口</a>
+            <div class="user-dropdown" id="userDropdown">
+                <div class="user-avatar" id="userAvatarBtn" onclick="toggleUserMenu()">?</div>
+                <div class="user-dropdown-menu" id="userDropdownMenu">
+                    <a href="user.html" class="user-dropdown-item">
+                        <span class="icon">👤</span>
+                        <span id="dropdownUsername">个人中心</span>
+                    </a>
+                    <button class="user-dropdown-item" onclick="logout()">
+                        <span class="icon">🚪</span>
+                        <span>退出登录</span>
+                    </button>
+                </div>
+            </div>
+            <a href="login.html" class="btn-user" id="loginLink">登录</a>
         </div>
         <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
     </nav>
@@ -28,46 +42,88 @@
         <a href="contribute.html">贡献</a>
         <a href="about.html">关于</a>
     </div>
-    <main>
+    <main class="page-transition">
         <h1>学业指导</h1>
 
         <div class="section">
             <h2 id="freshman">新生须知</h2>
             <ul class="resource-list">
-                <li><a href="#">入学必看</a></li>
-                <li><a href="#">必备物品清单</a></li>
-                <li><a href="#">常见问题解答</a></li>
-                <li><a href="#">校园地图</a></li>
-                <li><a href="#">校园网使用指南</a></li>
+                <li><a href="freshman.html">入学必看</a> <span class="resource-tag">新生入学完全指南</span></li>
+                <li><a href="freshman.html#items">必备物品清单</a> <span class="resource-tag">入学物品准备攻略</span></li>
+                <li><a href="freshman.html#faq">常见问题解答</a> <span class="resource-tag">FAQ汇总</span></li>
+                <li><a href="search.html?q=校园地图">校园地图</a></li>
+                <li><a href="freshman.html#network">校园网使用指南</a> <span class="resource-tag">网络连接与配置</span></li>
             </ul>
         </div>
 
         <div class="section">
             <h2>专业培养方案</h2>
             <ul class="resource-list">
-                <li><a href="#">工学院各专业培养方案</a></li>
-                <li><a href="#">文理学院各专业培养方案</a></li>
-                <li><a href="#">商学院各专业培养方案</a></li>
+                <li><a href="cultivation.html">石油学院各专业培养方案</a> <span class="resource-tag">含课程设置</span></li>
+                <li><a href="cultivation.html#liberal">文理学院各专业培养方案</a> <span class="resource-tag">含学分要求</span></li>
+                <li><a href="cultivation.html#business">工商管理学院各专业培养方案</a> <span class="resource-tag">含实习安排</span></li>
             </ul>
         </div>
 
         <div class="section">
             <h2>转专业相关</h2>
             <ul class="resource-list">
-                <li><a href="#">转专业政策</a></li>
-                <li><a href="#">历年转专业情况</a></li>
-                <li><a href="#">转专业经验分享</a></li>
+                <li><a href="transfer.html">转专业政策</a> <span class="resource-tag">最新政策解读</span></li>
+                <li><a href="transfer.html#stats">历年转专业情况</a> <span class="resource-tag">数据分析</span></li>
+                <li><a href="transfer.html#experience">转专业经验分享</a> <span class="resource-tag">学长学姐经验</span></li>
             </ul>
+        </div>
+
+        <div class="section">
+            <h2>热门学习资料</h2>
+            <div class="resource-grid">
+                <div class="resource-card">
+                    <div class="resource-title"><a href="detail.html?id=RES_000001">高等数学笔记</a></div>
+                    <div class="resource-meta">分类：数学</div>
+                    <div class="resource-meta">上传者：张同学</div>
+                    <div class="resource-meta">下载：128次</div>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title"><a href="detail.html?id=RES_000002">线性代数资料</a></div>
+                    <div class="resource-meta">分类：数学</div>
+                    <div class="resource-meta">上传者：李同学</div>
+                    <div class="resource-meta">下载：96次</div>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title"><a href="detail.html?id=RES_000003">C语言程序设计教程</a></div>
+                    <div class="resource-meta">分类：计算机</div>
+                    <div class="resource-meta">上传者：王同学</div>
+                    <div class="resource-meta">下载：215次</div>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title"><a href="detail.html?id=RES_000006">大学物理公式汇总</a></div>
+                    <div class="resource-meta">分类：物理</div>
+                    <div class="resource-meta">上传者：孙同学</div>
+                    <div class="resource-meta">下载：203次</div>
+                </div>
+            </div>
+            <p style="margin-top: 15px;"><a href="courses.html">查看更多课程资源 &rarr;</a></p>
         </div>
     </main>
     <footer class="footer">
-        <p>Copyright &copy; 2025 石大克拉玛依校区开源资源库</p>
+        <p>Copyright &copy; 2025 中石大克校区资源共享论坛</p>
         <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
     </footer>
-    <script src="js/data.js"></script>
-    <script src="js/main.js"></script>
+    <div class="mobile-tip-bar" id="mobileTipBar" style="display: none;">
+        <span>💻 电脑访问体验更佳</span>
+    </div>
+    <div class="mobile-tip-popup" id="mobileTipPopup" style="display: none;">
+        <div class="mobile-tip-popup-content">
+            <div class="mobile-tip-popup-icon">💻</div>
+            <div class="mobile-tip-popup-text">为了更好的浏览体验<br>建议使用电脑访问</div>
+            <button onclick="closeMobileTipPopup()">我知道了</button>
+        </div>
+    </div>
+    <script src="js/data.js" defer></script>
+    <script src="js/main.js" defer></script>
     <script>
         checkLoginStatus();
+        updateNavUserState();
         hideLoading();
         window.onscroll = function() {
             var navbar = document.getElementById("navbar");
