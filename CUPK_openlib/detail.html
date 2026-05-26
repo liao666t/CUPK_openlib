@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>资料详情 - 中石大克校区资源共享论坛</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .detail-container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+        }
+
+        .detail-main {
+            min-width: 0;
+        }
+
+        .detail-header {
+            background-color: var(--bg-light);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .detail-title {
+            font-size: 26px;
+            color: var(--text-color);
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .detail-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .detail-author {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .author-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--link-color);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .detail-stats {
+            display: flex;
+            gap: 25px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-item .icon {
+            font-size: 16px;
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-download {
+            background-color: var(--link-color);
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-download:hover {
+            background-color: #960018;
+        }
+
+        .btn-favorite {
+            background-color: #fff;
+            color: var(--link-color);
+            border: 1px solid var(--link-color);
+            padding: 10px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-favorite:hover {
+            background-color: var(--link-color);
+            color: #fff;
+        }
+
+        .btn-favorite.active {
+            background-color: #ffc107;
+            color: #333;
+            border-color: #ffc107;
+        }
+
+        .btn-report {
+            background-color: #fff;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .btn-report:hover {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #f8d7da;
+        }
+
+        .detail-section {
+            background-color: var(--bg-light);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .detail-section h2 {
+            font-size: 18px;
+            color: var(--link-color);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .detail-description {
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+
+        .detail-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .tag {
+            background-color: var(--bg-color);
+            color: var(--text-secondary);
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 13px;
+            border: 1px solid var(--border-color);
+        }
+
+        .preview-area {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 15px;
+            padding: 30px;
+        }
+
+        .preview-icon {
+            font-size: 64px;
+            color: var(--text-muted);
+        }
+
+        .preview-info {
+            text-align: center;
+        }
+
+        .preview-info p {
+            margin: 5px 0;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .preview-hint {
+            color: var(--link-color);
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .pdf-embed {
+            width: 100%;
+            height: 600px;
+            border: none;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 600px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .preview-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .preview-controls button {
+            background-color: #fff;
+            color: var(--link-color);
+            border: 1px solid var(--link-color);
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .preview-controls button:hover {
+            background-color: var(--link-color);
+            color: #fff;
+        }
+
+        .comments-section h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rating-display {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background-color: #fff3cd;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: normal;
+            color: #856404;
+        }
+
+        .comment-form {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .comment-form h3 {
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .rating-input {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .rating-input span {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--border-color);
+            transition: color 0.2s;
+        }
+
+        .rating-input span:hover,
+        .rating-input span.active {
+            color: #ffc107;
+        }
+
+        .comment-form textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        .comment-form textarea:focus {
+            outline: none;
+            border-color: var(--link-color);
+        }
+
+        .comment-form button {
+            margin-top: 12px;
+            background-color: var(--link-color);
+            color: #fff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: background-color 0.2s;
+        }
+
+        .comment-form button:hover {
+            background-color: #960018;
+        }
+
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .comment-item {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .comment-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .comment-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--link-color);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .comment-user-info .username {
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .comment-user-info .comment-time {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .comment-rating {
+            color: #ffc107;
+            font-size: 14px;
+        }
+
+        .comment-content {
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .comment-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .comment-action-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .comment-action-btn:hover {
+            color: var(--link-color);
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 90px;
+            align-self: start;
+        }
+
+        .related-section {
+            background-color: var(--bg-light);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .related-section h3 {
+            font-size: 16px;
+            color: var(--link-color);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .related-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .related-item {
+            display: flex;
+            gap: 12px;
+            padding: 10px;
+            background-color: var(--bg-color);
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .related-item:hover {
+            border-color: var(--link-color);
+            box-shadow: 0 2px 8px rgba(200, 16, 46, 0.1);
+        }
+
+        .related-thumb {
+            width: 60px;
+            height: 60px;
+            background-color: var(--bg-light);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .related-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .related-title {
+            font-weight: bold;
+            font-size: 14px;
+            color: var(--text-color);
+            margin-bottom: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .related-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+        }
+
+        .no-data-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--bg-color);
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 900px) {
+            .detail-container {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                position: static;
+            }
+            .detail-stats {
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .detail-title {
+                font-size: 22px;
+            }
+            .detail-actions {
+                flex-direction: column;
+            }
+            .btn-download, .btn-favorite, .btn-report {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="nav-logo">
+            <a href="landing.html" class="page-link">克校区资源共享论坛</a>
+            <a href="index.html" class="home-icon" title="返回主页">🏠</a>
+        </div>
+        <div class="nav-search">
+            <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
+        </div>
+        <div class="nav-actions" id="navActions">
+            <a href="upload.html" class="btn-upload">上传资料</a>
+            <div class="user-dropdown" id="userDropdown">
+                <div class="user-avatar" id="userAvatarBtn" onclick="toggleUserMenu()">?</div>
+                <div class="user-dropdown-menu" id="userDropdownMenu">
+                    <a href="user.html" class="user-dropdown-item">
+                        <span class="icon">👤</span>
+                        <span id="dropdownUsername">个人中心</span>
+                    </a>
+                    <button class="user-dropdown-item" onclick="logout()">
+                        <span class="icon">🚪</span>
+                        <span>退出登录</span>
+                    </button>
+                </div>
+            </div>
+            <a href="login.html" class="btn-user" id="loginLink">登录</a>
+        </div>
+        <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
+    </nav>
+    <div class="nav-links-mobile" id="navLinks">
+        <a href="courses.html">课程</a>
+        <a href="academics.html">学业</a>
+        <a href="clubs.html">社团</a>
+        <a href="life.html">生活</a>
+        <a href="contribute.html">贡献</a>
+        <a href="about.html">关于</a>
+    </div>
+
+    <main class="page-transition">
+        <div class="detail-container">
+            <div class="detail-main">
+                <div class="detail-header">
+                    <h1 class="detail-title" id="resourceTitle">资料详情</h1>
+                    <div class="detail-meta">
+                        <div class="detail-author" id="resourceAuthor">
+                            <div class="author-avatar">?</div>
+                            <span>上传者：<a href="user.html">加载中...</a></span>
+                        </div>
+                        <span>|</span>
+                        <span id="uploadTime">上传时间：-</span>
+                        <div class="detail-stats">
+                            <div class="stat-item">
+                                <span class="icon">&#128065;</span>
+                                <span id="viewCount">-</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="icon">&#128229;</span>
+                                <span id="downloadCount">-</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="icon">&#128276;</span>
+                                <span id="favoriteCount">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-actions">
+                        <button class="btn-download" onclick="downloadFile()">
+                            <span>&#128229;</span> 下载资料
+                        </button>
+                        <button class="btn-favorite" id="favoriteBtn" onclick="toggleFavorite()">
+                            <span>&#9829;</span> 收藏
+                        </button>
+                        <button class="btn-report" onclick="reportResource()">
+                            <span>&#9888;</span> 举报
+                        </button>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h2>资料简介</h2>
+                    <p class="detail-description" id="resourceDescription">
+                        暂无简介
+                    </p>
+                    <div class="detail-tags" id="resourceTags">
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h2>文件预览</h2>
+                    <div class="preview-area" id="previewArea">
+                        <div class="preview-icon">&#128196;</div>
+                        <div class="preview-info">
+                            <p id="fileName">暂无文件</p>
+                            <p id="fileSize"></p>
+                            <p class="preview-hint" onclick="togglePreview()">点击在线预览</p>
+                        </div>
+                        <div class="preview-controls">
+                            <button onclick="togglePreview()">在线预览</button>
+                            <button onclick="downloadFile()">下载文件</button>
+                        </div>
+                    </div>
+                    <iframe class="pdf-embed" id="pdfEmbed" src=""></iframe>
+                    <img class="image-preview" id="imagePreview" src="" alt="预览图片">
+                </div>
+
+                <div class="detail-section comments-section">
+                    <h2>
+                        用户评价
+                        <span class="rating-display" id="ratingDisplay" style="display: none;">
+                            <span>&#9733;</span>
+                            <span id="avgRating">-</span>
+                            <span id="ratingCount">(-条评价)</span>
+                        </span>
+                    </h2>
+                    <div class="comment-form">
+                        <h3>发表评价</h3>
+                        <div class="rating-input" id="ratingInput">
+                            <span data-rating="1">&#9733;</span>
+                            <span data-rating="2">&#9733;</span>
+                            <span data-rating="3">&#9733;</span>
+                            <span data-rating="4">&#9733;</span>
+                            <span data-rating="5">&#9733;</span>
+                        </div>
+                        <textarea id="commentText" placeholder="请输入您的评价..."></textarea>
+                        <button onclick="submitComment()">提交评价</button>
+                    </div>
+                    <div class="comments-list" id="commentsList">
+                        <div class="empty-state">
+                            暂无用户评价
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <aside class="sidebar">
+                <div class="related-section">
+                    <h3>相关资料推荐</h3>
+                    <div class="related-list" id="relatedList">
+                        <div class="empty-state" style="padding: 15px;">
+                            暂无相关推荐
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>Copyright &copy; 2025 中石大克校区资源共享论坛</p>
+        <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
+    </footer>
+    <div class="mobile-tip-bar" id="mobileTipBar" style="display: none;">
+        <span>💻 电脑访问体验更佳</span>
+    </div>
+    <div class="mobile-tip-popup" id="mobileTipPopup" style="display: none;">
+        <div class="mobile-tip-popup-content">
+            <div class="mobile-tip-popup-icon">💻</div>
+            <div class="mobile-tip-popup-text">为了更好的浏览体验<br>建议使用电脑访问</div>
+            <button onclick="closeMobileTipPopup()">我知道了</button>
+        </div>
+    </div>
+
+    <script src="js/data.js" defer></script>
+    <script src="js/main.js" defer></script>
+    <script>
+        var isPreviewVisible = false;
+        var isFavoriteActive = false;
+        var currentRating = 0;
+        var currentResource = null;
+
+        function getResourceId() {
+            var params = new URLSearchParams(window.location.search);
+            return params.get('id');
+        }
+
+        function loadResource() {
+            var resourceId = getResourceId();
+            if (!resourceId) {
+                showEmptyState();
+                return;
+            }
+            
+            fetchResourceData(resourceId);
+        }
+
+        function fetchResourceData(id) {
+            // 使用 DataStore 获取资源数据
+            var resource = DataStore.getResourceByAnyId(id);
+            
+            var mockData = null;
+            
+            if (resource) {
+                // 获取评论
+                var comments = DataStore.getComments(id);
+                // 获取相关资源
+                var related = DataStore.getRelatedResources(id);
+                
+                // 找到资源，使用 DataStore 中的数据
+                mockData = {
+                    id: resource.id,
+                    title: resource.title,
+                    author: {
+                        name: resource.uploader,
+                        avatar: resource.uploader ? resource.uploader.charAt(0) : '?',
+                        uploaderId: resource.uploaderId
+                    },
+                    uploaderId: resource.uploaderId,
+                    uploadTime: resource.uploadTime || '-',
+                    viewCount: resource.views || 0,
+                    downloadCount: resource.downloads || 0,
+                    favoriteCount: resource.favorites || 0,
+                    description: resource.description || '暂无简介',
+                    tags: resource.tags || [DataStore.categoryNames[resource.category] || resource.category],
+                    fileName: resource.fileName || '',
+                    filePath: resource.filePath || '',
+                    file: resource.filePath ? { name: resource.fileName, path: resource.filePath } : null,
+                    rating: null,
+                    comments: comments,
+                    related: related
+                };
+            } else {
+                // 没找到资源
+                mockData = {
+                    id: id,
+                    title: '资料详情',
+                    author: {
+                        name: '未知',
+                        avatar: '?'
+                    },
+                    uploadTime: '-',
+                    viewCount: '-',
+                    downloadCount: '-',
+                    favoriteCount: '-',
+                    description: '未找到该资料',
+                    tags: [],
+                    file: null,
+                    rating: null,
+                    comments: [],
+                    related: []
+                };
+            }
+
+            if (typeof onResourceLoaded === 'function') {
+                onResourceLoaded(mockData);
+            }
+        }
+
+        function onResourceLoaded(data) {
+            currentResource = data;
+            
+            // 更新页面内容
+            document.getElementById('resourceTitle').textContent = data.title || '资料详情';
+            
+            if (data.author) {
+                var userLink = data.uploaderId ? 'user.html?userId=' + encodeURIComponent(data.uploaderId) : 'user.html';
+                var authorHtml = '<div class="author-avatar">' + (data.author.name ? data.author.name.charAt(0) : '?') + '</div>' +
+                    '<span>上传者：<a href="' + userLink + '">' + (data.author.name || '未知') + '</a></span>';
+                document.getElementById('resourceAuthor').innerHTML = authorHtml;
+            }
+            
+            document.getElementById('uploadTime').textContent = '上传时间：' + (data.uploadTime || '-');
+            document.getElementById('viewCount').textContent = data.viewCount || '-';
+            document.getElementById('downloadCount').textContent = data.downloadCount || '-';
+            document.getElementById('favoriteCount').textContent = data.favoriteCount || '-';
+            document.getElementById('resourceDescription').textContent = data.description || '暂无简介';
+            
+            // 标签
+            var tagsContainer = document.getElementById('resourceTags');
+            tagsContainer.innerHTML = '';
+            if (data.tags && data.tags.length > 0) {
+                data.tags.forEach(function(tag) {
+                    var tagEl = document.createElement('span');
+                    tagEl.className = 'tag';
+                    tagEl.textContent = tag;
+                    tagsContainer.appendChild(tagEl);
+                });
+            }
+            
+            // 文件信息
+            if (data.file) {
+                document.getElementById('fileName').textContent = data.file.name || '未知文件';
+                document.getElementById('fileSize').textContent = data.file.size ? '文件大小：' + formatFileSize(data.file.size) : '';
+            }
+            
+            // 检查是否已收藏
+            checkFavoriteStatus();
+            
+            // 评论
+            var commentsContainer = document.getElementById('commentsList');
+            if (data.comments && data.comments.length > 0) {
+                commentsContainer.innerHTML = '';
+                data.comments.forEach(function(comment) {
+                    var commentEl = createCommentElement(comment);
+                    commentsContainer.appendChild(commentEl);
+                });
+            }
+            
+            // 相关资料
+            var relatedContainer = document.getElementById('relatedList');
+            if (data.related && data.related.length > 0) {
+                relatedContainer.innerHTML = '';
+                data.related.forEach(function(item) {
+                    var itemEl = createRelatedElement(item);
+                    relatedContainer.appendChild(itemEl);
+                });
+            }
+        }
+        
+        function checkFavoriteStatus() {
+            var currentUser = localStorage.getItem("currentUser");
+            if (!currentUser) return;
+            
+            var user = JSON.parse(currentUser);
+            var resourceId = getResourceId();
+            
+            var isFav = DataStore.isFavorited(user.id || user.username, resourceId);
+            var btn = document.getElementById('favoriteBtn');
+            
+            if (isFav) {
+                isFavoriteActive = true;
+                btn.classList.add('active');
+                btn.innerHTML = '<span>&#10084;</span> 已收藏';
+            }
+        }
+
+        function showEmptyState() {
+            document.getElementById('resourceTitle').textContent = '资料详情';
+            document.getElementById('resourceDescription').textContent = '暂无数据，请从资料列表进入查看详情';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 B';
+            var k = 1024;
+            var sizes = ['B', 'KB', 'MB', 'GB'];
+            var i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function createCommentElement(comment) {
+            var div = document.createElement('div');
+            div.className = 'comment-item';
+            var ratingStars = '&#9733;'.repeat(comment.rating || 0) + '&#9734;'.repeat(5 - (comment.rating || 0));
+            var avatar = comment.user && comment.user.name ? comment.user.name.charAt(0) : '?';
+            div.innerHTML = 
+                '<div class="comment-header">' +
+                    '<div class="comment-user">' +
+                        '<div class="comment-avatar">' + avatar + '</div>' +
+                        '<div class="comment-user-info">' +
+                            '<div class="username">' + (comment.user ? comment.user.name : '匿名用户') + '</div>' +
+                            '<div class="comment-time">' + (comment.time || '') + '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="comment-rating">' + ratingStars + '</div>' +
+                '</div>' +
+                '<p class="comment-content">' + (comment.content || '') + '</p>' +
+                '<div class="comment-actions">' +
+                    '<button class="comment-action-btn" onclick="markHelpful(this)">&#128077; 有用 (<span>' + (comment.helpful || 0) + '</span>)</button>' +
+                    '<button class="comment-action-btn" onclick="replyComment(this)">&#128172; 回复</button>' +
+                '</div>';
+            return div;
+        }
+
+        function createRelatedElement(item) {
+            var div = document.createElement('div');
+            div.className = 'related-item';
+            div.onclick = function() { window.location.href = 'detail.html?id=' + item.id; };
+            div.innerHTML = 
+                '<div class="related-thumb">&#128196;</div>' +
+                '<div class="related-info">' +
+                    '<div class="related-title">' + (item.title || '未知资料') + '</div>' +
+                    '<div class="related-meta">浏览 ' + (item.viewCount || '-') + ' | 收藏 ' + (item.favoriteCount || '-') + '</div>' +
+                '</div>';
+            return div;
+        }
+
+        function togglePreview() {
+            var previewArea = document.getElementById('previewArea');
+            var pdfEmbed = document.getElementById('pdfEmbed');
+            var imagePreview = document.getElementById('imagePreview');
+
+            if (!currentResource || !currentResource.file) {
+                alert('暂无文件可预览');
+                return;
+            }
+
+            isPreviewVisible = !isPreviewVisible;
+
+            if (isPreviewVisible) {
+                previewArea.style.display = 'none';
+                var file = currentResource.file;
+                if (file.type === 'pdf') {
+                    pdfEmbed.style.display = 'block';
+                    pdfEmbed.src = file.url || file.path || '';
+                } else if (/^image\//.test(file.type)) {
+                    imagePreview.style.display = 'block';
+                    imagePreview.src = file.url || file.path || '';
+                }
+            } else {
+                previewArea.style.display = 'flex';
+                pdfEmbed.style.display = 'none';
+                pdfEmbed.src = '';
+                imagePreview.style.display = 'none';
+                imagePreview.src = '';
+            }
+        }
+
+        function toggleFavorite() {
+            var btn = document.getElementById('favoriteBtn');
+            var currentUser = localStorage.getItem("currentUser");
+            
+            if (!currentUser) {
+                alert('请先登录后再收藏');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            var user = JSON.parse(currentUser);
+            var resourceId = getResourceId();
+            
+            if (isFavoriteActive) {
+                // 取消收藏
+                DataStore.removeFavorite(user.id || user.username, resourceId, function(success) {
+                    if (success) {
+                        isFavoriteActive = false;
+                        btn.classList.remove('active');
+                        btn.innerHTML = '<span>&#9829;</span> 收藏';
+                        var favCount = document.getElementById('favoriteCount');
+                        if (favCount) {
+                            var count = parseInt(favCount.textContent) || 0;
+                            favCount.textContent = Math.max(0, count - 1);
+                        }
+                    }
+                });
+            } else {
+                // 添加收藏
+                DataStore.addFavorite(user.id || user.username, resourceId, function(success) {
+                    if (success) {
+                        isFavoriteActive = true;
+                        btn.classList.add('active');
+                        btn.innerHTML = '<span>&#10084;</span> 已收藏';
+                        var favCount = document.getElementById('favoriteCount');
+                        if (favCount) {
+                            var count = parseInt(favCount.textContent) || 0;
+                            favCount.textContent = count + 1;
+                        }
+                    }
+                });
+            }
+        }
+
+        function downloadFile() {
+            if (!currentResource) {
+                alert('暂无文件可下载');
+                return;
+            }
+            
+            var resourceId = getResourceId();
+            DataStore.incrementDownloads(resourceId, function(result) {
+                if (result && result.downloads) {
+                    var dlCount = document.getElementById('downloadCount');
+                    if (dlCount) {
+                        dlCount.textContent = result.downloads;
+                    }
+                }
+                
+                // 获取文件路径
+                var resource = DataStore.getResourceByAnyId(resourceId);
+                if (resource && resource.filePath) {
+                    // 实际下载文件
+                    var link = document.createElement('a');
+                    link.href = resource.filePath;
+                    link.download = resource.fileName || resource.title;
+                    link.click();
+                } else {
+                    alert('下载已开始：' + (currentResource.file ? currentResource.file.name : 'file'));
+                }
+            });
+        }
+
+        function reportResource() {
+            var reason = prompt('请选择举报原因：\n1. 侵权内容\n2. 虚假信息\n3. 广告推广\n4. 其他违规\n\n请输入数字：');
+            if (reason) {
+                alert('感谢您的反馈，我们会尽快处理！');
+            }
+        }
+
+        function submitComment() {
+            var commentText = document.getElementById('commentText').value.trim();
+            var currentUser = localStorage.getItem("currentUser");
+            
+            if (!currentUser) {
+                alert('请先登录后再发表评论');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            if (!commentText) {
+                alert('请输入评价内容');
+                return;
+            }
+            if (currentRating === 0) {
+                alert('请选择评分');
+                return;
+            }
+            
+            var user = JSON.parse(currentUser);
+            var resourceId = getResourceId();
+            
+            DataStore.addComment({
+                resourceId: resourceId,
+                userId: user.id || user.username,
+                userName: user.username,
+                content: commentText,
+                rating: currentRating
+            }, function(comment) {
+                if (comment) {
+                    alert('评价提交成功！感谢您的反馈');
+                    document.getElementById('commentText').value = '';
+                    resetRating();
+                    
+                    // 刷新评论列表
+                    var commentsContainer = document.getElementById('commentsList');
+                    var newComment = createCommentElement(comment);
+                    var emptyState = commentsContainer.querySelector('.empty-state');
+                    if (emptyState) {
+                        emptyState.remove();
+                    }
+                    commentsContainer.appendChild(newComment);
+                }
+            });
+        }
+
+        function resetRating() {
+            currentRating = 0;
+            var stars = document.querySelectorAll('#ratingInput span');
+            stars.forEach(function(star) {
+                star.classList.remove('active');
+            });
+        }
+
+        function markHelpful(btn) {
+            alert('感谢您的认可！');
+        }
+
+        function replyComment(btn) {
+            alert('回复功能开发中...');
+        }
+
+        // 评分交互
+        var ratingStars = document.querySelectorAll('#ratingInput span');
+        ratingStars.forEach(function(star) {
+            star.addEventListener('click', function() {
+                currentRating = parseInt(this.getAttribute('data-rating'));
+                ratingStars.forEach(function(s, index) {
+                    if (index < currentRating) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
+                });
+            });
+
+            star.addEventListener('mouseover', function() {
+                var rating = parseInt(this.getAttribute('data-rating'));
+                ratingStars.forEach(function(s, index) {
+                    if (index < rating) {
+                        s.style.color = '#ffc107';
+                    }
+                });
+            });
+
+            star.addEventListener('mouseout', function() {
+                ratingStars.forEach(function(s, index) {
+                    if (index >= currentRating) {
+                        s.style.color = '';
+                    }
+                });
+            });
+        });
+
+        // 页面加载时获取数据
+        checkLoginStatus();
+        hideLoading();
+        
+        // 等待 DataStore 初始化完成后再加载资源
+        waitForDataStore(function() {
+            loadResource();
+        });
+    </script>
+</body>
+</html>

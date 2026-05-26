@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>贡献资源 - 中石大克校区资源共享论坛</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="nav-logo">
+            <a href="landing.html" class="page-link">克校区资源共享论坛</a>
+            <a href="index.html" class="home-icon" title="返回主页">🏠</a>
+        </div>
+        <div class="nav-search">
+            <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
+        </div>
+        <div class="nav-actions" id="navActions">
+            <a href="upload.html" class="btn-upload">上传资料</a>
+            <div class="user-dropdown" id="userDropdown">
+                <div class="user-avatar" id="userAvatarBtn" onclick="toggleUserMenu()">?</div>
+                <div class="user-dropdown-menu" id="userDropdownMenu">
+                    <a href="user.html" class="user-dropdown-item">
+                        <span class="icon">👤</span>
+                        <span id="dropdownUsername">个人中心</span>
+                    </a>
+                    <button class="user-dropdown-item" onclick="logout()">
+                        <span class="icon">🚪</span>
+                        <span>退出登录</span>
+                    </button>
+                </div>
+            </div>
+            <a href="login.html" class="btn-user" id="loginLink">登录</a>
+        </div>
+        <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
+    </nav>
+    <div class="nav-links-mobile" id="navLinks">
+        <a href="courses.html">课程</a>
+        <a href="academics.html">学业</a>
+        <a href="clubs.html">社团</a>
+        <a href="life.html">生活</a>
+        <a href="contribute.html">贡献</a>
+        <a href="about.html">关于</a>
+    </div>
+    <main class="page-transition">
+        <h1>贡献资源</h1>
+
+        <div class="section">
+            <h2>贡献方式</h2>
+            <ul class="resource-list">
+                <li><a href="upload.html">上传资料</a> <span class="resource-tag">直接上传到平台</span></li>
+                <li><a href="mailto:contact@cupk.edu.cn">联系管理员</a> <span class="resource-tag">发送邮件</span></li>
+                <li><a href="https://github.com" target="_blank">GitHub提交</a> <span class="resource-tag">开源协作</span></li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>贡献指南</h2>
+            <ul>
+                <li>请确保您有权分享该资源，不侵犯他人版权</li>
+                <li>资源文件请使用常见格式（如PDF、Word、PPT等）</li>
+                <li>请为资源添加清晰的标题和描述</li>
+                <li>鼓励分类整理，便于其他同学查找</li>
+                <li>建议上传前检查文件内容，确保无错误或恶意代码</li>
+                <li>欢迎补充和完善现有资源内容</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>贡献激励</h2>
+            <div class="resource-grid">
+                <div class="resource-card">
+                    <div class="resource-title">积分奖励</div>
+                    <div class="resource-meta">每上传一份资料获得积分</div>
+                    <div class="resource-meta">可兑换精美礼品</div>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title">荣誉徽章</div>
+                    <div class="resource-meta">贡献达人可获得专属徽章</div>
+                    <div class="resource-meta">展示在你的个人主页</div>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title">年度评选</div>
+                    <div class="resource-meta">每年评选优秀贡献者</div>
+                    <div class="resource-meta">颁发荣誉证书</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>免责声明</h2>
+            <p>所有贡献的资源仅供学习交流使用，请勿用于商业用途。如有版权问题，请联系我们删除。</p>
+            <p>平台不对资源内容的准确性做任何保证，使用者需自行判断。详细条款请查看 <a href="about.html">关于我们</a>。</p>
+        </div>
+
+        <div class="section">
+            <h2>快速开始</h2>
+            <p>想要贡献资源？立即 <a href="upload.html">上传资料</a>，或先 <a href="login.html">登录/注册</a> 账号。</p>
+        </div>
+    </main>
+    <footer class="footer">
+        <p>Copyright &copy; 2025 中石大克校区资源共享论坛</p>
+        <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
+    </footer>
+    <div class="mobile-tip-bar" id="mobileTipBar" style="display: none;">
+        <span>💻 电脑访问体验更佳</span>
+    </div>
+    <div class="mobile-tip-popup" id="mobileTipPopup" style="display: none;">
+        <div class="mobile-tip-popup-content">
+            <div class="mobile-tip-popup-icon">💻</div>
+            <div class="mobile-tip-popup-text">为了更好的浏览体验<br>建议使用电脑访问</div>
+            <button onclick="closeMobileTipPopup()">我知道了</button>
+        </div>
+    </div>
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        checkLoginStatus();
+        hideLoading();
+        window.onscroll = function() {
+            var navbar = document.getElementById("navbar");
+            if (navbar) {
+                if (window.pageYOffset > 50) {
+                    navbar.classList.add("scrolled");
+                } else {
+                    navbar.classList.remove("scrolled");
+                }
+            }
+        };
+    </script>
+</body>
+</html>

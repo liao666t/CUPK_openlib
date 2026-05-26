@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>上传资料 - 中石大克校区资源共享论坛</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="nav-logo">
+            <a href="landing.html" class="page-link">克校区资源共享论坛</a>
+            <a href="index.html" class="home-icon" title="返回主页">🏠</a>
+        </div>
+        <div class="nav-search">
+            <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
+        </div>
+        <div class="nav-actions" id="navActions">
+            <a href="upload.html" class="btn-upload">上传资料</a>
+            <div class="user-dropdown" id="userDropdown">
+                <div class="user-avatar" id="userAvatarBtn" onclick="toggleUserMenu()">?</div>
+                <div class="user-dropdown-menu" id="userDropdownMenu">
+                    <a href="user.html" class="user-dropdown-item">
+                        <span class="icon">👤</span>
+                        <span id="dropdownUsername">个人中心</span>
+                    </a>
+                    <button class="user-dropdown-item" onclick="logout()">
+                        <span class="icon">🚪</span>
+                        <span>退出登录</span>
+                    </button>
+                </div>
+            </div>
+            <a href="login.html" class="btn-user" id="loginLink">登录</a>
+        </div>
+        <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
+    </nav>
+    <div class="nav-links-mobile" id="navLinks">
+        <a href="courses.html">课程</a>
+        <a href="academics.html">学业</a>
+        <a href="clubs.html">社团</a>
+        <a href="life.html">生活</a>
+        <a href="contribute.html">贡献</a>
+        <a href="about.html">关于</a>
+    </div>
+    <main class="page-transition">
+        <h1>上传资料</h1>
+        <p>欢迎贡献优质学习资源，帮助更多同学！</p>
+
+        <div class="section" id="notLoginSection" style="display:none;">
+            <div class="not-logged-in">
+                <p>请先 <a href="login.html">登录</a> 后再上传资料</p>
+            </div>
+        </div>
+
+        <div class="upload-wizard" id="uploadWizard">
+            <!-- 步骤指示器 -->
+            <div class="step-indicator">
+                <div class="step-item active" id="stepInd1">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">选择分类</div>
+                </div>
+                <div class="step-line" id="line1"></div>
+                <div class="step-item" id="stepInd2">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">填写信息</div>
+                </div>
+                <div class="step-line" id="line2"></div>
+                <div class="step-item" id="stepInd3">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">上传文件</div>
+                </div>
+                <div class="step-line" id="line3"></div>
+                <div class="step-item" id="stepInd4">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">完成</div>
+                </div>
+            </div>
+
+            <!-- 步骤1：分类选择 -->
+            <div class="step-panel active" id="step1">
+                <h2>选择资料分类</h2>
+                <div class="cascade-form">
+                    <div class="form-group">
+                        <label for="college">学院</label>
+                        <select id="college" onchange="updateMajors()">
+                            <option value="">请选择学院</option>
+                            <option value="public">公共基础课（通识课）</option>
+                            <option value="petroleum">石油学院</option>
+                            <option value="engineering">工学院</option>
+                            <option value="arts">文理学院·文化艺术学院</option>
+                            <option value="business">工商管理学院·马克思主义学院</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="majorGroup" style="display:none;">
+                        <label for="major">专业</label>
+                        <select id="major" onchange="validateStep1()">
+                            <option value="">请先选择专业</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="step-actions">
+                    <button type="button" class="btn-next" onclick="goStep(2)">下一步</button>
+                </div>
+            </div>
+
+            <!-- 步骤2：填写信息 -->
+            <div class="step-panel" id="step2">
+                <h2>填写资料信息</h2>
+                <div class="cascade-form">
+                    <div class="form-group">
+                        <label for="title">标题 <span class="required">*</span></label>
+                        <input type="text" id="title" placeholder="请输入标题，如：数据结构">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">资料描述</label>
+                        <textarea id="description" rows="4" placeholder="请简要描述资料内容、适用范围等"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="anonymousMode">
+                            <span>匿名上传（不显示我的用户名）</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="step-actions">
+                    <button type="button" class="btn-prev" onclick="goStep(1)">上一步</button>
+                    <button type="button" class="btn-next" onclick="goStep(3)">下一步</button>
+                </div>
+            </div>
+
+            <!-- 步骤3：上传文件 -->
+            <div class="step-panel" id="step3">
+                <h2>上传文件</h2>
+                <div class="form-group">
+                    <label>选择文件 <span class="required">*</span></label>
+                    <div class="drop-zone" id="dropZone">
+                        <div class="drop-zone-content" id="dropZoneContent">
+                            <div class="drop-icon">&#128194;</div>
+                            <p>拖拽文件到此处，或 <label for="fileInput" class="browse-link">点击选择文件</label></p>
+                            <p class="file-hint">支持 PDF、Word、PPT、图片等常见格式，单个文件不超过 100MB</p>
+                        </div>
+                        <input type="file" id="fileInput" style="display:none;" onchange="handleFileSelect(this)">
+                        <div class="file-selected" id="fileSelected" style="display:none;">
+                            <div class="file-info">
+                                <span class="file-icon">&#128196;</span>
+                                <span class="file-name" id="fileName"></span>
+                                <span class="file-size" id="fileSize"></span>
+                            </div>
+                            <button type="button" class="file-remove" onclick="removeFile()">移除</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- 进度条 -->
+                <div class="progress-container" id="progressContainer" style="display:none;">
+                    <div class="progress-label">
+                        <span id="progressText">正在上传...</span>
+                        <span id="progressPercent">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+                <div class="step-actions">
+                    <button type="button" class="btn-prev" onclick="goStep(2)">上一步</button>
+                    <button type="button" class="btn-submit" id="submitBtn" onclick="submitUpload()">提交上传</button>
+                </div>
+            </div>
+
+            <!-- 步骤4：完成 -->
+            <div class="step-panel" id="step4">
+                <div class="success-box">
+                    <div class="success-icon">&#10004;</div>
+                    <h2>上传成功！</h2>
+                    <p id="uploadedTitle"></p>
+                    <p>感谢您的贡献，其他同学将能够查看到这份资料。</p>
+                </div>
+                <div class="step-actions">
+                    <button type="button" class="btn-next" onclick="window.location.href='index.html'">返回首页</button>
+                    <button type="button" class="btn-prev" onclick="resetUpload()">继续上传</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="footer">
+        <p>Copyright &copy; 2025 中石大克校区资源共享论坛</p>
+        <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
+    </footer>
+    <div class="mobile-tip-bar" id="mobileTipBar" style="display: none;">
+        <span>💻 电脑访问体验更佳</span>
+    </div>
+    <div class="mobile-tip-popup" id="mobileTipPopup" style="display: none;">
+        <div class="mobile-tip-popup-content">
+            <div class="mobile-tip-popup-icon">💻</div>
+            <div class="mobile-tip-popup-text">为了更好的浏览体验<br>建议使用电脑访问</div>
+            <button onclick="closeMobileTipPopup()">我知道了</button>
+        </div>
+    </div>
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        checkLoginStatus();
+        hideLoading();
+        highlightNav();
+        requireLoginForUpload();
+
+        window.onscroll = function() {
+            var navbar = document.getElementById("navbar");
+            if (navbar) {
+                if (window.pageYOffset > 50) {
+                    navbar.classList.add("scrolled");
+                } else {
+                    navbar.classList.remove("scrolled");
+                }
+            }
+        };
+
+        function requireLoginForUpload() {
+            var currentUser = localStorage.getItem("currentUser");
+            var wizard = document.getElementById("uploadWizard");
+            var notLogin = document.getElementById("notLoginSection");
+            if (!currentUser) {
+                if (wizard) wizard.style.display = "none";
+                if (notLogin) notLogin.style.display = "block";
+            } else {
+                var user = JSON.parse(currentUser);
+                if (wizard) wizard.style.display = "block";
+                if (notLogin) notLogin.style.display = "none";
+                initUploadWizard(user);
+            }
+        }
+
+        // ====== 分步向导 ======
+        var majorData = {
+            petroleum: ["资源勘查工程", "勘查技术与工程", "石油工程", "软件工程", "数据科学与大数据技术", "人工智能"],
+            engineering: ["油气储运工程", "化学工程与工艺", "能源化学工程", "环境工程", "机械设计制造及其自动化", "过程装备与控制工程", "材料科学与工程", "自动化", "安全工程", "新能源科学与工程", "能源与动力工程"],
+            arts: ["数学与应用数学", "统计学", "俄语", "英语", "汉语言文学"],
+            business: ["经济学", "金融学", "会计学", "行政管理", "思想政治教育"]
+        };
+
+        function initUploadWizard(user) {
+            // 拖拽上传
+            var dropZone = document.getElementById("dropZone");
+            if (dropZone) {
+                dropZone.addEventListener("dragover", function(e) {
+                    e.preventDefault();
+                    dropZone.classList.add("drag-over");
+                });
+                dropZone.addEventListener("dragleave", function(e) {
+                    e.preventDefault();
+                    dropZone.classList.remove("drag-over");
+                });
+                dropZone.addEventListener("drop", function(e) {
+                    e.preventDefault();
+                    dropZone.classList.remove("drag-over");
+                    var files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        handleFile(files[0]);
+                    }
+                });
+            }
+        }
+
+        function updateMajors() {
+            var college = document.getElementById("college").value;
+            var majorSelect = document.getElementById("major");
+            var majorGroup = document.getElementById("majorGroup");
+
+            majorGroup.style.display = "none";
+            majorSelect.innerHTML = '<option value="">请先选择专业</option>';
+
+            if (college === "public") {
+                majorGroup.style.display = "block";
+                majorSelect.innerHTML =
+                    '<option value="">请先选择专业</option>' +
+                    '<option value="高等数学">高等数学</option>' +
+                    '<option value="线性代数">线性代数</option>' +
+                    '<option value="概率论与数理统计">概率论与数理统计</option>' +
+                    '<option value="大学物理">大学物理</option>' +
+                    '<option value="大学英语">大学英语</option>' +
+                    '<option value="思政类">思政类（近代史/马原/毛概等）</option>' +
+                    '<option value="计算机基础">计算机基础</option>' +
+                    '<option value="体育">体育</option>' +
+                    '<option value="军事理论">军事理论</option>' +
+                    '<option value="形势与政策">形势与政策</option>' +
+                    '<option value="其他">其他</option>';
+            } else if (college && majorData[college]) {
+                majorGroup.style.display = "block";
+                var majors = majorData[college];
+                for (var i = 0; i < majors.length; i++) {
+                    var opt = document.createElement("option");
+                    opt.value = majors[i];
+                    opt.textContent = majors[i];
+                    majorSelect.appendChild(opt);
+                }
+            }
+        }
+
+        function goStep(n) {
+            // 验证步骤1必填项
+            if (n >= 2 && !validateStep1()) return;
+
+            var panels = document.querySelectorAll(".step-panel");
+            var inds = document.querySelectorAll(".step-item");
+            var lines = document.querySelectorAll(".step-line");
+
+            for (var i = 0; i < panels.length; i++) {
+                panels[i].classList.remove("active");
+            }
+            for (var i = 0; i < inds.length; i++) {
+                inds[i].classList.remove("active");
+            }
+
+            var targetStep = "step" + n;
+            var targetInd = "stepInd" + n;
+
+            if (document.getElementById(targetStep)) {
+                document.getElementById(targetStep).classList.add("active");
+            }
+            if (document.getElementById(targetInd)) {
+                document.getElementById(targetInd).classList.add("active");
+            }
+
+            // 激活连接线
+            for (var i = 1; i < n; i++) {
+                if (document.getElementById("line" + i)) {
+                    document.getElementById("line" + i).classList.add("filled");
+                }
+            }
+
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        function validateStep1() {
+            var college = document.getElementById("college").value;
+            if (!college) {
+                alert("请选择学院");
+                return false;
+            }
+            var major = document.getElementById("major").value;
+            if (!major) {
+                alert("请选择专业");
+                return false;
+            }
+            return true;
+        }
+
+        // ====== 文件处理 ======
+        var selectedFile = null;
+
+        function handleFileSelect(input) {
+            if (input.files && input.files.length > 0) {
+                handleFile(input.files[0]);
+            }
+        }
+
+        function handleFile(file) {
+            // 格式校验
+            var allowedTypes = [
+                "application/pdf",
+                "application/msword",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "application/vnd.ms-powerpoint",
+                "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                "image/jpeg",
+                "image/png",
+                "image/gif",
+                "application/vnd.ms-excel",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "application/zip",
+                "text/plain"
+            ];
+            var allowedExts = [".pdf", ".doc", ".docx", ".ppt", ".pptx", ".jpg", ".jpeg", ".png", ".gif", ".xls", ".xlsx", ".zip", ".txt", ".rar"];
+            var ext = "." + file.name.split(".").pop().toLowerCase();
+            if (allowedExts.indexOf(ext) === -1) {
+                alert("不支持的文件格式，请上传 PDF、Word、PPT、图片等常见格式");
+                return;
+            }
+            // 大小校验 100MB
+            if (file.size > 100 * 1024 * 1024) {
+                alert("文件大小不能超过 100MB");
+                return;
+            }
+
+            selectedFile = file;
+            document.getElementById("dropZoneContent").style.display = "none";
+            document.getElementById("fileSelected").style.display = "flex";
+            document.getElementById("fileName").textContent = file.name;
+            document.getElementById("fileSize").textContent = formatSize(file.size);
+        }
+
+        function removeFile() {
+            selectedFile = null;
+            document.getElementById("fileInput").value = "";
+            document.getElementById("dropZoneContent").style.display = "block";
+            document.getElementById("fileSelected").style.display = "none";
+            document.getElementById("fileName").textContent = "";
+            document.getElementById("fileSize").textContent = "";
+            hideProgress();
+        }
+
+        function formatSize(bytes) {
+            if (bytes < 1024) return bytes + " B";
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+            return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+        }
+
+        function showProgress() {
+            document.getElementById("progressContainer").style.display = "block";
+            document.getElementById("progressFill").style.width = "0%";
+            document.getElementById("progressPercent").textContent = "0%";
+            document.getElementById("progressText").textContent = "正在上传...";
+            document.getElementById("submitBtn").disabled = true;
+        }
+
+        function hideProgress() {
+            document.getElementById("progressContainer").style.display = "none";
+            document.getElementById("submitBtn").disabled = false;
+        }
+
+        function submitUpload() {
+            // 验证必填
+            var title = document.getElementById("title").value.trim();
+            if (!title) {
+                alert("请填写标题");
+                goStep(2);
+                return;
+            }
+            if (!selectedFile) {
+                alert("请选择要上传的文件");
+                goStep(3);
+                return;
+            }
+
+            showProgress();
+
+            // 模拟上传进度
+            var progress = 0;
+            var interval = setInterval(function() {
+                progress += Math.random() * 15;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    document.getElementById("progressFill").style.width = "100%";
+                    document.getElementById("progressPercent").textContent = "100%";
+                    document.getElementById("progressText").textContent = "上传完成！";
+                    setTimeout(function() {
+                        finishUpload();
+                    }, 500);
+                } else {
+                    document.getElementById("progressFill").style.width = progress.toFixed(0) + "%";
+                    document.getElementById("progressPercent").textContent = progress.toFixed(0) + "%";
+                }
+            }, 200);
+        }
+
+        function finishUpload() {
+            var currentUser = localStorage.getItem("currentUser");
+            var user = currentUser ? JSON.parse(currentUser) : null;
+            var isAnonymous = document.getElementById("anonymousMode").checked;
+
+            var title = document.getElementById("title").value.trim();
+            var college = document.getElementById("college").value;
+            var major = document.getElementById("major").value;
+            var description = document.getElementById("description").value.trim();
+
+            var uploaderName = isAnonymous ? "匿名用户" : (user ? user.username : "未知");
+            var uploaderId = user ? (user.id || user.username) : "";
+
+            // 使用 DataStore 保存资源（支持服务器模式和本地模式）
+            var uploadData = {
+                title: title,
+                category: major || college || 'other',
+                description: description,
+                uploader: uploaderName,
+                uploaderId: uploaderId,
+                fileName: selectedFile ? selectedFile.name : "",
+                fileSize: selectedFile ? selectedFile.size : 0,
+                tags: [college, major].filter(Boolean)
+            };
+
+            // 如果有文件且服务器可用，先上传文件
+            if (selectedFile && DataStore.isServerMode()) {
+                var formData = new FormData();
+                formData.append('file', selectedFile);
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/upload', true);
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        var result = JSON.parse(xhr.responseText);
+                        uploadData.filePath = result.filePath;
+                        uploadData.fileName = result.fileName;
+                        uploadData.fileSize = result.fileSize;
+                    }
+                    // 保存资源数据
+                    DataStore.addResource(uploadData, function(newResource) {
+                        if (newResource) {
+                            document.getElementById("uploadedTitle").textContent = "《" + title + "》";
+                            hideProgress();
+                            goStep(4);
+                        }
+                    });
+                };
+                xhr.onerror = function() {
+                    // 上传失败，继续保存资源数据（不包含文件路径）
+                    DataStore.addResource(uploadData, function(newResource) {
+                        if (newResource) {
+                            document.getElementById("uploadedTitle").textContent = "《" + title + "》";
+                            hideProgress();
+                            goStep(4);
+                        }
+                    });
+                };
+                xhr.send(formData);
+            } else {
+                // 本地模式或没有文件
+                DataStore.addResource(uploadData, function(newResource) {
+                    if (newResource) {
+                        document.getElementById("uploadedTitle").textContent = "《" + title + "》";
+                        hideProgress();
+                        goStep(4);
+                    }
+                });
+            }
+        }
+
+        function resetUpload() {
+            selectedFile = null;
+            document.getElementById("college").value = "";
+            document.getElementById("major").innerHTML = '<option value="">请先选择专业</option>';
+            document.getElementById("majorGroup").style.display = "none";
+            document.getElementById("title").value = "";
+            document.getElementById("description").value = "";
+            document.getElementById("anonymousMode").checked = false;
+            document.getElementById("fileInput").value = "";
+            document.getElementById("dropZoneContent").style.display = "block";
+            document.getElementById("fileSelected").style.display = "none";
+
+            // 重置步骤指示器
+            var lines = document.querySelectorAll(".step-line");
+            for (var i = 0; i < lines.length; i++) {
+                lines[i].classList.remove("filled");
+            }
+            goStep(1);
+        }
+    </script>
+</body>
+</html>

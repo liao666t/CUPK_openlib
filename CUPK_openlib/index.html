@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中石大克校区资源共享论坛</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="nav-logo">
+            <a href="landing.html" class="page-link">克校区资源共享论坛</a>
+            <a href="index.html" class="home-icon" title="返回主页">🏠</a>
+        </div>
+        <div class="nav-search">
+            <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
+        </div>
+        <div class="nav-actions" id="navActions">
+            <a href="upload.html" class="btn-upload">上传资料</a>
+            <div class="user-dropdown" id="userDropdown">
+                <div class="user-avatar" id="userAvatarBtn" onclick="toggleUserMenu()">?</div>
+                <div class="user-dropdown-menu" id="userDropdownMenu">
+                    <a href="user.html" class="user-dropdown-item">
+                        <span class="icon">👤</span>
+                        <span id="dropdownUsername">个人中心</span>
+                    </a>
+                    <button class="user-dropdown-item" onclick="logout()">
+                        <span class="icon">🚪</span>
+                        <span>退出登录</span>
+                    </button>
+                </div>
+            </div>
+            <a href="login.html" class="btn-user" id="loginLink">登录</a>
+        </div>
+        <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
+    </nav>
+    <div class="nav-links-mobile" id="navLinks">
+        <a href="courses.html">课程</a>
+        <a href="academics.html">学业</a>
+        <a href="clubs.html">社团</a>
+        <a href="life.html">生活</a>
+        <a href="contribute.html">贡献</a>
+        <a href="about.html">关于</a>
+    </div>
+    <main class="page-transition">
+        <h1>欢迎来到中石大克校区资源共享论坛</h1>
+        <p>这是一个由学生自发创建、维护的非盈利性开源资源平台，致力于解决校区信息壁垒问题。</p>
+        
+        <div class="section fade-in">
+            <h2>快速入口</h2>
+            <div class="quick-entry">
+                <a href="courses.html" class="quick-card">
+                    <div class="quick-icon">📚</div>
+                    <div class="quick-title">课程资源</div>
+                    <div class="quick-desc">课件、笔记、习题</div>
+                </a>
+                <a href="academics.html" class="quick-card">
+                    <div class="quick-icon">🎓</div>
+                    <div class="quick-title">学业指导</div>
+                    <div class="quick-desc">新生指南、转专业</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="section fade-in">
+            <h2>平台数据</h2>
+            <div class="profile-stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="resourceCount">12</div>
+                    <div class="stat-label">资源总数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="downloadTotal">2,156</div>
+                    <div class="stat-label">下载次数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="userCount">156</div>
+                    <div class="stat-label">注册用户</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section fade-in">
+            <h2>热门资源</h2>
+            <div class="resource-grid">
+                <div class="resource-card">
+                    <div class="resource-title"><a href="detail.html?id=RES_000003">C语言程序设计教程</a></div>
+                    <div class="resource-meta">分类：计算机</div>
+                    <div class="resource-meta">上传者：王同学</div>
+                    <div class="resource-meta">下载：215次</div>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title"><a href="detail.html?id=RES_000007">电路分析基础</a></div>
+                    <div class="resource-meta">分类：物理</div>
+                    <div class="resource-meta">上传者：周同学</div>
+                    <div class="resource-meta">下载：432次</div>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title"><a href="detail.html?id=RES_000006">大学物理公式汇总</a></div>
+                    <div class="resource-meta">分类：物理</div>
+                    <div class="resource-meta">上传者：孙同学</div>
+                    <div class="resource-meta">下载：203次</div>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title"><a href="detail.html?id=RES_000001">高等数学笔记</a></div>
+                    <div class="resource-meta">分类：数学</div>
+                    <div class="resource-meta">上传者：张同学</div>
+                    <div class="resource-meta">下载：128次</div>
+                </div>
+            </div>
+            <p style="margin-top: 15px;"><a href="search.html">查看更多资源 &rarr;</a></p>
+        </div>
+        
+        <div class="section fade-in">
+            <h2>资源分类</h2>
+            <ul>
+                <li><a href="courses.html">课程资源</a> - 各学科课程课件、笔记、习题</li>
+                <li><a href="academics.html">学业指导</a> - 新生须知、培养方案、转专业</li>
+                <li><a href="clubs.html">社团信息</a> - 学生社团介绍与活动</li>
+                <li><a href="life.html">生活指南</a> - 校园美食、校园服务</li>
+            </ul>
+        </div>
+
+        <div class="section fade-in">
+            <h2>最新上传</h2>
+            <div class="resource-grid">
+                <div class="resource-card">
+                    <div class="resource-title"><a href="detail.html?id=RES_000001">高等数学笔记</a></div>
+                    <div class="resource-meta">2025-06-10</div>
+                    <div class="resource-meta">张同学</div>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title"><a href="detail.html?id=RES_000002">线性代数资料</a></div>
+                    <div class="resource-meta">2025-06-09</div>
+                    <div class="resource-meta">李同学</div>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title"><a href="detail.html?id=RES_000003">C语言程序设计教程</a></div>
+                    <div class="resource-meta">2025-06-08</div>
+                    <div class="resource-meta">王同学</div>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-title"><a href="detail.html?id=RES_000004">数据结构与算法</a></div>
+                    <div class="resource-meta">2025-06-07</div>
+                    <div class="resource-meta">赵同学</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>如何使用</h2>
+            <ul>
+                <li><strong>搜索资料</strong> - 在顶部搜索框输入关键词，快速找到需要的资源</li>
+                <li><strong>浏览分类</strong> - 通过课程、社团、生活等分类浏览资源</li>
+                <li><strong>上传分享</strong> - 登录后可以上传自己的学习资料帮助更多人</li>
+                <li><strong>收藏下载</strong> - 收藏喜欢的资源，方便下次查看</li>
+            </ul>
+        </div>
+    </main>
+    </footer>
+    <div class="mobile-tip-bar" id="mobileTipBar" style="display: none;">
+        <span>💻 电脑访问体验更佳</span>
+    </div>
+    <div class="mobile-tip-popup" id="mobileTipPopup" style="display: none;">
+        <div class="mobile-tip-popup-content">
+            <div class="mobile-tip-popup-icon">💻</div>
+            <div class="mobile-tip-popup-text">为了更好的浏览体验<br>建议使用电脑访问</div>
+            <button onclick="closeMobileTipPopup()">我知道了</button>
+        </div>
+    </div>
+    <script src="js/data.js" defer></script>
+    <script src="js/main.js" defer></script>
+    <script>
+        checkLoginStatus();
+        hideLoading();
+        highlightNav();
+        window.onscroll = function() {
+            var navbar = document.getElementById("navbar");
+            if (navbar) {
+                if (window.pageYOffset > 50) {
+                    navbar.classList.add("scrolled");
+                } else {
+                    navbar.classList.remove("scrolled");
+                }
+            }
+        };
+    </script>
+</body>
+</html>

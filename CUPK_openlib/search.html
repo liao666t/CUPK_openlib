@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索资源 - 中石大克校区资源共享论坛</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .search-hero {
+            background: linear-gradient(135deg, var(--link-color) 0%, #e63946 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            color: #fff;
+        }
+        .search-hero h1 {
+            color: #fff;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .search-box-wrapper {
+            display: flex;
+            gap: 10px;
+            max-width: 600px;
+        }
+        .search-box-wrapper input {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .search-box-wrapper button {
+            padding: 14px 30px;
+            background: #fff;
+            color: var(--link-color);
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .search-box-wrapper button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .search-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 15px 20px;
+            background: var(--bg-light);
+            border-radius: 8px;
+        }
+        .search-filters label {
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        .search-filters select {
+            padding: 8px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            background: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .search-filters select:hover,
+        .search-filters select:focus {
+            border-color: var(--link-color);
+            outline: none;
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        .results-count {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+        .results-count strong {
+            color: var(--link-color);
+        }
+        
+        .search-empty {
+            text-align: center;
+            padding: 60px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        .search-empty-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.6;
+        }
+        .search-empty h3 {
+            font-size: 22px;
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+        .search-empty p {
+            color: var(--text-muted);
+            margin-bottom: 25px;
+        }
+        .search-empty .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .search-empty .suggestion-tag {
+            display: inline-block;
+            padding: 8px 20px;
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            color: var(--link-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .search-empty .suggestion-tag:hover {
+            background: var(--link-color);
+            color: #fff;
+            border-color: var(--link-color);
+            transform: translateY(-2px);
+        }
+        
+        .hot-searches {
+            margin-top: 30px;
+            padding: 20px;
+            background: var(--bg-light);
+            border-radius: 12px;
+        }
+        .hot-searches h4 {
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+        .hot-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .hot-tag {
+            display: inline-block;
+            padding: 6px 16px;
+            background: #fff;
+            border-radius: 15px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .hot-tag:hover {
+            background: var(--link-color);
+            color: #fff;
+        }
+        
+        .result-item {
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+            animation: slideUp 0.4s ease forwards;
+            opacity: 0;
+        }
+        .result-item:nth-child(1) { animation-delay: 0.05s; }
+        .result-item:nth-child(2) { animation-delay: 0.1s; }
+        .result-item:nth-child(3) { animation-delay: 0.15s; }
+        .result-item:nth-child(4) { animation-delay: 0.2s; }
+        .result-item:nth-child(5) { animation-delay: 0.25s; }
+        .result-item:nth-child(n+6) { animation-delay: 0.3s; }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .result-item:hover {
+            border-color: var(--link-color);
+            box-shadow: 0 8px 25px rgba(200, 16, 46, 0.1);
+            transform: translateY(-3px);
+        }
+        .result-item h3 {
+            margin-bottom: 8px;
+        }
+        .result-item h3 a {
+            color: var(--link-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .result-item h3 a:hover {
+            color: #960018;
+        }
+        .result-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .result-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .result-desc {
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="nav-logo">
+            <a href="landing.html" class="page-link">克校区资源共享论坛</a>
+            <a href="index.html" class="home-icon" title="返回主页">🏠</a>
+        </div>
+        <div class="nav-search">
+            <input type="text" id="searchInput" placeholder="搜索课程、资料..." onkeypress="handleKeyPress(event)">
+        </div>
+        <div class="nav-actions" id="navActions">
+            <a href="upload.html" class="btn-upload">上传资料</a>
+            <div class="user-dropdown" id="userDropdown">
+                <div class="user-avatar" id="userAvatarBtn" onclick="toggleUserMenu()">?</div>
+                <div class="user-dropdown-menu" id="userDropdownMenu">
+                    <a href="user.html" class="user-dropdown-item">
+                        <span class="icon">👤</span>
+                        <span id="dropdownUsername">个人中心</span>
+                    </a>
+                    <button class="user-dropdown-item" onclick="logout()">
+                        <span class="icon">🚪</span>
+                        <span>退出登录</span>
+                    </button>
+                </div>
+            </div>
+            <a href="login.html" class="btn-user" id="loginLink">登录</a>
+        </div>
+        <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
+    </nav>
+    <div class="nav-links-mobile" id="navLinks">
+        <a href="courses.html">课程</a>
+        <a href="academics.html">学业</a>
+        <a href="clubs.html">社团</a>
+        <a href="life.html">生活</a>
+        <a href="contribute.html">贡献</a>
+        <a href="about.html">关于</a>
+    </div>
+    <main class="page-transition">
+        <div class="search-hero">
+            <h1>🔍 搜索资源</h1>
+            <div class="search-box-wrapper">
+                <input type="text" id="searchInputPage" placeholder="输入关键词搜索课程、资料..." onkeypress="handleSearchKeyPress(event)">
+                <button type="button" onclick="doPageSearch()">搜索</button>
+            </div>
+        </div>
+        
+        <div class="search-filters">
+            <label>分类筛选：</label>
+            <select id="filterCategory" onchange="doPageSearch()">
+                <option value="">全部</option>
+                <option value="math">数学</option>
+                <option value="cs">计算机</option>
+                <option value="physics">物理</option>
+                <option value="language">语言</option>
+                <option value="economics">经济</option>
+                <option value="humanities">人文</option>
+            </select>
+            <label>排序：</label>
+            <select id="sortBy" onchange="doPageSearch()">
+                <option value="relevance">相关度</option>
+                <option value="downloads">下载量</option>
+                <option value="time">上传时间</option>
+            </select>
+        </div>
+        
+        <div id="results"></div>
+        
+        <div class="hot-searches" id="hotSearches" style="display: none;">
+            <h4>🔥 热门搜索</h4>
+            <div class="hot-tags">
+                <span class="hot-tag" onclick="searchTag('高等数学')">高等数学</span>
+                <span class="hot-tag" onclick="searchTag('C语言')">C语言</span>
+                <span class="hot-tag" onclick="searchTag('线性代数')">线性代数</span>
+                <span class="hot-tag" onclick="searchTag('大学物理')">大学物理</span>
+                <span class="hot-tag" onclick="searchTag('Python')">Python</span>
+                <span class="hot-tag" onclick="searchTag('数据结构')">数据结构</span>
+                <span class="hot-tag" onclick="searchTag('英语')">英语四六级</span>
+            </div>
+        </div>
+    </main>
+    <footer class="footer">
+        <p>Copyright &copy; 2025 中石大克校区资源共享论坛</p>
+        <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
+    </footer>
+    <div class="mobile-tip-bar" id="mobileTipBar" style="display: none;">
+        <span>💻 电脑访问体验更佳</span>
+    </div>
+    <div class="mobile-tip-popup" id="mobileTipPopup" style="display: none;">
+        <div class="mobile-tip-popup-content">
+            <div class="mobile-tip-popup-icon">💻</div>
+            <div class="mobile-tip-popup-text">为了更好的浏览体验<br>建议使用电脑访问</div>
+            <button onclick="closeMobileTipPopup()">我知道了</button>
+        </div>
+    </div>
+    <script src="js/data.js" defer></script>
+    <script src="js/main.js" defer></script>
+    <script>
+        checkLoginStatus();
+        updateNavUserState();
+        hideLoading();
+        initSearchPage();
+        
+        function doPageSearch() {
+            var query = document.getElementById("searchInputPage").value.trim();
+            var category = document.getElementById("filterCategory").value;
+            var sortBy = document.getElementById("sortBy").value;
+            
+            if (query) {
+                window.location.href = "search.html?q=" + encodeURIComponent(query) + "&cat=" + category + "&sort=" + sortBy;
+            } else if (category) {
+                window.location.href = "search.html?cat=" + category + "&sort=" + sortBy;
+            } else {
+                window.location.href = "search.html?sort=" + sortBy;
+            }
+        }
+        
+        function handleSearchKeyPress(e) {
+            if (e.keyCode === 13) {
+                doPageSearch();
+            }
+        }
+        
+        function searchTag(tag) {
+            document.getElementById("searchInputPage").value = tag;
+            doPageSearch();
+        }
+        
+        window.onscroll = function() {
+            var navbar = document.getElementById("navbar");
+            if (navbar) {
+                if (window.pageYOffset > 50) {
+                    navbar.classList.add("scrolled");
+                } else {
+                    navbar.classList.remove("scrolled");
+                }
+            }
+        };
+    </script>
+</body>
+</html>
