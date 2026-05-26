@@ -334,7 +334,11 @@
         checkLoginStatus();
         updateNavUserState();
         hideLoading();
-        initSearchPage();
+        
+        // 等待 DataStore 初始化后再搜索
+        waitForDataStore(function() {
+            initSearchPage();
+        });
         
         function doPageSearch() {
             var query = document.getElementById("searchInputPage").value.trim();
