@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>课程资源 - 中石大克校区资源共享论坛</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="nav-logo">
+            <a href="landing.html" class="page-link">克校区资源共享论坛</a>
+            <a href="index.html" class="home-icon" title="返回主页">🏠</a>
+        </div>
+        <div class="nav-search">
+            <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
+        </div>
+        <div class="nav-actions" id="navActions">
+            <a href="upload.html" class="btn-upload">上传资料</a>
+            <div class="user-dropdown" id="userDropdown">
+                <div class="user-avatar" id="userAvatarBtn" onclick="toggleUserMenu()">?</div>
+                <div class="user-dropdown-menu" id="userDropdownMenu">
+                    <a href="user.html" class="user-dropdown-item">
+                        <span class="icon">👤</span>
+                        <span id="dropdownUsername">个人中心</span>
+                    </a>
+                    <button class="user-dropdown-item" onclick="logout()">
+                        <span class="icon">🚪</span>
+                        <span>退出登录</span>
+                    </button>
+                </div>
+            </div>
+            <a href="login.html" class="btn-user" id="loginLink">登录</a>
+        </div>
+        <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
+    </nav>
+    <div class="nav-links-mobile" id="navLinks">
+        <a href="courses.html">课程</a>
+        <a href="academics.html">学业</a>
+        <a href="clubs.html">社团</a>
+        <a href="life.html">生活</a>
+        <a href="contribute.html">贡献</a>
+        <a href="about.html">关于</a>
+    </div>
+    <main class="page-transition">
+        <h1>课程资源</h1>
+        <div class="search-box">
+            <input type="text" id="courseSearch" placeholder="搜索课程..." onkeypress="handleKeyPress(event)">
+            <button type="button" onclick="doSearch()">搜索</button>
+        </div>
+
+        <div class="section fade-in delay-1">
+            <h2>公共基础课</h2>
+            <ul class="resource-list">
+                <li><a href="search.html?q=高等数学">高等数学</a></li>
+                <li><a href="search.html?q=大学英语">大学英语</a></li>
+                <li><a href="search.html?q=大学物理">大学物理</a></li>
+                <li><a href="search.html?q=计算机基础">计算机基础</a></li>
+                <li><a href="search.html?q=思想道德与法治">思想道德与法治</a></li>
+                <li><a href="search.html?q=毛泽东思想">毛泽东思想和中国特色社会主义理论体系概论</a></li>
+                <li><a href="search.html?q=中国近现代史">中国近现代史纲要</a></li>
+                <li><a href="search.html?q=马克思主义">马克思主义基本原理</a></li>
+                <li><a href="search.html?q=大学体育">大学体育</a></li>
+            </ul>
+        </div>
+
+        <div class="section fade-in delay-2">
+            <h2>石油学院</h2>
+            <h3>地质系</h3>
+            <ul class="resource-list">
+                <li><a href="major.html?college=石油学院&major=资源勘查工程">资源勘查工程</a> <span class="resource-tag">查看专业课程</span></li>
+                <li><a href="major.html?college=石油学院&major=勘查技术与工程">勘查技术与工程</a> <span class="resource-tag">查看专业课程</span></li>
+            </ul>
+            <h3>石油工程系</h3>
+            <ul class="resource-list">
+                <li><a href="major.html?college=石油学院&major=石油工程">石油工程</a> <span class="resource-tag">查看专业课程</span></li>
+            </ul>
+            <h3>计算机系</h3>
+            <ul class="resource-list">
+                <li><a href="major.html?college=石油学院&major=软件工程">软件工程</a> <span class="resource-tag">查看专业课程</span></li>
+                <li><a href="major.html?college=石油学院&major=数据科学与大数据技术">数据科学与大数据技术</a> <span class="resource-tag">查看专业课程</span></li>
+                <li><a href="major.html?college=石油学院&major=人工智能">人工智能</a> <span class="resource-tag">查看专业课程</span></li>
+            </ul>
+        </div>
+
+        <div class="section fade-in delay-3">
+            <h2>工学院</h2>
+            <h3>化工与环境系</h3>
+            <ul class="resource-list">
+                <li><a href="major.html?college=工学院&major=油气储运工程">油气储运工程</a> <span class="resource-tag">查看专业课程</span></li>
+                <li><a href="major.html?college=工学院&major=化学工程与工艺">化学工程与工艺</a> <span class="resource-tag">查看专业课程</span></li>
+                <li><a href="major.html?college=工学院&major=能源化学工程">能源化学工程</a> <span class="resource-tag">查看专业课程</span></li>
+                <li><a href="major.html?college=工学院&major=环境工程">环境工程(油气生产加工环境保护)</a> <span class="resource-tag">查看专业课程</span></li>
+            </ul>
+            <h3>机械与过程系</h3>
+            <ul class="resource-list">
+                <li><a href="major.html?college=工学院&major=机械设计制造及其自动化">机械设计制造及其自动化</a> <span class="resource-tag">查看专业课程</span></li>
+                <li><a href="major.html?college=工学院&major=过程装备与控制工程">过程装备与控制工程</a> <span class="resource-tag">查看专业课程</span></li>
+                <li><a href="major.html?college=工学院&major=材料科学与工程">材料科学与工程</a> <span class="resource-tag">查看专业课程</span></li>
+            </ul>
+            <h3>储运与自动化系</h3>
+            <ul class="resource-list">
+                <li><a href="major.html?college=工学院&major=自动化">自动化</a> <span class="resource-tag">查看专业课程</span></li>
+                <li><a href="major.html?college=工学院&major=安全工程">安全工程</a> <span class="resource-tag">查看专业课程</span></li>
+                <li><a href="major.html?college=工学院&major=新能源科学与工程">新能源科学与工程</a> <span class="resource-tag">查看专业课程</span></li>
+                <li><a href="major.html?college=工学院&major=能源与动力工程">能源与动力工程</a> <span class="resource-tag">查看专业课程</span></li>
+            </ul>
+        </div>
+
+        <div class="section fade-in delay-4">
+            <h2>文理学院·文化艺术学院</h2>
+            <h3>数学系</h3>
+            <ul class="resource-list">
+                <li><a href="major.html?college=文理学院&major=数学与应用数学">数学与应用数学</a> <span class="resource-tag">查看专业课程</span></li>
+                <li><a href="major.html?college=文理学院&major=统计学">统计学</a> <span class="resource-tag">查看专业课程</span></li>
+            </ul>
+            <h3>物理系</h3>
+            <ul class="resource-list">
+                <li>（无本科专业，仅承担公共课教学）</li>
+            </ul>
+            <h3>语言与艺术系</h3>
+            <ul class="resource-list">
+                <li><a href="major.html?college=文理学院&major=俄语">俄语</a> <span class="resource-tag">查看专业课程</span></li>
+                <li><a href="search.html?q=俄语">俄语(石油与天然气工程)</a></li>
+                <li><a href="major.html?college=文理学院&major=英语">英语</a> <span class="resource-tag">查看专业课程</span></li>
+                <li><a href="search.html?q=英语">英语(语言与计算科学)</a></li>
+                <li><a href="major.html?college=文理学院&major=汉语言文学">汉语言文学</a> <span class="resource-tag">查看专业课程</span></li>
+            </ul>
+            <h3>体育系</h3>
+            <ul class="resource-list">
+                <li>（无本科专业，仅承担公共课教学）</li>
+            </ul>
+        </div>
+
+        <div class="section fade-in delay-5">
+            <h2>工商管理学院·马克思主义学院</h2>
+            <h3>经济与金融系</h3>
+            <ul class="resource-list">
+                <li><a href="major.html?college=工商管理学院&major=经济学">经济学</a> <span class="resource-tag">查看专业课程</span></li>
+                <li><a href="major.html?college=工商管理学院&major=金融学">金融学</a> <span class="resource-tag">查看专业课程</span></li>
+            </ul>
+            <h3>会计与行政管理系</h3>
+            <ul class="resource-list">
+                <li><a href="major.html?college=工商管理学院&major=会计学">会计学</a> <span class="resource-tag">查看专业课程</span></li>
+                <li><a href="major.html?college=工商管理学院&major=行政管理">行政管理</a> <span class="resource-tag">查看专业课程</span></li>
+            </ul>
+            <h3>马克思主义系</h3>
+            <ul class="resource-list">
+                <li><a href="major.html?college=工商管理学院&major=思想政治教育">思想政治教育</a> <span class="resource-tag">查看专业课程</span></li>
+            </ul>
+        </div>
+    </main>
+    <footer class="footer">
+        <p>Copyright &copy; 2025 中石大克校区资源共享论坛</p>
+        <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
+    </footer>
+    <div class="mobile-tip-bar" id="mobileTipBar" style="display: none;">
+        <span>💻 电脑访问体验更佳</span>
+    </div>
+    <div class="mobile-tip-popup" id="mobileTipPopup" style="display: none;">
+        <div class="mobile-tip-popup-content">
+            <div class="mobile-tip-popup-icon">💻</div>
+            <div class="mobile-tip-popup-text">为了更好的浏览体验<br>建议使用电脑访问</div>
+            <button onclick="closeMobileTipPopup()">我知道了</button>
+        </div>
+    </div>
+    <script src="js/data.js" defer></script>
+    <script src="js/main.js" defer></script>
+    <script>
+        checkLoginStatus();
+        updateNavUserState();
+        hideLoading();
+        window.onscroll = function() {
+            var navbar = document.getElementById("navbar");
+            if (navbar) {
+                if (window.pageYOffset > 50) {
+                    navbar.classList.add("scrolled");
+                } else {
+                    navbar.classList.remove("scrolled");
+                }
+            }
+        };
+    </script>
+</body>
+</html>
