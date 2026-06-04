@@ -239,7 +239,7 @@
     <nav class="navbar" id="navbar">
         <div class="nav-logo">
             <a href="index.html" class="page-link">克校区资源共享论坛</a>
-            <a href="index.html" class="home-icon" title="返回主页">🏠</a>
+            <a href="home.html" class="home-icon" title="返回主页">🏠</a>
         </div>
         <div class="nav-search">
             <input type="text" id="searchInput" placeholder="搜索课程、资料..." onkeypress="handleKeyPress(event)">
@@ -290,6 +290,8 @@
                 <option value="language">语言</option>
                 <option value="economics">经济</option>
                 <option value="humanities">人文</option>
+                <option value="clubs">社团</option>
+                <option value="life">生活</option>
             </select>
             <label>排序：</label>
             <select id="sortBy" onchange="doPageSearch()">
@@ -298,10 +300,10 @@
                 <option value="time">上传时间</option>
             </select>
         </div>
-        
+
         <div id="results"></div>
-        
-        <div class="hot-searches" id="hotSearches" style="display: none;">
+
+        <div class="hot-searches" id="hotSearches">
             <h4>🔥 热门搜索</h4>
             <div class="hot-tags">
                 <span class="hot-tag" onclick="searchTag('高等数学')">高等数学</span>
@@ -311,6 +313,11 @@
                 <span class="hot-tag" onclick="searchTag('Python')">Python</span>
                 <span class="hot-tag" onclick="searchTag('数据结构')">数据结构</span>
                 <span class="hot-tag" onclick="searchTag('英语')">英语四六级</span>
+                <span class="hot-tag" onclick="searchTag('学生会')">学生会</span>
+                <span class="hot-tag" onclick="searchTag('志愿者')">志愿者</span>
+                <span class="hot-tag" onclick="searchTag('食堂')">食堂</span>
+                <span class="hot-tag" onclick="searchTag('图书馆')">图书馆</span>
+                <span class="hot-tag" onclick="searchTag('快递')">快递</span>
             </div>
         </div>
     </main>
@@ -328,43 +335,174 @@
             <button onclick="closeMobileTipPopup()">我知道了</button>
         </div>
     </div>
-    <script src="js/data.js" defer></script>
-    <script src="js/main.js" defer></script>
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
     <script>
-        checkLoginStatus();
-        updateNavUserState();
-        hideLoading();
-        
-        // 等待 DataStore 初始化后再搜索
-        waitForDataStore(function() {
-            initSearchPage();
+        // 确保在 DataStore 和 main.js 加载后再执行
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLoginStatus();
+            updateNavUserState();
+            hideLoading();
+
+            // 等待 DataStore 初始化后再搜索
+            waitForDataStore(function() {
+                initSearchPage();
+            });
         });
-        
+
+        function initSearchPage() {
+            // 调试信息
+            console.log('初始化搜索页面...');
+            console.log('资源总数:', DataStore.getAllResources().length);
+
+            // 检查 URL 参数
+            var params = new URLSearchParams(window.location.search);
+            var urlQuery = params.get('q');
+            var urlCategory = params.get('category');
+
+            console.log('URL 参数 - q:', urlQuery, 'category:', urlCategory);
+
+            // 如果有 URL 参数，填充搜索框并执行搜索
+            if (urlQuery) {
+                document.getElementById("searchInputPage").value = urlQuery;
+            }
+            if (urlCategory) {
+                document.getElementById("filterCategory").value = urlCategory;
+            }
+
+            // 执行搜索
+            performSearch(urlQuery || '', urlCategory || '', 'relevance');
+        }
+
+        function performSearch(query, category, sortBy) {
+            var results = [];
+            var allResources = DataStore.getAllResources();
+
+            console.log('执行搜索，资源数:', allResources.length);
+
+            // 筛选
+            if (query) {
+                query = query.toLowerCase();
+                results = allResources.filter(function(r) {
+                    return r.title.toLowerCase().indexOf(query) !== -1 ||
+                           r.description.toLowerCase().indexOf(query) !== -1 ||
+                           (r.uploader && r.uploader.toLowerCase().indexOf(query) !== -1) ||
+                           (r.tags && r.tags.some(function(t) { return t.toLowerCase().indexOf(query) !== -1; }));
+                });
+            } else {
+                results = allResources;
+            }
+
+            // 分类筛选
+            if (category) {
+                results = results.filter(function(r) { return r.category === category; });
+            }
+
+            // 排序
+            if (sortBy === 'downloads') {
+                results.sort(function(a, b) { return (b.downloads || 0) - (a.downloads || 0); });
+            } else if (sortBy === 'time') {
+                results.sort(function(a, b) { return new Date(b.uploadTime) - new Date(a.uploadTime); });
+            }
+
+            console.log('搜索结果数:', results.length);
+
+            // 显示结果
+            displayResults(results, query);
+        }
+
+        function displayResults(results, query) {
+            var container = document.getElementById('results');
+            var hotSearches = document.getElementById('hotSearches');
+
+            // 调试信息
+            console.log('displayResults 被调用');
+            console.log('results 数量:', results.length);
+            console.log('container 元素:', container);
+            console.log('container innerHTML before:', container.innerHTML.length);
+
+            if (results.length === 0) {
+                // 无结果
+                container.innerHTML = `
+                    <div class="search-empty">
+                        <div class="search-empty-icon">🔍</div>
+                        <h3>暂无相关结果</h3>
+                        <p>没有找到与"${query || '该条件'}"相关的资料，试试以下方式：</p>
+                        <div class="suggestions">
+                            <a href="javascript:void(0)" onclick="clearFilters()" class="suggestion-tag">查看全部资料</a>
+                            <a href="upload.html" class="suggestion-tag">上传资料</a>
+                        </div>
+                        <div class="hot-searches" style="margin-top:30px;text-align:left;">
+                            <h4>🔥 热门搜索词</h4>
+                            <div class="hot-tags">
+                                <span class="hot-tag" onclick="searchTag('高等数学')">高等数学</span>
+                                <span class="hot-tag" onclick="searchTag('C语言')">C语言</span>
+                                <span class="hot-tag" onclick="searchTag('线性代数')">线性代数</span>
+                                <span class="hot-tag" onclick="searchTag('大学物理')">大学物理</span>
+                                <span class="hot-tag" onclick="searchTag('Python')">Python</span>
+                                <span class="hot-tag" onclick="searchTag('数据结构')">数据结构</span>
+                                <span class="hot-tag" onclick="searchTag('英语四六级')">英语四六级</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                hotSearches.style.display = 'none';
+                return;
+            }
+
+            // 有结果
+            hotSearches.style.display = 'none';
+
+            var html = '<div class="results-header"><span class="results-count">找到 <strong>' + results.length + '</strong> 个相关资料</span></div>';
+
+            results.forEach(function(r) {
+                var categoryName = DataStore.categoryNames[r.category] || r.category;
+                html += '<div class="result-item">';
+                html += '<h3><a href="detail.html?id=' + r.id + '">' + r.title + '</a></h3>';
+                html += '<div class="result-meta">';
+                html += '<span>📁 ' + categoryName + '</span>';
+                html += '<span>👤 ' + r.uploader + '</span>';
+                html += '<span>📅 ' + r.uploadTime + '</span>';
+                html += '<span>⬇️ ' + (r.downloads || 0) + '次下载</span>';
+                html += '<span>👁️ ' + (r.views || 0) + '次浏览</span>';
+                html += '</div>';
+                html += '<p class="result-desc">' + (r.description || '') + '</p>';
+                html += '</div>';
+            });
+
+            container.innerHTML = html;
+            console.log('container innerHTML after:', container.innerHTML.length);
+            console.log('第一个 result-item:', container.querySelector('.result-item'));
+            console.log('innerHTML 前100字符:', container.innerHTML.substring(0, 100));
+        }
+
+        function clearFilters() {
+            document.getElementById("searchInputPage").value = '';
+            document.getElementById("filterCategory").value = '';
+            document.getElementById("sortBy").value = 'relevance';
+            performSearch('', '', 'relevance');
+        }
+
         function doPageSearch() {
             var query = document.getElementById("searchInputPage").value.trim();
             var category = document.getElementById("filterCategory").value;
             var sortBy = document.getElementById("sortBy").value;
-            
-            if (query) {
-                window.location.href = "search.html?q=" + encodeURIComponent(query) + "&cat=" + category + "&sort=" + sortBy;
-            } else if (category) {
-                window.location.href = "search.html?cat=" + category + "&sort=" + sortBy;
-            } else {
-                window.location.href = "search.html?sort=" + sortBy;
-            }
+
+            // 直接在当前页面执行搜索，不跳转
+            performSearch(query, category, sortBy);
         }
-        
+
+        function searchTag(tag) {
+            document.getElementById("searchInputPage").value = tag;
+            doPageSearch();
+        }
+
         function handleSearchKeyPress(e) {
             if (e.keyCode === 13) {
                 doPageSearch();
             }
         }
-        
-        function searchTag(tag) {
-            document.getElementById("searchInputPage").value = tag;
-            doPageSearch();
-        }
-        
+
         window.onscroll = function() {
             var navbar = document.getElementById("navbar");
             if (navbar) {

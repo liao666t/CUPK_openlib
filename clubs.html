@@ -1,24 +1,61 @@
+<!--
+    =============================================================================
+    社团信息页面 (clubs.html)
+    =============================================================================
+    页面功能：
+        - 展示中石大克校区各类学生社团信息
+        - 分类展示直属社团、青年志愿者协会、科学技术协会等
+        - 提供社团活动信息和招新动态
+        - 支持移动端访问
+    页面结构：
+        - 顶部导航栏（Logo、搜索框、用户操作）
+        - 移动端导航菜单
+        - 主要内容区（各类型社团列表、活动信息）
+        - 页脚版权信息
+        - 移动端提示组件
+    依赖文件：
+        - css/style.css（样式表）
+        - js/data.js（数据存储）
+        - js/main.js（公共功能）
+    =============================================================================
+-->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <!-- 页面元数据配置 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>社团信息 - 中石大克校区资源共享论坛</title>
+    <!-- 引入全局样式文件 -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <!--
+        ============================================================
+        顶部导航栏区域
+        ============================================================
+        包含：网站Logo、主页链接、全局搜索框、用户操作按钮（上传、用户菜单）
+        功能：提供页面导航和全局搜索能力
+    -->
     <nav class="navbar" id="navbar">
+        <!-- 左侧Logo和主页链接 -->
         <div class="nav-logo">
             <a href="index.html" class="page-link">克校区资源共享论坛</a>
-            <a href="index.html" class="home-icon" title="返回主页">🏠</a>
+            <a href="home.html" class="home-icon" title="返回主页">🏠</a>
         </div>
+        <!-- 中间搜索框，支持回车搜索 -->
         <div class="nav-search">
             <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
         </div>
+        <!-- 右侧用户操作区：上传按钮、用户下拉菜单、登录入口 -->
         <div class="nav-actions" id="navActions">
+            <!-- 上传资料入口 -->
             <a href="upload.html" class="btn-upload">上传资料</a>
+            <!-- 用户下拉菜单（头像） -->
             <div class="user-dropdown" id="userDropdown">
+                <!-- 用户头像按钮，点击展开下拉菜单 -->
                 <div class="user-avatar" id="userAvatarBtn" onclick="toggleUserMenu()">?</div>
+                <!-- 下拉菜单内容：个人中心、退出登录 -->
                 <div class="user-dropdown-menu" id="userDropdownMenu">
                     <a href="user.html" class="user-dropdown-item">
                         <span class="icon">👤</span>
@@ -30,10 +67,20 @@
                     </button>
                 </div>
             </div>
+            <!-- 未登录状态显示的登录入口 -->
             <a href="login.html" class="btn-user" id="loginLink">登录</a>
         </div>
+        <!-- 移动端导航切换按钮 -->
         <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
     </nav>
+
+    <!--
+        ============================================================
+        移动端导航菜单
+        ============================================================
+        在移动设备上显示的水平导航链接
+        通过nav-toggle按钮控制显示/隐藏
+    -->
     <div class="nav-links-mobile" id="navLinks">
         <a href="courses.html">课程</a>
         <a href="academics.html">学业</a>
@@ -42,53 +89,77 @@
         <a href="contribute.html">贡献</a>
         <a href="about.html">关于</a>
     </div>
+
+    <!--
+        ============================================================
+        主要内容区域
+        ============================================================
+        页面核心内容，展示各类社团信息
+    -->
     <main class="page-transition">
+        <!-- 页面主标题 -->
         <h1>社团信息</h1>
 
+        <!-- 直属社团模块：学校官方学生组织 -->
         <div class="section">
             <h2>直属社团</h2>
             <ul class="resource-list">
-                <li><a href="detail.html?id=RES_000007">学生会</a> <span class="resource-tag">官方学生组织</span></li>
-                <li><a href="detail.html?id=RES_000008">研究生会</a> <span class="resource-tag">研究生自治组织</span></li>
-                <li><a href="detail.html?id=RES_000009">社团联合会</a> <span class="resource-tag">社团管理服务</span></li>
+                <!-- 学生会：学校最大官方学生组织 -->
+                <li><a href="detail.html?id=RES_000013">学生会纳新</a> <span class="resource-tag">官方学生组织</span></li>
+                <!-- 研究生会：研究生自治组织 -->
+                <li><a href="detail.html?id=RES_000014">研究生会</a> <span class="resource-tag">研究生自治组织</span></li>
+                <!-- 社团联合会：管理和协调各社团 -->
+                <li><a href="detail.html?id=RES_000015">社团联合会</a> <span class="resource-tag">社团管理服务</span></li>
             </ul>
         </div>
 
+        <!-- 青年志愿者协会模块：公益志愿服务组织 -->
         <div class="section">
             <h2>青年志愿者协会</h2>
             <ul class="resource-list">
-                <li><a href="detail.html?id=RES_000010">校青年志愿者协会</a> <span class="resource-tag">爱心公益</span></li>
-                <li><a href="detail.html?id=RES_000011">志愿服务活动</a> <span class="resource-tag">近期活动安排</span></li>
+                <!-- 校青年志愿者协会：校级志愿组织 -->
+                <li><a href="detail.html?id=RES_000016">校青年志愿者协会</a> <span class="resource-tag">爱心公益</span></li>
+                <!-- 志愿服务活动：近期活动安排 -->
+                <li><a href="detail.html?id=RES_000017">志愿服务活动</a> <span class="resource-tag">近期活动安排</span></li>
             </ul>
         </div>
 
+        <!-- 科学技术协会模块：学术科技创新类社团 -->
         <div class="section">
             <h2>科学技术协会</h2>
             <ul class="resource-list">
-                <li><a href="detail.html?id=RES_000003">机器人协会</a> <span class="resource-tag">科技创新</span></li>
-                <li><a href="detail.html?id=RES_000004">计算机协会</a> <span class="resource-tag">技术交流</span></li>
-                <li><a href="detail.html?id=RES_000005">数学建模协会</a> <span class="resource-tag">学术竞赛</span></li>
+                <!-- 机器人协会：科技创新实践 -->
+                <li><a href="detail.html?id=RES_000018">机器人协会</a> <span class="resource-tag">科技创新</span></li>
+                <!-- 计算机协会：技术交流分享 -->
+                <li><a href="detail.html?id=RES_000019">计算机协会</a> <span class="resource-tag">技术交流</span></li>
+                <!-- 数学建模协会：学术竞赛准备 -->
+                <li><a href="detail.html?id=RES_000020">数学建模协会</a> <span class="resource-tag">学术竞赛</span></li>
             </ul>
         </div>
 
+        <!-- 更多社团模块：以卡片形式展示其他社团 -->
         <div class="section">
             <h2>更多社团</h2>
             <div class="resource-grid">
+                <!-- 摄影协会：记录校园生活 -->
                 <div class="resource-card">
                     <div class="resource-title"><a href="search.html?q=摄影协会">摄影协会</a></div>
                     <div class="resource-meta">记录美好瞬间</div>
                     <div class="resource-meta">招新中</div>
                 </div>
+                <!-- 音乐社：音乐爱好者聚集地 -->
                 <div class="resource-card">
                     <div class="resource-title"><a href="search.html?q=音乐社">音乐社</a></div>
                     <div class="resource-meta">音乐爱好者之家</div>
                     <div class="resource-meta">招新中</div>
                 </div>
+                <!-- 足球社：体育运动类 -->
                 <div class="resource-card">
                     <div class="resource-title"><a href="search.html?q=足球社">足球社</a></div>
                     <div class="resource-meta">运动健身</div>
                     <div class="resource-meta">招新中</div>
                 </div>
+                <!-- 动漫社：兴趣爱好类 -->
                 <div class="resource-card">
                     <div class="resource-title"><a href="search.html?q=动漫社">动漫社</a></div>
                     <div class="resource-meta">二次元文化</div>
@@ -97,22 +168,42 @@
             </div>
         </div>
 
+        <!-- 社团活动模块：展示近期社团相关活动 -->
         <div class="section">
             <h2>社团活动</h2>
             <ul class="resource-list">
-                <li><a href="detail.html?id=RES_000012">社团招新季</a> <span class="resource-tag">每学年开学</span></li>
-                <li><a href="detail.html?id=RES_000001">社团文化节</a> <span class="resource-tag">年度大型活动</span></li>
-                <li><a href="detail.html?id=RES_000002">社团风采展</a> <span class="resource-tag">线上展示</span></li>
+                <!-- 社团招新季：每学年开学 -->
+                <li><a href="detail.html?id=RES_000021">社团招新季</a> <span class="resource-tag">每学年开学</span></li>
+                <!-- 社团文化节：年度大型活动 -->
+                <li><a href="detail.html?id=RES_000022">社团文化节</a> <span class="resource-tag">年度大型活动</span></li>
+                <!-- 社团风采展：线上展示各社团 -->
+                <li><a href="detail.html?id=RES_000015">社团风采展</a> <span class="resource-tag">线上展示</span></li>
             </ul>
         </div>
     </main>
+
+    <!--
+        ============================================================
+        页脚区域
+        ============================================================
+        显示版权信息和平台声明
+    -->
     <footer class="footer">
         <p>Copyright &copy; 2025 中石大克校区资源共享论坛</p>
         <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
     </footer>
+
+    <!--
+        ============================================================
+        移动端提示组件
+        ============================================================
+        提示移动端用户使用电脑访问以获得更好体验
+    -->
+    <!-- 移动端顶部提示条（始终显示） -->
     <div class="mobile-tip-bar" id="mobileTipBar" style="display: none;">
         <span>💻 电脑访问体验更佳</span>
     </div>
+    <!-- 移动端首次访问弹窗提示（点击关闭） -->
     <div class="mobile-tip-popup" id="mobileTipPopup" style="display: none;">
         <div class="mobile-tip-popup-content">
             <div class="mobile-tip-popup-icon">💻</div>
@@ -120,22 +211,64 @@
             <button onclick="closeMobileTipPopup()">我知道了</button>
         </div>
     </div>
-    <script src="js/data.js" defer></script>
-    <script src="js/main.js" defer></script>
+
+    <!-- 引入外部脚本文件 -->
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+
+    <!--
+        ============================================================
+        页面初始化脚本
+        ============================================================
+        功能：
+            - DOM加载完成后初始化页面
+            - 检查用户登录状态
+            - 更新导航栏用户状态显示
+            - 隐藏页面加载动画
+            - 实现导航栏滚动效果
+    -->
     <script>
-        checkLoginStatus();
-        updateNavUserState();
-        hideLoading();
-        window.onscroll = function() {
-            var navbar = document.getElementById("navbar");
-            if (navbar) {
-                if (window.pageYOffset > 50) {
-                    navbar.classList.add("scrolled");
-                } else {
-                    navbar.classList.remove("scrolled");
+        /**
+         * DOM加载完成后执行初始化
+         * 确保所有DOM元素都已渲染后再进行操作
+         */
+        document.addEventListener('DOMContentLoaded', function() {
+            /**
+             * 检查用户登录状态
+             * 根据登录状态更新导航栏的显示（显示用户头像或登录按钮）
+             */
+            checkLoginStatus();
+
+            /**
+             * 更新导航栏用户状态
+             * 刷新用户下拉菜单中的用户名显示
+             */
+            updateNavUserState();
+
+            /**
+             * 隐藏页面加载动画/遮罩
+             * 在所有资源加载完成后调用
+             */
+            hideLoading();
+
+            /**
+             * 导航栏滚动效果
+             * 当页面滚动超过50px时，为导航栏添加阴影效果
+             * 提升页面滚动时的视觉层次感
+             */
+            window.onscroll = function() {
+                var navbar = document.getElementById("navbar");
+                if (navbar) {
+                    if (window.pageYOffset > 50) {
+                        // 添加滚动样式（阴影效果）
+                        navbar.classList.add("scrolled");
+                    } else {
+                        // 移除滚动样式
+                        navbar.classList.remove("scrolled");
+                    }
                 }
-            }
-        };
+            };
+        });
     </script>
 </body>
 </html>

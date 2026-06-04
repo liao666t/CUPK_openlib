@@ -1,39 +1,85 @@
 <!DOCTYPE html>
+<!--
+    上传资料页面
+    功能：提供分步向导式文件上传功能，用户可选择分类、填写信息、上传文件
+    作者：03班14组
+    创建日期：2024年
+    
+    技术说明：
+    - 支持服务器模式和本地模式双模式运行
+    - 支持拖拽上传和点击选择文件
+    - 支持文件格式和大小校验
+    - 模拟上传进度动画
+    - 匿名上传功能
+    - 需要登录才能上传
+-->
 <html lang="zh-CN">
 <head>
+    <!-- 页面元数据设置 -->
     <meta charset="UTF-8">
+    <!-- 视口设置，支持移动端响应式布局 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 页面标题 -->
     <title>上传资料 - 中石大克校区资源共享论坛</title>
+    <!-- 引入外部样式表 -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <!-- ========================================
+         顶部导航栏
+         功能：提供网站主要导航、搜索和用户操作入口
+         ======================================== -->
     <nav class="navbar" id="navbar">
+        <!-- Logo和网站名称区域 -->
         <div class="nav-logo">
+            <!-- 网站主链接，点击返回入口页面 -->
             <a href="index.html" class="page-link">克校区资源共享论坛</a>
-            <a href="index.html" class="home-icon" title="返回主页">🏠</a>
+            <!-- 主页图标快捷链接，点击直接跳转首页 -->
+            <a href="home.html" class="home-icon" title="返回主页">🏠</a>
         </div>
+        
+        <!-- 搜索框区域 -->
         <div class="nav-search">
+            <!-- 搜索输入框，支持按回车键搜索 -->
             <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
         </div>
+        
+        <!-- 用户操作按钮区域 -->
         <div class="nav-actions" id="navActions">
+            <!-- 上传资料按钮，当前页面链接 -->
             <a href="upload.html" class="btn-upload">上传资料</a>
+            
+            <!-- 用户下拉菜单，已登录用户可见 -->
             <div class="user-dropdown" id="userDropdown">
+                <!-- 用户头像图标，点击展开下拉菜单 -->
                 <div class="user-avatar" id="userAvatarBtn" onclick="toggleUserMenu()">?</div>
+                <!-- 下拉菜单内容 -->
                 <div class="user-dropdown-menu" id="userDropdownMenu">
+                    <!-- 个人中心链接 -->
                     <a href="user.html" class="user-dropdown-item">
                         <span class="icon">👤</span>
                         <span id="dropdownUsername">个人中心</span>
                     </a>
+                    <!-- 退出登录按钮 -->
                     <button class="user-dropdown-item" onclick="logout()">
                         <span class="icon">🚪</span>
                         <span>退出登录</span>
                     </button>
                 </div>
             </div>
+            
+            <!-- 登录按钮，未登录用户可见 -->
             <a href="login.html" class="btn-user" id="loginLink">登录</a>
         </div>
+        
+        <!-- 移动端导航菜单切换按钮 -->
         <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
     </nav>
+    
+    <!-- ========================================
+         移动端导航链接
+         功能：在移动设备上提供水平排列的快捷导航
+         ======================================== -->
     <div class="nav-links-mobile" id="navLinks">
         <a href="courses.html">课程</a>
         <a href="academics.html">学业</a>
@@ -42,46 +88,73 @@
         <a href="contribute.html">贡献</a>
         <a href="about.html">关于</a>
     </div>
+    
+    <!-- ========================================
+         页面主要内容区域
+         包含：欢迎提示、上传向导、登录提示
+         ======================================== -->
     <main class="page-transition">
+        <!-- 页面主标题 -->
         <h1>上传资料</h1>
+        <!-- 欢迎提示 -->
         <p>欢迎贡献优质学习资源，帮助更多同学！</p>
 
+        <!-- ========================================
+             未登录提示区域
+             用户未登录时显示此提示，引导用户登录
+             ======================================== -->
         <div class="section" id="notLoginSection" style="display:none;">
             <div class="not-logged-in">
                 <p>请先 <a href="login.html">登录</a> 后再上传资料</p>
             </div>
         </div>
 
+        <!-- ========================================
+             分步上传向导
+             包含4个步骤：分类选择→填写信息→上传文件→完成
+             ======================================== -->
         <div class="upload-wizard" id="uploadWizard">
-            <!-- 步骤指示器 -->
+            <!-- 步骤指示器：显示当前进度 -->
             <div class="step-indicator">
+                <!-- 步骤1：选择分类 -->
                 <div class="step-item active" id="stepInd1">
                     <div class="step-circle">1</div>
                     <div class="step-label">选择分类</div>
                 </div>
+                <!-- 连接线1 -->
                 <div class="step-line" id="line1"></div>
+                <!-- 步骤2：填写信息 -->
                 <div class="step-item" id="stepInd2">
                     <div class="step-circle">2</div>
                     <div class="step-label">填写信息</div>
                 </div>
+                <!-- 连接线2 -->
                 <div class="step-line" id="line2"></div>
+                <!-- 步骤3：上传文件 -->
                 <div class="step-item" id="stepInd3">
                     <div class="step-circle">3</div>
                     <div class="step-label">上传文件</div>
                 </div>
+                <!-- 连接线3 -->
                 <div class="step-line" id="line3"></div>
+                <!-- 步骤4：完成 -->
                 <div class="step-item" id="stepInd4">
                     <div class="step-circle">4</div>
                     <div class="step-label">完成</div>
                 </div>
             </div>
 
-            <!-- 步骤1：分类选择 -->
+            <!-- ========================================
+                 步骤1：分类选择
+                 用户选择学院和专业
+                 ======================================== -->
             <div class="step-panel active" id="step1">
                 <h2>选择资料分类</h2>
                 <div class="cascade-form">
+                    <!-- 学院选择 -->
                     <div class="form-group">
                         <label for="college">学院</label>
+                        <!-- 选择学院后触发专业列表更新 -->
                         <select id="college" onchange="updateMajors()">
                             <option value="">请选择学院</option>
                             <option value="public">公共基础课（通识课）</option>
@@ -91,6 +164,7 @@
                             <option value="business">工商管理学院·马克思主义学院</option>
                         </select>
                     </div>
+                    <!-- 专业选择（根据学院联动） -->
                     <div class="form-group" id="majorGroup" style="display:none;">
                         <label for="major">专业</label>
                         <select id="major" onchange="validateStep1()">
@@ -98,23 +172,30 @@
                         </select>
                     </div>
                 </div>
+                <!-- 下一步按钮 -->
                 <div class="step-actions">
                     <button type="button" class="btn-next" onclick="goStep(2)">下一步</button>
                 </div>
             </div>
 
-            <!-- 步骤2：填写信息 -->
+            <!-- ========================================
+                 步骤2：填写信息
+                 用户填写资料标题、描述
+                 ======================================== -->
             <div class="step-panel" id="step2">
                 <h2>填写资料信息</h2>
                 <div class="cascade-form">
+                    <!-- 标题输入 -->
                     <div class="form-group">
                         <label for="title">标题 <span class="required">*</span></label>
                         <input type="text" id="title" placeholder="请输入标题，如：数据结构">
                     </div>
+                    <!-- 描述文本框 -->
                     <div class="form-group">
                         <label for="description">资料描述</label>
                         <textarea id="description" rows="4" placeholder="请简要描述资料内容、适用范围等"></textarea>
                     </div>
+                    <!-- 匿名上传选项 -->
                     <div class="form-group">
                         <label>
                             <input type="checkbox" id="anonymousMode">
@@ -122,24 +203,33 @@
                         </label>
                     </div>
                 </div>
+                <!-- 上一步、下一步按钮 -->
                 <div class="step-actions">
                     <button type="button" class="btn-prev" onclick="goStep(1)">上一步</button>
                     <button type="button" class="btn-next" onclick="goStep(3)">下一步</button>
                 </div>
             </div>
 
-            <!-- 步骤3：上传文件 -->
+            <!-- ========================================
+                 步骤3：上传文件
+                 用户选择要上传的文件
+                 ======================================== -->
             <div class="step-panel" id="step3">
                 <h2>上传文件</h2>
                 <div class="form-group">
+                    <!-- 文件选择区域 -->
                     <label>选择文件 <span class="required">*</span></label>
+                    <!-- 拖拽上传区域 -->
                     <div class="drop-zone" id="dropZone">
+                        <!-- 拖拽提示内容 -->
                         <div class="drop-zone-content" id="dropZoneContent">
                             <div class="drop-icon">&#128194;</div>
                             <p>拖拽文件到此处，或 <label for="fileInput" class="browse-link">点击选择文件</label></p>
                             <p class="file-hint">支持 PDF、Word、PPT、图片等常见格式，单个文件不超过 100MB</p>
                         </div>
+                        <!-- 隐藏的文件输入框 -->
                         <input type="file" id="fileInput" style="display:none;" onchange="handleFileSelect(this)">
+                        <!-- 已选择文件显示区域 -->
                         <div class="file-selected" id="fileSelected" style="display:none;">
                             <div class="file-info">
                                 <span class="file-icon">&#128196;</span>
@@ -150,7 +240,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- 进度条 -->
+                <!-- 上传进度条 -->
                 <div class="progress-container" id="progressContainer" style="display:none;">
                     <div class="progress-label">
                         <span id="progressText">正在上传...</span>
@@ -160,20 +250,26 @@
                         <div class="progress-fill" id="progressFill"></div>
                     </div>
                 </div>
+                <!-- 上一步、提交按钮 -->
                 <div class="step-actions">
                     <button type="button" class="btn-prev" onclick="goStep(2)">上一步</button>
                     <button type="button" class="btn-submit" id="submitBtn" onclick="submitUpload()">提交上传</button>
                 </div>
             </div>
 
-            <!-- 步骤4：完成 -->
+            <!-- ========================================
+                 步骤4：完成
+                 上传成功提示和后续操作
+                 ======================================== -->
             <div class="step-panel" id="step4">
+                <!-- 成功提示框 -->
                 <div class="success-box">
                     <div class="success-icon">&#10004;</div>
                     <h2>上传成功！</h2>
                     <p id="uploadedTitle"></p>
                     <p>感谢您的贡献，其他同学将能够查看到这份资料。</p>
                 </div>
+                <!-- 返回首页、继续上传按钮 -->
                 <div class="step-actions">
                     <button type="button" class="btn-next" onclick="window.location.href='index.html'">返回首页</button>
                     <button type="button" class="btn-prev" onclick="resetUpload()">继续上传</button>
@@ -181,13 +277,28 @@
             </div>
         </div>
     </main>
+    
+    <!-- ========================================
+         页脚区域
+         包含版权声明和免责条款
+         ======================================== -->
     <footer class="footer">
         <p>Copyright &copy; 2025 中石大克校区资源共享论坛</p>
         <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
     </footer>
+    
+    <!-- ========================================
+         移动端提示栏
+         移动设备访问时显示友好提示
+         ======================================== -->
     <div class="mobile-tip-bar" id="mobileTipBar" style="display: none;">
         <span>💻 电脑访问体验更佳</span>
     </div>
+    
+    <!-- ========================================
+         移动端提示弹窗
+         首次访问时显示的引导提示
+         ======================================== -->
     <div class="mobile-tip-popup" id="mobileTipPopup" style="display: none;">
         <div class="mobile-tip-popup-content">
             <div class="mobile-tip-popup-icon">💻</div>
@@ -195,14 +306,33 @@
             <button onclick="closeMobileTipPopup()">我知道了</button>
         </div>
     </div>
+    
+    <!-- ========================================
+         JavaScript脚本
+         包含分步向导、表单验证、文件处理等核心逻辑
+         ======================================== -->
+    <!-- 数据管理模块，提供数据存取接口 -->
     <script src="js/data.js"></script>
+    <!-- 主逻辑模块 -->
     <script src="js/main.js"></script>
+    <!-- 上传页面专用脚本 -->
     <script>
+        /**
+         * 页面初始化函数
+         */
+        // 检查用户登录状态
         checkLoginStatus();
+        // 隐藏页面加载动画
         hideLoading();
+        // 高亮当前页面在导航栏中的链接
         highlightNav();
+        // 检查是否需要登录才能上传
         requireLoginForUpload();
 
+        /**
+         * 滚动事件监听器
+         * 功能：实现导航栏滚动效果
+         */
         window.onscroll = function() {
             var navbar = document.getElementById("navbar");
             if (navbar) {
@@ -214,41 +344,51 @@
             }
         };
 
+        /**
+         * 检查登录状态函数
+         * 功能：验证用户是否已登录，未登录则显示提示
+         */
         function requireLoginForUpload() {
+            // 获取当前登录用户信息
             var currentUser = localStorage.getItem("currentUser");
             var wizard = document.getElementById("uploadWizard");
             var notLogin = document.getElementById("notLoginSection");
+            
             if (!currentUser) {
+                // 未登录，隐藏上传向导，显示登录提示
                 if (wizard) wizard.style.display = "none";
                 if (notLogin) notLogin.style.display = "block";
             } else {
+                // 已登录，显示上传向导，隐藏登录提示
                 var user = JSON.parse(currentUser);
                 if (wizard) wizard.style.display = "block";
                 if (notLogin) notLogin.style.display = "none";
+                // 初始化上传向导
                 initUploadWizard(user);
             }
         }
 
-        // ====== 分步向导 ======
-        var majorData = {
-            petroleum: ["资源勘查工程", "勘查技术与工程", "石油工程", "软件工程", "数据科学与大数据技术", "人工智能"],
-            engineering: ["油气储运工程", "化学工程与工艺", "能源化学工程", "环境工程", "机械设计制造及其自动化", "过程装备与控制工程", "材料科学与工程", "自动化", "安全工程", "新能源科学与工程", "能源与动力工程"],
-            arts: ["数学与应用数学", "统计学", "俄语", "英语", "汉语言文学"],
-            business: ["经济学", "金融学", "会计学", "行政管理", "思想政治教育"]
-        };
-
+        /**
+         * 初始化上传向导函数
+         * 功能：设置拖拽上传事件监听
+         * @param {Object} user - 当前登录用户对象
+         */
+        // ====== 分步向导初始化 ======
         function initUploadWizard(user) {
-            // 拖拽上传
+            // 获取拖拽区域元素
             var dropZone = document.getElementById("dropZone");
             if (dropZone) {
+                // 拖拽进入事件
                 dropZone.addEventListener("dragover", function(e) {
                     e.preventDefault();
                     dropZone.classList.add("drag-over");
                 });
+                // 拖拽离开事件
                 dropZone.addEventListener("dragleave", function(e) {
                     e.preventDefault();
                     dropZone.classList.remove("drag-over");
                 });
+                // 拖拽放下事件
                 dropZone.addEventListener("drop", function(e) {
                     e.preventDefault();
                     dropZone.classList.remove("drag-over");
@@ -260,15 +400,34 @@
             }
         }
 
+        /**
+         * 专业数据映射表
+         * 按学院分类的专业列表
+         */
+        var majorData = {
+            petroleum: ["资源勘查工程", "勘查技术与工程", "石油工程", "软件工程", "数据科学与大数据技术", "人工智能"],
+            engineering: ["油气储运工程", "化学工程与工艺", "能源化学工程", "环境工程", "机械设计制造及其自动化", "过程装备与控制工程", "材料科学与工程", "自动化", "安全工程", "新能源科学与工程", "能源与动力工程"],
+            arts: ["数学与应用数学", "统计学", "俄语", "英语", "汉语言文学"],
+            business: ["经济学", "金融学", "会计学", "行政管理", "思想政治教育"]
+        };
+
+        /**
+         * 更新专业选项函数
+         * 功能：根据选择的学院，动态更新专业下拉框的选项
+         */
         function updateMajors() {
+            // 获取当前选择的学院值
             var college = document.getElementById("college").value;
             var majorSelect = document.getElementById("major");
             var majorGroup = document.getElementById("majorGroup");
 
+            // 默认隐藏专业选择，显示提示
             majorGroup.style.display = "none";
             majorSelect.innerHTML = '<option value="">请先选择专业</option>';
 
+            // 根据学院设置对应的专业列表
             if (college === "public") {
+                // 公共基础课专业列表
                 majorGroup.style.display = "block";
                 majorSelect.innerHTML =
                     '<option value="">请先选择专业</option>' +
@@ -284,6 +443,7 @@
                     '<option value="形势与政策">形势与政策</option>' +
                     '<option value="其他">其他</option>';
             } else if (college && majorData[college]) {
+                // 其他学院专业列表
                 majorGroup.style.display = "block";
                 var majors = majorData[college];
                 for (var i = 0; i < majors.length; i++) {
@@ -295,14 +455,21 @@
             }
         }
 
+        /**
+         * 步骤切换函数
+         * 功能：在不同步骤之间切换，更新UI状态
+         * @param {number} n - 目标步骤号
+         */
         function goStep(n) {
             // 验证步骤1必填项
             if (n >= 2 && !validateStep1()) return;
 
+            // 获取所有面板和指示器元素
             var panels = document.querySelectorAll(".step-panel");
             var inds = document.querySelectorAll(".step-item");
             var lines = document.querySelectorAll(".step-line");
 
+            // 移除所有激活状态
             for (var i = 0; i < panels.length; i++) {
                 panels[i].classList.remove("active");
             }
@@ -310,6 +477,7 @@
                 inds[i].classList.remove("active");
             }
 
+            // 激活目标步骤
             var targetStep = "step" + n;
             var targetInd = "stepInd" + n;
 
@@ -320,16 +488,22 @@
                 document.getElementById(targetInd).classList.add("active");
             }
 
-            // 激活连接线
+            // 激活已完成步骤的连接线
             for (var i = 1; i < n; i++) {
                 if (document.getElementById("line" + i)) {
                     document.getElementById("line" + i).classList.add("filled");
                 }
             }
 
+            // 滚动到页面顶部
             window.scrollTo({ top: 0, behavior: "smooth" });
         }
 
+        /**
+         * 验证步骤1函数
+         * 功能：检查学院和专业是否已选择
+         * @returns {boolean} 验证是否通过
+         */
         function validateStep1() {
             var college = document.getElementById("college").value;
             if (!college) {
@@ -345,16 +519,30 @@
         }
 
         // ====== 文件处理 ======
+        
+        /**
+         * 全局变量：已选择的文件对象
+         */
         var selectedFile = null;
 
+        /**
+         * 处理文件选择函数
+         * 功能：处理表单文件输入选择的文件
+         * @param {HTMLInputElement} input - 文件输入元素
+         */
         function handleFileSelect(input) {
             if (input.files && input.files.length > 0) {
                 handleFile(input.files[0]);
             }
         }
 
+        /**
+         * 处理文件函数
+         * 功能：验证文件格式和大小，更新UI显示
+         * @param {File} file - 要处理的File对象
+         */
         function handleFile(file) {
-            // 格式校验
+            // 支持的文件类型MIME列表
             var allowedTypes = [
                 "application/pdf",
                 "application/msword",
@@ -369,25 +557,37 @@
                 "application/zip",
                 "text/plain"
             ];
+            // 支持的文件扩展名列表
             var allowedExts = [".pdf", ".doc", ".docx", ".ppt", ".pptx", ".jpg", ".jpeg", ".png", ".gif", ".xls", ".xlsx", ".zip", ".txt", ".rar"];
+            
+            // 获取文件扩展名
             var ext = "." + file.name.split(".").pop().toLowerCase();
+            
+            // 验证文件格式
             if (allowedExts.indexOf(ext) === -1) {
                 alert("不支持的文件格式，请上传 PDF、Word、PPT、图片等常见格式");
                 return;
             }
-            // 大小校验 100MB
+            
+            // 验证文件大小（不超过100MB）
             if (file.size > 100 * 1024 * 1024) {
                 alert("文件大小不能超过 100MB");
                 return;
             }
 
+            // 保存文件对象
             selectedFile = file;
+            // 更新UI显示
             document.getElementById("dropZoneContent").style.display = "none";
             document.getElementById("fileSelected").style.display = "flex";
             document.getElementById("fileName").textContent = file.name;
             document.getElementById("fileSize").textContent = formatSize(file.size);
         }
 
+        /**
+         * 移除文件函数
+         * 功能：清除已选择的文件，重置UI
+         */
         function removeFile() {
             selectedFile = null;
             document.getElementById("fileInput").value = "";
@@ -398,12 +598,22 @@
             hideProgress();
         }
 
+        /**
+         * 格式化文件大小函数
+         * 功能：将字节数转换为人类可读的大小字符串
+         * @param {number} bytes - 字节数
+         * @returns {string} 格式化后的大小字符串
+         */
         function formatSize(bytes) {
             if (bytes < 1024) return bytes + " B";
             if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
             return (bytes / (1024 * 1024)).toFixed(1) + " MB";
         }
 
+        /**
+         * 显示上传进度函数
+         * 功能：显示进度条，禁用提交按钮
+         */
         function showProgress() {
             document.getElementById("progressContainer").style.display = "block";
             document.getElementById("progressFill").style.width = "0%";
@@ -412,28 +622,38 @@
             document.getElementById("submitBtn").disabled = true;
         }
 
+        /**
+         * 隐藏上传进度函数
+         * 功能：隐藏进度条，启用提交按钮
+         */
         function hideProgress() {
             document.getElementById("progressContainer").style.display = "none";
             document.getElementById("submitBtn").disabled = false;
         }
 
+        /**
+         * 提交上传函数
+         * 功能：验证必填项，模拟上传进度，完成上传
+         */
         function submitUpload() {
-            // 验证必填
+            // 验证标题必填
             var title = document.getElementById("title").value.trim();
             if (!title) {
                 alert("请填写标题");
                 goStep(2);
                 return;
             }
+            // 验证文件必选
             if (!selectedFile) {
                 alert("请选择要上传的文件");
                 goStep(3);
                 return;
             }
 
+            // 显示上传进度
             showProgress();
 
-            // 模拟上传进度
+            // 模拟上传进度动画
             var progress = 0;
             var interval = setInterval(function() {
                 progress += Math.random() * 15;
@@ -443,6 +663,7 @@
                     document.getElementById("progressFill").style.width = "100%";
                     document.getElementById("progressPercent").textContent = "100%";
                     document.getElementById("progressText").textContent = "上传完成！";
+                    // 延迟执行完成处理
                     setTimeout(function() {
                         finishUpload();
                     }, 500);
@@ -453,20 +674,28 @@
             }, 200);
         }
 
+        /**
+         * 完成上传函数
+         * 功能：收集表单数据，保存资源信息
+         */
         function finishUpload() {
+            // 获取当前用户信息
             var currentUser = localStorage.getItem("currentUser");
             var user = currentUser ? JSON.parse(currentUser) : null;
+            // 获取匿名上传选项
             var isAnonymous = document.getElementById("anonymousMode").checked;
 
+            // 收集表单数据
             var title = document.getElementById("title").value.trim();
             var college = document.getElementById("college").value;
             var major = document.getElementById("major").value;
             var description = document.getElementById("description").value.trim();
 
+            // 确定上传者名称
             var uploaderName = isAnonymous ? "匿名用户" : (user ? user.username : "未知");
             var uploaderId = user ? (user.id || user.username) : "";
 
-            // 使用 DataStore 保存资源（支持服务器模式和本地模式）
+            // 构建资源数据对象
             var uploadData = {
                 title: title,
                 category: major || college || 'other',
@@ -478,7 +707,7 @@
                 tags: [college, major].filter(Boolean)
             };
 
-            // 如果有文件且服务器可用，先上传文件
+            // 如果有文件且服务器可用，先上传文件到服务器
             if (selectedFile && DataStore.isServerMode()) {
                 var formData = new FormData();
                 formData.append('file', selectedFile);
@@ -487,6 +716,7 @@
                 xhr.open('POST', '/api/upload', true);
                 xhr.onload = function() {
                     if (xhr.status === 200) {
+                        // 文件上传成功，更新文件信息
                         var result = JSON.parse(xhr.responseText);
                         uploadData.filePath = result.filePath;
                         uploadData.fileName = result.fileName;
@@ -513,7 +743,7 @@
                 };
                 xhr.send(formData);
             } else {
-                // 本地模式或没有文件
+                // 本地模式或没有文件，直接保存资源数据
                 DataStore.addResource(uploadData, function(newResource) {
                     if (newResource) {
                         document.getElementById("uploadedTitle").textContent = "《" + title + "》";
@@ -524,8 +754,14 @@
             }
         }
 
+        /**
+         * 重置上传向导函数
+         * 功能：清空所有表单数据，重置到步骤1
+         */
         function resetUpload() {
+            // 清空已选文件
             selectedFile = null;
+            // 重置表单值
             document.getElementById("college").value = "";
             document.getElementById("major").innerHTML = '<option value="">请先选择专业</option>';
             document.getElementById("majorGroup").style.display = "none";
@@ -541,6 +777,7 @@
             for (var i = 0; i < lines.length; i++) {
                 lines[i].classList.remove("filled");
             }
+            // 跳转到步骤1
             goStep(1);
         }
     </script>

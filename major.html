@@ -1,11 +1,49 @@
+<!--
+    =============================================================================
+    专业课程页面 (major.html)
+    =============================================================================
+    页面功能：
+        - 根据URL参数动态加载指定专业的课程信息
+        - 展示各专业的必修课程和选修课程列表
+        - 显示课程的学分和开设学期信息
+        - 关联展示相关的学长分享资源
+        - 支持搜索相关资源
+    页面结构：
+        - 顶部导航栏（Logo、搜索框、用户操作）
+        - 移动端导航菜单
+        - 主要内容区（面包屑、课程列表、相关资源）
+        - 页脚版权信息
+        - 移动端提示组件
+    依赖文件：
+        - css/style.css（样式表）
+        - js/data.js（数据存储）
+        - js/main.js（公共功能）
+    URL参数：
+        - college: 学院名称
+        - major: 专业名称
+    核心函数：
+        - getUrlParam(name): 从URL获取参数值
+        - loadMajorData(): 加载并渲染专业数据
+        - searchRelatedResources(major, course): 搜索相关资源
+        - waitForDataStore(callback): 等待数据存储初始化
+    =============================================================================
+-->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <!-- 页面元数据配置 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>专业课程 - 中石大克校区资源共享论坛</title>
+    <!-- 引入全局样式文件 -->
     <link rel="stylesheet" href="css/style.css">
+    <!--
+        ============================================================
+        内联样式 - 专业课程页面专用样式
+        ============================================================
+    -->
     <style>
+        /* 面包屑导航样式：显示当前位置 */
         .breadcrumb {
             margin-bottom: 20px;
             font-size: 14px;
@@ -17,11 +55,15 @@
         .breadcrumb span {
             margin: 0 8px;
         }
+
+        /* 课程列表容器样式 */
         .course-list {
             background-color: var(--bg-light);
             border-radius: 8px;
             padding: 20px;
         }
+
+        /* 单个课程项样式：左右布局（信息+统计） */
         .course-item {
             display: flex;
             justify-content: space-between;
@@ -32,6 +74,8 @@
         .course-item:last-child {
             border-bottom: none;
         }
+
+        /* 课程信息区域 */
         .course-info {
             flex: 1;
         }
@@ -44,6 +88,8 @@
             font-size: 13px;
             color: var(--text-muted);
         }
+
+        /* 课程统计区域：资料数和下载次数 */
         .course-stats {
             text-align: right;
             min-width: 120px;
@@ -57,6 +103,8 @@
             color: var(--link-color);
             font-weight: bold;
         }
+
+        /* 空状态提示样式 */
         .empty-state {
             text-align: center;
             padding: 40px;
@@ -66,6 +114,8 @@
             font-size: 48px;
             margin-bottom: 15px;
         }
+
+        /* 返回按钮样式 */
         .back-btn {
             display: inline-block;
             background-color: var(--bg-light);
@@ -83,18 +133,32 @@
     </style>
 </head>
 <body>
+    <!--
+        ============================================================
+        顶部导航栏区域
+        ============================================================
+        包含：网站Logo、主页链接、全局搜索框、用户操作按钮（上传、用户菜单）
+        功能：提供页面导航和全局搜索能力
+    -->
     <nav class="navbar" id="navbar">
+        <!-- 左侧Logo和主页链接 -->
         <div class="nav-logo">
             <a href="index.html" class="page-link">克校区资源共享论坛</a>
-            <a href="index.html" class="home-icon" title="返回主页">🏠</a>
+            <a href="home.html" class="home-icon" title="返回主页">🏠</a>
         </div>
+        <!-- 中间搜索框，支持回车搜索 -->
         <div class="nav-search">
             <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
         </div>
+        <!-- 右侧用户操作区：上传按钮、用户下拉菜单、登录入口 -->
         <div class="nav-actions" id="navActions">
+            <!-- 上传资料入口 -->
             <a href="upload.html" class="btn-upload">上传资料</a>
+            <!-- 用户下拉菜单（头像） -->
             <div class="user-dropdown" id="userDropdown">
+                <!-- 用户头像按钮，点击展开下拉菜单 -->
                 <div class="user-avatar" id="userAvatarBtn" onclick="toggleUserMenu()">?</div>
+                <!-- 下拉菜单内容：个人中心、退出登录 -->
                 <div class="user-dropdown-menu" id="userDropdownMenu">
                     <a href="user.html" class="user-dropdown-item">
                         <span class="icon">👤</span>
@@ -106,10 +170,20 @@
                     </button>
                 </div>
             </div>
+            <!-- 未登录状态显示的登录入口 -->
             <a href="login.html" class="btn-user" id="loginLink">登录</a>
         </div>
+        <!-- 移动端导航切换按钮 -->
         <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
     </nav>
+
+    <!--
+        ============================================================
+        移动端导航菜单
+        ============================================================
+        在移动设备上显示的水平导航链接
+        通过nav-toggle按钮控制显示/隐藏
+    -->
     <div class="nav-links-mobile" id="navLinks">
         <a href="courses.html">课程</a>
         <a href="academics.html">学业</a>
@@ -118,48 +192,82 @@
         <a href="contribute.html">贡献</a>
         <a href="about.html">关于</a>
     </div>
+
+    <!--
+        ============================================================
+        主要内容区域
+        ============================================================
+        页面核心内容，展示专业课程信息
+    -->
     <main class="page-transition">
+        <!-- 返回上一页链接 -->
         <a href="courses.html" class="back-btn">&larr; 返回课程资源列表</a>
-        
+
+        <!-- 面包屑导航：显示当前位置 -->
         <div class="breadcrumb">
             <a href="courses.html">课程资源</a>
             <span>&gt;</span>
+            <!-- 动态填充学院名称 -->
             <span id="collegeName">学院</span>
             <span>&gt;</span>
+            <!-- 动态填充专业名称 -->
             <span id="majorName">专业</span>
         </div>
-        
+
+        <!-- 页面标题和描述（动态填充） -->
         <h1 id="pageTitle">专业课程</h1>
         <p id="majorDesc">该专业的课程资源和学习资料</p>
 
+        <!-- 必修课程模块 -->
         <div class="section">
             <h2>必修课程</h2>
+            <!-- 必修课程列表容器，动态加载 -->
             <div class="course-list" id="requiredCourses">
                 <!-- 动态加载 -->
             </div>
         </div>
 
+        <!-- 选修课程模块 -->
         <div class="section">
             <h2>选修课程</h2>
+            <!-- 选修课程列表容器，动态加载 -->
             <div class="course-list" id="electiveCourses">
                 <!-- 动态加载 -->
             </div>
         </div>
 
+        <!-- 学长分享模块 -->
         <div class="section">
             <h2>学长分享</h2>
+            <!-- 相关资源卡片容器，动态加载 -->
             <div class="resource-grid" id="relatedResources">
                 <!-- 动态加载 -->
             </div>
         </div>
     </main>
+
+    <!--
+        ============================================================
+        页脚区域
+        ============================================================
+        显示版权信息和平台声明
+    -->
     <footer class="footer">
         <p>Copyright &copy; 2025 中石大克校区资源共享论坛</p>
         <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
     </footer>
+
+    <!--
+        ============================================================
+        移动端提示组件
+        ============================================================
+        提示移动端用户使用电脑访问以获得更好体验
+    -->
+    <!-- 移动端顶部提示条（始终显示） -->
     <div class="mobile-tip-bar" id="mobileTipBar" style="display: none;">
         <span>💻 电脑访问体验更佳</span>
     </div>
+    <!-- 移动端首次访问弹窗提示（点击关闭） -->
     <div class="mobile-tip-popup" id="mobileTipPopup" style="display: none;">
         <div class="mobile-tip-popup-content">
             <div class="mobile-tip-popup-icon">💻</div>
@@ -167,17 +275,53 @@
             <button onclick="closeMobileTipPopup()">我知道了</button>
         </div>
     </div>
+
+    <!-- 引入外部脚本文件 -->
     <script src="js/data.js"></script>
     <script src="js/main.js"></script>
+
+    <!--
+        ============================================================
+        页面逻辑脚本
+        ============================================================
+        功能：
+            - 页面状态初始化
+            - 专业课程数据管理
+            - 动态渲染课程列表和相关资源
+    -->
     <script>
+        /**
+         * 检查用户登录状态
+         * 根据登录状态更新导航栏的显示（显示用户头像或登录按钮）
+         */
         checkLoginStatus();
+
+        /**
+         * 更新导航栏用户状态
+         * 刷新用户下拉菜单中的用户名显示
+         */
         updateNavUserState();
+
+        /**
+         * 隐藏页面加载动画/遮罩
+         * 在所有资源加载完成后调用
+         */
         hideLoading();
-        
+
+        /**
+         * ============================================================
+         * 专业课程数据
+         * ============================================================
+         * 包含各专业的必修课程和选修课程信息
+         * 数据结构：{ 专业名: { college: 学院名, required: [课程数组], elective: [课程数组] } }
+         * 课程数组元素：{ name: 课程名, credits: 学分, semester: 开设学期 }
+         */
         // 专业课程数据
         var majorCourseData = {
+            // 石油学院 - 软件工程专业
             "软件工程": {
                 college: "石油学院",
+                // 必修课程
                 required: [
                     { name: "C语言程序设计", credits: 4, semester: "大一上" },
                     { name: "数据结构与算法", credits: 4, semester: "大一下" },
@@ -188,6 +332,7 @@
                     { name: "计算机网络", credits: 3, semester: "大三上" },
                     { name: "软件工程导论", credits: 3, semester: "大三上" }
                 ],
+                // 选修课程
                 elective: [
                     { name: "Java程序设计", credits: 3, semester: "大二上" },
                     { name: "Web应用开发", credits: 3, semester: "大二下" },
@@ -196,6 +341,7 @@
                     { name: "云计算与大数据", credits: 3, semester: "大四上" }
                 ]
             },
+            // 数据科学与大数据技术专业
             "数据科学与大数据技术": {
                 college: "石油学院",
                 required: [
@@ -213,6 +359,7 @@
                     { name: "分布式系统", credits: 3, semester: "大四上" }
                 ]
             },
+            // 人工智能专业
             "人工智能": {
                 college: "石油学院",
                 required: [
@@ -230,6 +377,7 @@
                     { name: "边缘计算", credits: 3, semester: "大四上" }
                 ]
             },
+            // 石油工程专业
             "石油工程": {
                 college: "石油学院",
                 required: [
@@ -246,6 +394,7 @@
                     { name: "海洋油气工程", credits: 3, semester: "大四上" }
                 ]
             },
+            // 资源勘查工程专业
             "资源勘查工程": {
                 college: "石油学院",
                 required: [
@@ -261,6 +410,7 @@
                     { name: "储层地质学", credits: 3, semester: "大四上" }
                 ]
             },
+            // 勘查技术与工程专业
             "勘查技术与工程": {
                 college: "石油学院",
                 required: [
@@ -275,6 +425,7 @@
                     { name: "放射性勘探", credits: 3, semester: "大四上" }
                 ]
             },
+            // 数学与应用数学专业
             "数学与应用数学": {
                 college: "文理学院",
                 required: [
@@ -292,6 +443,7 @@
                     { name: "拓扑学", credits: 3, semester: "大三下" }
                 ]
             },
+            // 统计学专业
             "统计学": {
                 college: "文理学院",
                 required: [
@@ -308,6 +460,7 @@
                     { name: "统计软件", credits: 3, semester: "大二下" }
                 ]
             },
+            // 英语专业
             "英语": {
                 college: "文理学院",
                 required: [
@@ -324,6 +477,7 @@
                     { name: "商务英语", credits: 3, semester: "大三下" }
                 ]
             },
+            // 经济学专业
             "经济学": {
                 college: "工商管理学院",
                 required: [
@@ -340,6 +494,7 @@
                     { name: "国际经济学", credits: 3, semester: "大三下" }
                 ]
             },
+            // 会计学专业
             "会计学": {
                 college: "工商管理学院",
                 required: [
@@ -356,6 +511,7 @@
                     { name: "高级财务会计", credits: 3, semester: "大四上" }
                 ]
             },
+            // 机械设计制造及其自动化专业
             "机械设计制造及其自动化": {
                 college: "工学院",
                 required: [
@@ -372,6 +528,7 @@
                     { name: "液压与气压传动", credits: 3, semester: "大二下" }
                 ]
             },
+            // 自动化专业
             "自动化": {
                 college: "工学院",
                 required: [
@@ -388,6 +545,7 @@
                     { name: "嵌入式系统", credits: 3, semester: "大二下" }
                 ]
             },
+            // 化学工程与工艺专业
             "化学工程与工艺": {
                 college: "工学院",
                 required: [
@@ -404,6 +562,7 @@
                     { name: "绿色化学", credits: 3, semester: "大四上" }
                 ]
             },
+            // 油气储运工程专业
             "油气储运工程": {
                 college: "工学院",
                 required: [
@@ -420,6 +579,7 @@
                     { name: "油库设计与管理", credits: 3, semester: "大四上" }
                 ]
             },
+            // 能源化学工程专业
             "能源化学工程": {
                 college: "工学院",
                 required: [
@@ -436,6 +596,7 @@
                     { name: "太阳能利用技术", credits: 3, semester: "大四上" }
                 ]
             },
+            // 环境工程专业
             "环境工程": {
                 college: "工学院",
                 required: [
@@ -451,6 +612,7 @@
                     { name: "环境影响评价", credits: 3, semester: "大四上" }
                 ]
             },
+            // 过程装备与控制工程专业
             "过程装备与控制工程": {
                 college: "工学院",
                 required: [
@@ -466,6 +628,7 @@
                     { name: "化工机器", credits: 3, semester: "大四上" }
                 ]
             },
+            // 材料科学与工程专业
             "材料科学与工程": {
                 college: "工学院",
                 required: [
@@ -482,6 +645,7 @@
                     { name: "先进材料", credits: 3, semester: "大四上" }
                 ]
             },
+            // 安全工程专业
             "安全工程": {
                 college: "工学院",
                 required: [
@@ -497,6 +661,7 @@
                     { name: "消防安全工程", credits: 3, semester: "大四上" }
                 ]
             },
+            // 新能源科学与工程专业
             "新能源科学与工程": {
                 college: "工学院",
                 required: [
@@ -512,6 +677,7 @@
                     { name: "地热能利用", credits: 3, semester: "大四上" }
                 ]
             },
+            // 能源与动力工程专业
             "能源与动力工程": {
                 college: "工学院",
                 required: [
@@ -527,6 +693,7 @@
                     { name: "制冷与空调", credits: 3, semester: "大四上" }
                 ]
             },
+            // 俄语专业
             "俄语": {
                 college: "文理学院",
                 required: [
@@ -543,6 +710,7 @@
                     { name: "石油俄语", credits: 3, semester: "大四上" }
                 ]
             },
+            // 汉语言文学专业
             "汉语言文学": {
                 college: "文理学院",
                 required: [
@@ -559,6 +727,7 @@
                     { name: "语言学概论", credits: 3, semester: "大二上" }
                 ]
             },
+            // 金融学专业
             "金融学": {
                 college: "工商管理学院",
                 required: [
@@ -575,6 +744,7 @@
                     { name: "保险学", credits: 3, semester: "大二下" }
                 ]
             },
+            // 行政管理专业
             "行政管理": {
                 college: "工商管理学院",
                 required: [
@@ -591,6 +761,7 @@
                     { name: "行政法", credits: 3, semester: "大三上" }
                 ]
             },
+            // 思想政治教育专业
             "思想政治教育": {
                 college: "工商管理学院",
                 required: [
@@ -608,42 +779,60 @@
             }
         };
 
+        /**
+         * 从URL参数中获取指定名称的值
+         * @param {string} name - 参数名称
+         * @returns {string} - 参数值，如果不存在则返回空字符串
+         *
+         * 示例：URL为 major.html?college=石油学院&major=软件工程
+         * 调用 getUrlParam("major") 返回 "软件工程"
+         */
         function getUrlParam(name) {
+            // 解析URL查询参数
             var params = window.location.search.substring(1).split("&");
             for (var i = 0; i < params.length; i++) {
                 var pair = params[i].split("=");
                 if (pair[0] === name) {
+                    // URL解码并返回参数值
                     return decodeURIComponent(pair[1] || "");
                 }
             }
             return "";
         }
 
+        /**
+         * 加载并渲染专业数据
+         * 从URL获取专业参数，根据专业名称查询课程数据并渲染到页面
+         * 处理三种内容的渲染：必修课程、选修课程、相关资源
+         */
         function loadMajorData() {
+            // 获取URL参数
             var majorName = getUrlParam("major");
             var collegeName = getUrlParam("college");
-            
+
+            // 如果没有专业参数，显示提示信息
             if (!majorName) {
                 document.getElementById("pageTitle").textContent = "专业课程";
                 document.getElementById("majorDesc").textContent = "请从课程资源页面选择专业";
                 return;
             }
-            
-            // 更新页面标题
+
+            // 更新页面标题和面包屑
             document.getElementById("pageTitle").textContent = majorName + " 专业课程";
             document.getElementById("majorName").textContent = majorName;
             document.getElementById("collegeName").textContent = collegeName || "本学院";
-            
-            // 获取课程数据
+
+            // 获取专业课程数据
             var majorData = majorCourseData[majorName];
-            
+
             // 渲染必修课程
             var requiredContainer = document.getElementById("requiredCourses");
             if (majorData && majorData.required.length > 0) {
                 var html = "";
                 majorData.required.forEach(function(course) {
-                    // 搜索相关的资源
+                    // 搜索该课程的相关资源
                     var relatedRes = searchRelatedResources(majorName, course.name);
+                    // 生成课程项HTML
                     html += '<div class="course-item">';
                     html += '<div class="course-info">';
                     html += '<div class="course-name">' + course.name + '</div>';
@@ -651,9 +840,11 @@
                     html += '</div>';
                     html += '<div class="course-stats">';
                     if (relatedRes) {
+                        // 显示相关资源统计
                         html += '<div>资料：' + relatedRes.count + '份</div>';
                         html += '<div class="downloads">下载：' + relatedRes.downloads + '次</div>';
                     } else {
+                        // 无资源时显示提示和上传链接
                         html += '<div>暂无资料</div>';
                         html += '<div><a href="upload.html" style="color:var(--link-color);">上传资料</a></div>';
                     }
@@ -662,9 +853,10 @@
                 });
                 requiredContainer.innerHTML = html;
             } else {
+                // 无必修课程数据
                 requiredContainer.innerHTML = '<div class="empty-state">暂无课程数据</div>';
             }
-            
+
             // 渲染选修课程
             var electiveContainer = document.getElementById("electiveCourses");
             if (majorData && majorData.elective.length > 0) {
@@ -689,18 +881,20 @@
                 });
                 electiveContainer.innerHTML = html;
             } else {
+                // 无选修课程数据
                 electiveContainer.innerHTML = '<div class="empty-state">暂无选修课程数据</div>';
             }
-            
+
             // 渲染相关资源
             var relatedContainer = document.getElementById("relatedResources");
             var allResources = DataStore.getAllResources();
+            // 筛选与该专业相关的资源
             var related = allResources.filter(function(r) {
                 var searchText = (r.title + " " + r.description).toLowerCase();
-                return searchText.indexOf(majorName.toLowerCase()) !== -1 || 
+                return searchText.indexOf(majorName.toLowerCase()) !== -1 ||
                        searchText.indexOf("大学") !== -1;
-            }).slice(0, 4);
-            
+            }).slice(0, 4); // 最多显示4个
+
             if (related.length > 0) {
                 var html = "";
                 related.forEach(function(res) {
@@ -713,18 +907,28 @@
                 });
                 relatedContainer.innerHTML = html;
             } else {
+                // 无相关资源
                 relatedContainer.innerHTML = '<div class="empty-state">暂无相关资源，<a href="upload.html">成为第一个上传者</a></div>';
             }
         }
 
+        /**
+         * 搜索与专业或课程相关的资源
+         * @param {string} major - 专业名称
+         * @param {string} course - 课程名称
+         * @returns {Object|null} - 返回匹配的资源统计信息 { count: 数量, downloads: 下载次数 }，无匹配则返回null
+         */
         function searchRelatedResources(major, course) {
+            // 获取所有资源
             var allResources = DataStore.getAllResources();
+            // 在资源标题和描述中搜索专业名或课程名
             var matched = allResources.filter(function(r) {
                 var searchText = (r.title + " " + r.description).toLowerCase();
-                return searchText.indexOf(major.toLowerCase()) !== -1 || 
+                return searchText.indexOf(major.toLowerCase()) !== -1 ||
                        searchText.indexOf(course.toLowerCase()) !== -1;
             });
-            
+
+            // 如果有匹配的资源，计算统计信息
             if (matched.length > 0) {
                 var totalDownloads = 0;
                 matched.forEach(function(r) {
@@ -735,17 +939,28 @@
             return null;
         }
 
+        /**
+         * 页面初始化
+         * 等待数据存储模块初始化完成后，加载专业数据
+         */
         // 初始化
         waitForDataStore(function() {
             loadMajorData();
         });
-        
+
+        /**
+         * 导航栏滚动效果
+         * 当页面滚动超过50px时，为导航栏添加阴影效果
+         * 提升页面滚动时的视觉层次感
+         */
         window.onscroll = function() {
             var navbar = document.getElementById("navbar");
             if (navbar) {
                 if (window.pageYOffset > 50) {
+                    // 添加滚动样式（阴影效果）
                     navbar.classList.add("scrolled");
                 } else {
+                    // 移除滚动样式
                     navbar.classList.remove("scrolled");
                 }
             }

@@ -1,24 +1,63 @@
+<!--
+    =============================================================================
+    学业指导页面 (academics.html)
+    =============================================================================
+    页面功能：
+        - 为学生提供学业相关的指导信息
+        - 展示新生入学须知和必备物品清单
+        - 提供专业培养方案查阅入口
+        - 介绍转专业相关政策和流程
+        - 推荐热门学习资料
+        - 支持移动端访问
+    页面结构：
+        - 顶部导航栏（Logo、搜索框、用户操作）
+        - 移动端导航菜单
+        - 主要内容区（新生须知、培养方案、转专业、热门资料）
+        - 页脚版权信息
+        - 移动端提示组件
+    依赖文件：
+        - css/style.css（样式表）
+        - js/data.js（数据存储）
+        - js/main.js（公共功能）
+    =============================================================================
+-->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <!-- 页面元数据配置 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>学业指导 - 中石大克校区资源共享论坛</title>
+    <!-- 引入全局样式文件 -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <!--
+        ============================================================
+        顶部导航栏区域
+        ============================================================
+        包含：网站Logo、主页链接、全局搜索框、用户操作按钮（上传、用户菜单）
+        功能：提供页面导航和全局搜索能力
+    -->
     <nav class="navbar" id="navbar">
+        <!-- 左侧Logo和主页链接 -->
         <div class="nav-logo">
             <a href="index.html" class="page-link">克校区资源共享论坛</a>
-            <a href="index.html" class="home-icon" title="返回主页">🏠</a>
+            <a href="home.html" class="home-icon" title="返回主页">🏠</a>
         </div>
+        <!-- 中间搜索框，支持回车搜索 -->
         <div class="nav-search">
             <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
         </div>
+        <!-- 右侧用户操作区：上传按钮、用户下拉菜单、登录入口 -->
         <div class="nav-actions" id="navActions">
+            <!-- 上传资料入口 -->
             <a href="upload.html" class="btn-upload">上传资料</a>
+            <!-- 用户下拉菜单（头像） -->
             <div class="user-dropdown" id="userDropdown">
+                <!-- 用户头像按钮，点击展开下拉菜单 -->
                 <div class="user-avatar" id="userAvatarBtn" onclick="toggleUserMenu()">?</div>
+                <!-- 下拉菜单内容：个人中心、退出登录 -->
                 <div class="user-dropdown-menu" id="userDropdownMenu">
                     <a href="user.html" class="user-dropdown-item">
                         <span class="icon">👤</span>
@@ -30,10 +69,20 @@
                     </button>
                 </div>
             </div>
+            <!-- 未登录状态显示的登录入口 -->
             <a href="login.html" class="btn-user" id="loginLink">登录</a>
         </div>
+        <!-- 移动端导航切换按钮 -->
         <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
     </nav>
+
+    <!--
+        ============================================================
+        移动端导航菜单
+        ============================================================
+        在移动设备上显示的水平导航链接
+        通过nav-toggle按钮控制显示/隐藏
+    -->
     <div class="nav-links-mobile" id="navLinks">
         <a href="courses.html">课程</a>
         <a href="academics.html">学业</a>
@@ -42,59 +91,87 @@
         <a href="contribute.html">贡献</a>
         <a href="about.html">关于</a>
     </div>
+
+    <!--
+        ============================================================
+        主要内容区域
+        ============================================================
+        页面核心内容，展示学业指导相关信息
+    -->
     <main class="page-transition">
+        <!-- 页面主标题 -->
         <h1>学业指导</h1>
 
+        <!-- 新生须知模块：入学必看信息和常见问题 -->
         <div class="section">
+            <!-- id="freshman" 用于页面内锚点跳转 -->
             <h2 id="freshman">新生须知</h2>
             <ul class="resource-list">
+                <!-- 入学必看：新生完全指南 -->
                 <li><a href="freshman.html">入学必看</a> <span class="resource-tag">新生入学完全指南</span></li>
+                <!-- 必备物品清单：入学准备攻略 -->
                 <li><a href="freshman.html#items">必备物品清单</a> <span class="resource-tag">入学物品准备攻略</span></li>
+                <!-- 常见问题：FAQ汇总 -->
                 <li><a href="freshman.html#faq">常见问题解答</a> <span class="resource-tag">FAQ汇总</span></li>
+                <!-- 校园地图：校园导览 -->
                 <li><a href="search.html?q=校园地图">校园地图</a></li>
+                <!-- 校园网指南：网络配置 -->
                 <li><a href="freshman.html#network">校园网使用指南</a> <span class="resource-tag">网络连接与配置</span></li>
             </ul>
         </div>
 
+        <!-- 专业培养方案模块：各学院培养方案链接 -->
         <div class="section">
             <h2>专业培养方案</h2>
             <ul class="resource-list">
+                <!-- 石油学院培养方案 -->
                 <li><a href="cultivation.html">石油学院各专业培养方案</a> <span class="resource-tag">含课程设置</span></li>
+                <!-- 文理学院培养方案 -->
                 <li><a href="cultivation.html#liberal">文理学院各专业培养方案</a> <span class="resource-tag">含学分要求</span></li>
+                <!-- 工商管理学院培养方案 -->
                 <li><a href="cultivation.html#business">工商管理学院各专业培养方案</a> <span class="resource-tag">含实习安排</span></li>
             </ul>
         </div>
 
+        <!-- 转专业相关模块：转专业政策和经验分享入口 -->
         <div class="section">
             <h2>转专业相关</h2>
             <ul class="resource-list">
+                <!-- 转专业政策：最新政策解读 -->
                 <li><a href="transfer.html">转专业政策</a> <span class="resource-tag">最新政策解读</span></li>
+                <!-- 历年情况：数据分析 -->
                 <li><a href="transfer.html#stats">历年转专业情况</a> <span class="resource-tag">数据分析</span></li>
+                <!-- 经验分享：学长学姐经验 -->
                 <li><a href="transfer.html#experience">转专业经验分享</a> <span class="resource-tag">学长学姐经验</span></li>
             </ul>
         </div>
 
+        <!-- 热门学习资料模块：以卡片形式展示热门资源 -->
         <div class="section">
             <h2>热门学习资料</h2>
             <div class="resource-grid">
+                <!-- 高等数学笔记 -->
                 <div class="resource-card">
                     <div class="resource-title"><a href="detail.html?id=RES_000001">高等数学笔记</a></div>
                     <div class="resource-meta">分类：数学</div>
                     <div class="resource-meta">上传者：张同学</div>
                     <div class="resource-meta">下载：128次</div>
                 </div>
+                <!-- 线性代数资料 -->
                 <div class="resource-card">
                     <div class="resource-title"><a href="detail.html?id=RES_000002">线性代数资料</a></div>
                     <div class="resource-meta">分类：数学</div>
                     <div class="resource-meta">上传者：李同学</div>
                     <div class="resource-meta">下载：96次</div>
                 </div>
+                <!-- C语言程序设计 -->
                 <div class="resource-card">
                     <div class="resource-title"><a href="detail.html?id=RES_000003">C语言程序设计教程</a></div>
                     <div class="resource-meta">分类：计算机</div>
                     <div class="resource-meta">上传者：王同学</div>
                     <div class="resource-meta">下载：215次</div>
                 </div>
+                <!-- 大学物理公式 -->
                 <div class="resource-card">
                     <div class="resource-title"><a href="detail.html?id=RES_000006">大学物理公式汇总</a></div>
                     <div class="resource-meta">分类：物理</div>
@@ -102,16 +179,33 @@
                     <div class="resource-meta">下载：203次</div>
                 </div>
             </div>
+            <!-- 查看更多课程资源链接 -->
             <p style="margin-top: 15px;"><a href="courses.html">查看更多课程资源 &rarr;</a></p>
         </div>
     </main>
+
+    <!--
+        ============================================================
+        页脚区域
+        ============================================================
+        显示版权信息和平台声明
+    -->
     <footer class="footer">
         <p>Copyright &copy; 2025 中石大克校区资源共享论坛</p>
         <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
     </footer>
+
+    <!--
+        ============================================================
+        移动端提示组件
+        ============================================================
+        提示移动端用户使用电脑访问以获得更好体验
+    -->
+    <!-- 移动端顶部提示条（始终显示） -->
     <div class="mobile-tip-bar" id="mobileTipBar" style="display: none;">
         <span>💻 电脑访问体验更佳</span>
     </div>
+    <!-- 移动端首次访问弹窗提示（点击关闭） -->
     <div class="mobile-tip-popup" id="mobileTipPopup" style="display: none;">
         <div class="mobile-tip-popup-content">
             <div class="mobile-tip-popup-icon">💻</div>
@@ -119,22 +213,64 @@
             <button onclick="closeMobileTipPopup()">我知道了</button>
         </div>
     </div>
-    <script src="js/data.js" defer></script>
-    <script src="js/main.js" defer></script>
+
+    <!-- 引入外部脚本文件 -->
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+
+    <!--
+        ============================================================
+        页面初始化脚本
+        ============================================================
+        功能：
+            - DOM加载完成后初始化页面
+            - 检查用户登录状态
+            - 更新导航栏用户状态显示
+            - 隐藏页面加载动画
+            - 实现导航栏滚动效果
+    -->
     <script>
-        checkLoginStatus();
-        updateNavUserState();
-        hideLoading();
-        window.onscroll = function() {
-            var navbar = document.getElementById("navbar");
-            if (navbar) {
-                if (window.pageYOffset > 50) {
-                    navbar.classList.add("scrolled");
-                } else {
-                    navbar.classList.remove("scrolled");
+        /**
+         * DOM加载完成后执行初始化
+         * 确保所有DOM元素都已渲染后再进行操作
+         */
+        document.addEventListener('DOMContentLoaded', function() {
+            /**
+             * 检查用户登录状态
+             * 根据登录状态更新导航栏的显示（显示用户头像或登录按钮）
+             */
+            checkLoginStatus();
+
+            /**
+             * 更新导航栏用户状态
+             * 刷新用户下拉菜单中的用户名显示
+             */
+            updateNavUserState();
+
+            /**
+             * 隐藏页面加载动画/遮罩
+             * 在所有资源加载完成后调用
+             */
+            hideLoading();
+
+            /**
+             * 导航栏滚动效果
+             * 当页面滚动超过50px时，为导航栏添加阴影效果
+             * 提升页面滚动时的视觉层次感
+             */
+            window.onscroll = function() {
+                var navbar = document.getElementById("navbar");
+                if (navbar) {
+                    if (window.pageYOffset > 50) {
+                        // 添加滚动样式（阴影效果）
+                        navbar.classList.add("scrolled");
+                    } else {
+                        // 移除滚动样式
+                        navbar.classList.remove("scrolled");
+                    }
                 }
-            }
-        };
+            };
+        });
     </script>
 </body>
 </html>

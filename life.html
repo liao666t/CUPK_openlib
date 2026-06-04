@@ -1,24 +1,62 @@
+<!--
+    =============================================================================
+    生活指南页面 (life.html)
+    =============================================================================
+    页面功能：
+        - 提供中石大克校区校园生活实用信息
+        - 展示校园美食攻略和推荐
+        - 介绍校园服务使用方法（校园网、学生卡、图书馆、快递等）
+        - 提供生活小贴士和常用联系方式
+        - 支持移动端访问
+    页面结构：
+        - 顶部导航栏（Logo、搜索框、用户操作）
+        - 移动端导航菜单
+        - 主要内容区（美食、服务、小贴士、联系方式）
+        - 页脚版权信息
+        - 移动端提示组件
+    依赖文件：
+        - css/style.css（样式表）
+        - js/data.js（数据存储）
+        - js/main.js（公共功能）
+    =============================================================================
+-->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <!-- 页面元数据配置 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>生活指南 - 中石大克校区资源共享论坛</title>
+    <!-- 引入全局样式文件 -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <!--
+        ============================================================
+        顶部导航栏区域
+        ============================================================
+        包含：网站Logo、主页链接、全局搜索框、用户操作按钮（上传、用户菜单）
+        功能：提供页面导航和全局搜索能力
+    -->
     <nav class="navbar" id="navbar">
+        <!-- 左侧Logo和主页链接 -->
         <div class="nav-logo">
             <a href="index.html" class="page-link">克校区资源共享论坛</a>
-            <a href="index.html" class="home-icon" title="返回主页">🏠</a>
+            <a href="home.html" class="home-icon" title="返回主页">🏠</a>
         </div>
+        <!-- 中间搜索框，支持回车搜索 -->
         <div class="nav-search">
             <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
         </div>
+        <!-- 右侧用户操作区：上传按钮、用户下拉菜单、登录入口 -->
         <div class="nav-actions" id="navActions">
+            <!-- 上传资料入口 -->
             <a href="upload.html" class="btn-upload">上传资料</a>
+            <!-- 用户下拉菜单（头像） -->
             <div class="user-dropdown" id="userDropdown">
+                <!-- 用户头像按钮，点击展开下拉菜单 -->
                 <div class="user-avatar" id="userAvatarBtn" onclick="toggleUserMenu()">?</div>
+                <!-- 下拉菜单内容：个人中心、退出登录 -->
                 <div class="user-dropdown-menu" id="userDropdownMenu">
                     <a href="user.html" class="user-dropdown-item">
                         <span class="icon">👤</span>
@@ -30,10 +68,20 @@
                     </button>
                 </div>
             </div>
+            <!-- 未登录状态显示的登录入口 -->
             <a href="login.html" class="btn-user" id="loginLink">登录</a>
         </div>
+        <!-- 移动端导航切换按钮 -->
         <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
     </nav>
+
+    <!--
+        ============================================================
+        移动端导航菜单
+        ============================================================
+        在移动设备上显示的水平导航链接
+        通过nav-toggle按钮控制显示/隐藏
+    -->
     <div class="nav-links-mobile" id="navLinks">
         <a href="courses.html">课程</a>
         <a href="academics.html">学业</a>
@@ -42,72 +90,116 @@
         <a href="contribute.html">贡献</a>
         <a href="about.html">关于</a>
     </div>
+
+    <!--
+        ============================================================
+        主要内容区域
+        ============================================================
+        页面核心内容，展示校园生活相关信息
+    -->
     <main class="page-transition">
+        <!-- 页面主标题 -->
         <h1>生活指南</h1>
 
+        <!-- 校园美食模块：食堂和周边餐饮推荐 -->
         <div class="section">
             <h2>校园美食</h2>
             <ul class="resource-list">
-                <li><a href="detail.html?id=RES_000007">第一食堂美食推荐</a> <span class="resource-tag">热门菜品TOP10</span></li>
-                <li><a href="detail.html?id=RES_000008">第二食堂美食推荐</a> <span class="resource-tag">特色小吃</span></li>
+                <!-- 第一食堂：最受欢迎的食堂 -->
+                <li><a href="detail.html?id=RES_000023">第一食堂美食地图</a> <span class="resource-tag">热门菜品TOP10</span></li>
+                <!-- 第二食堂：隐藏菜单推荐 -->
+                <li><a href="detail.html?id=RES_000024">第二食堂隐藏菜单</a> <span class="resource-tag">内部人员推荐</span></li>
+                <!-- 校外美食：周边餐饮攻略 -->
                 <li><a href="search.html?q=校外美食">校外美食攻略</a> <span class="resource-tag">周边餐饮推荐</span></li>
-                <li><a href="detail.html?id=RES_000009">食堂隐藏菜单</a> <span class="resource-tag">内部人员推荐</span></li>
+                <!-- 食堂隐藏菜单：特色小吃 -->
+                <li><a href="detail.html?id=RES_000024">食堂隐藏菜单</a> <span class="resource-tag">特色小吃</span></li>
             </ul>
         </div>
 
+        <!-- 校园服务模块：日常生活必需服务介绍 -->
         <div class="section">
             <h2>校园服务</h2>
             <ul class="resource-list">
-                <li><a href="detail.html?id=RES_000005">校园网使用指南</a> <span class="resource-tag">WiFi连接与故障排除</span></li>
-                <li><a href="detail.html?id=RES_000006">学生卡使用指南</a> <span class="resource-tag">充值与挂失</span></li>
-                <li><a href="detail.html?id=RES_000010">图书馆使用指南</a> <span class="resource-tag">借阅规则与开放时间</span></li>
-                <li><a href="detail.html?id=RES_000011">快递点分布</a> <span class="resource-tag">各快递公司取件点</span></li>
-                <li><a href="detail.html?id=RES_000012">医务室服务</a> <span class="resource-tag">就医流程</span></li>
+                <!-- 校园网：WiFi使用指南 -->
+                <li><a href="detail.html?id=RES_000025">校园网使用指南</a> <span class="resource-tag">WiFi连接与故障排除</span></li>
+                <!-- 学生卡：充值挂失指南 -->
+                <li><a href="detail.html?id=RES_000026">学生卡使用指南</a> <span class="resource-tag">充值与挂失</span></li>
+                <!-- 图书馆：借阅规则 -->
+                <li><a href="detail.html?id=RES_000027">图书馆使用指南</a> <span class="resource-tag">借阅规则与开放时间</span></li>
+                <!-- 快递点：各快递公司位置 -->
+                <li><a href="detail.html?id=RES_000028">快递点分布</a> <span class="resource-tag">各快递公司取件点</span></li>
+                <!-- 后勤服务：报修投诉 -->
+                <li><a href="detail.html?id=RES_000032">后勤服务热线</a> <span class="resource-tag">报修、投诉</span></li>
             </ul>
         </div>
 
+        <!-- 生活小贴士模块：以卡片形式展示实用信息 -->
         <div class="section">
             <h2>生活小贴士</h2>
             <div class="resource-grid">
+                <!-- 宿舍生活：住宿相关指南 -->
                 <div class="resource-card">
-                    <div class="resource-title"><a href="detail.html?id=RES_000001">宿舍生活指南</a></div>
+                    <div class="resource-title"><a href="detail.html?id=RES_000029">宿舍生活指南</a></div>
                     <div class="resource-meta">包含宿舍设施介绍</div>
                     <div class="resource-meta">归属：生活</div>
                 </div>
+                <!-- 校园交通：出行方式汇总 -->
                 <div class="resource-card">
-                    <div class="resource-title"><a href="detail.html?id=RES_000002">校园交通攻略</a></div>
+                    <div class="resource-title"><a href="detail.html?id=RES_000030">校园交通攻略</a></div>
                     <div class="resource-meta">校内外出行方式</div>
                     <div class="resource-meta">归属：生活</div>
                 </div>
+                <!-- 校内超市：购物指南 -->
                 <div class="resource-card">
-                    <div class="resource-title"><a href="detail.html?id=RES_000003">超市购物指南</a></div>
-                    <div class="resource-meta">校内超市分布</div>
+                    <div class="resource-title"><a href="search.html?q=校内超市">校内超市分布</a></div>
+                    <div class="resource-meta">超市购物指南</div>
                     <div class="resource-meta">归属：生活</div>
                 </div>
+                <!-- 紧急电话：金融服务 -->
                 <div class="resource-card">
-                    <div class="resource-title"><a href="detail.html?id=RES_000004">银行与ATM分布</a></div>
+                    <div class="resource-title"><a href="detail.html?id=RES_000031">校园紧急电话</a></div>
                     <div class="resource-meta">校园金融服务</div>
                     <div class="resource-meta">归属：生活</div>
                 </div>
             </div>
         </div>
 
+        <!-- 常用联系方式模块：紧急和日常服务电话 -->
         <div class="section">
             <h2>常用联系方式</h2>
             <ul class="resource-list">
-                <li><a href="detail.html?id=RES_000008">校园紧急电话</a> <span class="resource-tag">保卫处、医务室</span></li>
-                <li><a href="detail.html?id=RES_000009">后勤服务热线</a> <span class="resource-tag">报修、投诉</span></li>
-                <li><a href="detail.html?id=RES_000010">教务处联系方式</a> <span class="resource-tag">选课、成绩咨询</span></li>
+                <!-- 紧急电话：安全和医疗 -->
+                <li><a href="detail.html?id=RES_000031">校园紧急电话</a> <span class="resource-tag">保卫处、医务室</span></li>
+                <!-- 后勤热线：维修投诉 -->
+                <li><a href="detail.html?id=RES_000032">后勤服务热线</a> <span class="resource-tag">报修、投诉</span></li>
+                <!-- 图书馆：借阅服务 -->
+                <li><a href="detail.html?id=RES_000027">图书馆服务台</a> <span class="resource-tag">借阅、座位预约</span></li>
             </ul>
         </div>
     </main>
+
+    <!--
+        ============================================================
+        页脚区域
+        ============================================================
+        显示版权信息和平台声明
+    -->
     <footer class="footer">
         <p>Copyright &copy; 2025 中石大克校区资源共享论坛</p>
         <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
     </footer>
+
+    <!--
+        ============================================================
+        移动端提示组件
+        ============================================================
+        提示移动端用户使用电脑访问以获得更好体验
+    -->
+    <!-- 移动端顶部提示条（始终显示） -->
     <div class="mobile-tip-bar" id="mobileTipBar" style="display: none;">
         <span>💻 电脑访问体验更佳</span>
     </div>
+    <!-- 移动端首次访问弹窗提示（点击关闭） -->
     <div class="mobile-tip-popup" id="mobileTipPopup" style="display: none;">
         <div class="mobile-tip-popup-content">
             <div class="mobile-tip-popup-icon">💻</div>
@@ -115,22 +207,64 @@
             <button onclick="closeMobileTipPopup()">我知道了</button>
         </div>
     </div>
-    <script src="js/data.js" defer></script>
-    <script src="js/main.js" defer></script>
+
+    <!-- 引入外部脚本文件 -->
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+
+    <!--
+        ============================================================
+        页面初始化脚本
+        ============================================================
+        功能：
+            - DOM加载完成后初始化页面
+            - 检查用户登录状态
+            - 更新导航栏用户状态显示
+            - 隐藏页面加载动画
+            - 实现导航栏滚动效果
+    -->
     <script>
-        checkLoginStatus();
-        updateNavUserState();
-        hideLoading();
-        window.onscroll = function() {
-            var navbar = document.getElementById("navbar");
-            if (navbar) {
-                if (window.pageYOffset > 50) {
-                    navbar.classList.add("scrolled");
-                } else {
-                    navbar.classList.remove("scrolled");
+        /**
+         * DOM加载完成后执行初始化
+         * 确保所有DOM元素都已渲染后再进行操作
+         */
+        document.addEventListener('DOMContentLoaded', function() {
+            /**
+             * 检查用户登录状态
+             * 根据登录状态更新导航栏的显示（显示用户头像或登录按钮）
+             */
+            checkLoginStatus();
+
+            /**
+             * 更新导航栏用户状态
+             * 刷新用户下拉菜单中的用户名显示
+             */
+            updateNavUserState();
+
+            /**
+             * 隐藏页面加载动画/遮罩
+             * 在所有资源加载完成后调用
+             */
+            hideLoading();
+
+            /**
+             * 导航栏滚动效果
+             * 当页面滚动超过50px时，为导航栏添加阴影效果
+             * 提升页面滚动时的视觉层次感
+             */
+            window.onscroll = function() {
+                var navbar = document.getElementById("navbar");
+                if (navbar) {
+                    if (window.pageYOffset > 50) {
+                        // 添加滚动样式（阴影效果）
+                        navbar.classList.add("scrolled");
+                    } else {
+                        // 移除滚动样式
+                        navbar.classList.remove("scrolled");
+                    }
                 }
-            }
-        };
+            };
+        });
     </script>
 </body>
 </html>

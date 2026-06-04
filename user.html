@@ -1,39 +1,83 @@
 <!DOCTYPE html>
+<!--
+    个人中心页面
+    功能：展示用户个人信息、上传记录、浏览历史，支持查看他人个人主页
+    作者：03班14组
+    创建日期：2024年
+    
+    技术说明：
+    - 支持查看当前用户个人主页
+    - 支持通过URL参数查看指定用户主页（?userId=xxx）
+    - 浏览历史仅对当前用户可见
+    - 使用localStorage存储用户数据
+-->
 <html lang="zh-CN">
 <head>
+    <!-- 页面元数据设置 -->
     <meta charset="UTF-8">
+    <!-- 视口设置，支持移动端响应式布局 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 页面标题 -->
     <title>个人中心 - 中石大克校区资源共享论坛</title>
+    <!-- 引入外部样式表 -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <!-- ========================================
+         顶部导航栏
+         功能：提供网站主要导航、搜索和用户操作入口
+         ======================================== -->
     <nav class="navbar" id="navbar">
+        <!-- Logo和网站名称区域 -->
         <div class="nav-logo">
+            <!-- 网站主链接，点击返回入口页面 -->
             <a href="index.html" class="page-link">克校区资源共享论坛</a>
-            <a href="index.html" class="home-icon" title="返回主页">🏠</a>
+            <!-- 主页图标快捷链接，点击直接跳转首页 -->
+            <a href="home.html" class="home-icon" title="返回主页">🏠</a>
         </div>
+        
+        <!-- 搜索框区域 -->
         <div class="nav-search">
+            <!-- 搜索输入框，支持按回车键搜索 -->
             <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
         </div>
+        
+        <!-- 用户操作按钮区域 -->
         <div class="nav-actions" id="navActions">
+            <!-- 上传资料按钮，跳转到上传页面 -->
             <a href="upload.html" class="btn-upload">上传资料</a>
+            
+            <!-- 用户下拉菜单，已登录用户可见 -->
             <div class="user-dropdown" id="userDropdown">
+                <!-- 用户头像图标，点击展开下拉菜单 -->
                 <div class="user-avatar" id="userAvatarBtn" onclick="toggleUserMenu()">?</div>
+                <!-- 下拉菜单内容 -->
                 <div class="user-dropdown-menu" id="userDropdownMenu">
+                    <!-- 个人中心链接 -->
                     <a href="user.html" class="user-dropdown-item">
                         <span class="icon">👤</span>
                         <span id="dropdownUsername">个人中心</span>
                     </a>
+                    <!-- 退出登录按钮 -->
                     <button class="user-dropdown-item" onclick="logout()">
                         <span class="icon">🚪</span>
                         <span>退出登录</span>
                     </button>
                 </div>
             </div>
+            
+            <!-- 登录按钮，未登录用户可见 -->
             <a href="login.html" class="btn-user" id="loginLink">登录</a>
         </div>
+        
+        <!-- 移动端导航菜单切换按钮 -->
         <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
     </nav>
+    
+    <!-- ========================================
+         移动端导航链接
+         功能：在移动设备上提供水平排列的快捷导航
+         ======================================== -->
     <div class="nav-links-mobile" id="navLinks">
         <a href="courses.html">课程</a>
         <a href="academics.html">学业</a>
@@ -42,16 +86,33 @@
         <a href="contribute.html">贡献</a>
         <a href="about.html">关于</a>
     </div>
+    
+    <!-- ========================================
+         页面主要内容区域
+         包含：用户信息、统计数据、上传记录、浏览历史
+         ======================================== -->
     <main class="page-transition">
+        <!-- 页面主标题 -->
         <h1>个人中心</h1>
         
+        <!-- ========================================
+             未登录提示区域
+             用户未登录时显示此提示
+             ======================================== -->
         <div id="notLoggedIn" class="not-logged-in" style="display:none;">
             <p>您还未登录，请先 <a href="login.html">登录</a></p>
         </div>
         
+        <!-- ========================================
+             用户信息卡片区域
+             包含头像、用户名、学院、专业、年级信息
+             ======================================== -->
         <div id="userProfile" class="user-profile">
+            <!-- 用户信息头部 -->
             <div class="profile-header">
+                <!-- 用户头像，显示用户名首字母 -->
                 <div class="profile-avatar" id="profileAvatar">用户名</div>
+                <!-- 用户详细信息 -->
                 <div class="profile-info">
                     <h2 id="profileUsername">用户名</h2>
                     <p id="profileCollege">学院</p>
@@ -60,47 +121,82 @@
                 </div>
             </div>
             
+            <!-- ========================================
+                 用户统计数据区域
+                 展示上传资料数、下载次数、资料被下载次数
+                 ======================================== -->
             <div class="profile-stats">
+                <!-- 上传资料数统计 -->
                 <div class="stat-card">
                     <div class="stat-number" id="uploadCount">0</div>
                     <div class="stat-label">上传资料数</div>
                 </div>
+                <!-- 用户下载次数统计 -->
                 <div class="stat-card">
                     <div class="stat-number" id="downloadCount">0</div>
                     <div class="stat-label">下载次数</div>
                 </div>
+                <!-- 用户上传资料被下载总次数 -->
                 <div class="stat-card">
                     <div class="stat-number" id="totalDownloads">0</div>
                     <div class="stat-label">资料被下载</div>
                 </div>
             </div>
             
+            <!-- 用户操作按钮区域 -->
             <div class="profile-actions">
                 <button class="btn-action" onclick="logout()">退出登录</button>
             </div>
         </div>
         
+        <!-- ========================================
+             我的上传记录区域
+             展示用户上传的所有资料
+             ======================================== -->
         <div class="section">
             <h2>我的上传记录</h2>
+            <!-- 上传记录列表容器 -->
             <div id="uploadList" class="upload-list">
+                <!-- 无记录时显示的提示 -->
                 <p class="empty-message">暂无上传记录</p>
             </div>
         </div>
         
+        <!-- ========================================
+             最近浏览区域
+             展示用户的浏览历史（仅当前用户可见）
+             ======================================== -->
         <div class="section">
             <h2>最近浏览</h2>
+            <!-- 浏览历史列表容器 -->
             <div id="browseHistory" class="upload-list">
+                <!-- 无记录时显示的提示 -->
                 <p class="empty-message">暂无浏览记录</p>
             </div>
         </div>
     </main>
+    
+    <!-- ========================================
+         页脚区域
+         包含版权声明和免责条款
+         ======================================== -->
     <footer class="footer">
         <p>Copyright &copy; 2025 中石大克校区资源共享论坛</p>
         <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
     </footer>
+    
+    <!-- ========================================
+         移动端提示栏
+         移动设备访问时显示友好提示
+         ======================================== -->
     <div class="mobile-tip-bar" id="mobileTipBar" style="display: none;">
         <span>💻 电脑访问体验更佳</span>
     </div>
+    
+    <!-- ========================================
+         移动端提示弹窗
+         首次访问时显示的引导提示
+         ======================================== -->
     <div class="mobile-tip-popup" id="mobileTipPopup" style="display: none;">
         <div class="mobile-tip-popup-content">
             <div class="mobile-tip-popup-icon">💻</div>
@@ -108,34 +204,56 @@
             <button onclick="closeMobileTipPopup()">我知道了</button>
         </div>
     </div>
+    
+    <!-- ========================================
+         JavaScript脚本
+         包含用户信息加载、个人主页渲染等逻辑
+         ======================================== -->
+    <!-- 数据管理模块，提供数据存取接口 -->
     <script src="js/data.js"></script>
+    <!-- 主逻辑模块 -->
     <script src="js/main.js"></script>
+    <!-- 个人中心页面专用脚本 -->
     <script>
+        /**
+         * 页面初始化函数
+         * 功能：加载用户数据、显示用户信息
+         */
+        // 隐藏页面加载动画
         hideLoading();
         
-        // 更新导航栏用户状态
+        // 更新导航栏用户状态（头像、用户名等）
         updateNavUserState();
         
+        /**
+         * 等待数据存储模块初始化
+         * 功能：确保DataStore加载完成后再获取用户数据
+         */
         // 等待 DataStore 初始化完成后再加载数据
         waitForDataStore(function() {
             loadUserProfile();
         });
         
+        /**
+         * 加载用户信息函数
+         * 功能：从localStorage或URL参数获取用户数据，渲染个人主页
+         */
         function loadUserProfile() {
-            // 检查是否有指定查看的用户ID
+            // 检查URL参数中是否有指定查看的用户ID
             var urlParams = new URLSearchParams(window.location.search);
             var viewUserId = urlParams.get('userId');
             
+            // 获取当前登录用户信息
             var currentUserStr = localStorage.getItem("currentUser");
             var notLoggedIn = document.getElementById("notLoggedIn");
             var userProfile = document.getElementById("userProfile");
             
-            // 确定要显示的用户
+            // 确定要显示的用户对象
             var userToShow = null;
-            var isOwnProfile = true;
+            var isOwnProfile = true; // 是否为查看自己的主页
             
             if (viewUserId) {
-                // 查看指定用户
+                // 通过URL参数查看指定用户
                 userToShow = DataStore.getUser(viewUserId);
                 isOwnProfile = false;
             } else if (currentUserStr) {
@@ -143,41 +261,50 @@
                 userToShow = JSON.parse(currentUserStr);
             }
             
+            // 用户不存在或未登录
             if (!userToShow) {
                 notLoggedIn.style.display = "block";
                 userProfile.style.display = "none";
                 return;
             }
             
+            // 显示用户信息区域，隐藏未登录提示
             notLoggedIn.style.display = "none";
             userProfile.style.display = "block";
             
-            // 显示用户信息
+            // 渲染用户基本信息
+            // 头像显示用户名首字母
             document.getElementById("profileAvatar").textContent = userToShow.username ? userToShow.username.charAt(0).toUpperCase() : '?';
             document.getElementById("profileUsername").textContent = userToShow.username || "未知用户";
             document.getElementById("profileCollege").textContent = userToShow.college || "";
             document.getElementById("profileMajor").textContent = userToShow.major || "";
             document.getElementById("profileGrade").textContent = (userToShow.grade || "") + "级";
             
-            // 获取用户上传的资源
+            // 获取该用户上传的所有资源
             var uploads = DataStore.getResourcesByUploader(userToShow.id || userToShow.username);
+            // 更新统计数据
             document.getElementById("uploadCount").textContent = uploads.length;
             document.getElementById("downloadCount").textContent = userToShow.downloadCount || 0;
             
+            // 计算用户上传资源被下载的总次数
             var totalDownloads = 0;
             for (var i = 0; i < uploads.length; i++) {
                 totalDownloads += uploads[i].downloads || 0;
             }
             document.getElementById("totalDownloads").textContent = totalDownloads;
             
-            // 显示上传记录
+            // ========================================
+            // 渲染上传记录列表
+            // ========================================
             var uploadList = document.getElementById("uploadList");
             if (uploads.length === 0) {
+                // 无上传记录时显示提示
                 uploadList.innerHTML = '<p class="empty-message">暂无上传记录</p>';
             } else {
                 var html = '<div class="record-list">';
                 for (var j = 0; j < uploads.length; j++) {
                     var upload = uploads[j];
+                    // 构建上传记录HTML，支持点击跳转详情页
                     html += '<div class="record-item" onclick="goToDetail(\'' + upload.id + '\')" style="cursor:pointer;">';
                     html += '<div class="record-title"><a href="detail.html?id=' + upload.id + '" onclick="event.stopPropagation();">' + upload.title + '</a></div>';
                     html += '<div class="record-meta">上传时间：' + upload.uploadTime + '</div>';
@@ -188,19 +315,27 @@
                 uploadList.innerHTML = html;
             }
             
-            // 仅在查看自己的主页时显示浏览历史
+            // ========================================
+            // 渲染浏览历史（仅对当前用户可见）
+            // ========================================
             var browseHistoryContainer = document.getElementById("browseHistory").parentElement;
             if (isOwnProfile && currentUserStr) {
+                // 当前用户查看自己的主页，显示浏览历史
                 browseHistoryContainer.style.display = "block";
+                // 从localStorage获取浏览历史
                 var browseHistory = JSON.parse(localStorage.getItem("browseHistory") || "[]");
                 var historyContainer = document.getElementById("browseHistory");
+                
                 if (browseHistory.length === 0) {
+                    // 无浏览历史时显示提示
                     historyContainer.innerHTML = '<p class="empty-message">暂无浏览记录</p>';
                 } else {
                     var historyHtml = '<div class="record-list">';
+                    // 只显示最近5条浏览记录
                     for (var k = 0; k < browseHistory.length && k < 5; k++) {
                         var item = browseHistory[k];
                         var itemId = item.id || 'browse_' + k;
+                        // 构建浏览历史HTML
                         historyHtml += '<div class="record-item" onclick="goToDetail(\'' + itemId + '\')" style="cursor:pointer;">';
                         historyHtml += '<div class="record-title"><a href="detail.html?id=' + itemId + '" onclick="event.stopPropagation();">' + item.title + '</a></div>';
                         historyHtml += '<div class="record-meta">浏览时间：' + item.time + '</div>';
@@ -210,20 +345,37 @@
                     historyContainer.innerHTML = historyHtml;
                 }
             } else {
+                // 查看他人主页时隐藏浏览历史
                 browseHistoryContainer.style.display = "none";
             }
         }
         
+        /**
+         * 退出登录函数
+         * 功能：清除登录状态，跳转到首页
+         */
         function logout() {
+            // 清除localStorage中的用户信息
             localStorage.removeItem("currentUser");
             localStorage.removeItem("savedUsername");
+            // 跳转到首页
             window.location.href = "index.html";
         }
         
+        /**
+         * 跳转详情页函数
+         * 功能：跳转到资源详情页面
+         * @param {string} id - 资源ID
+         */
         function goToDetail(id) {
             window.location.href = "detail.html?id=" + id;
         }
         
+        /**
+         * 滚动事件监听器
+         * 功能：实现导航栏滚动效果
+         * 当页面滚动超过50px时，为导航栏添加阴影效果
+         */
         window.onscroll = function() {
             var navbar = document.getElementById("navbar");
             if (navbar) {
@@ -234,7 +386,6 @@
                 }
             }
         };
-        
     </script>
 </body>
 </html>

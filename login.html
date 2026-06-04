@@ -1,26 +1,64 @@
 <!DOCTYPE html>
+<!--
+    登录/注册页面
+    功能：提供用户登录和注册功能，包含表单验证、记住密码、自动登录等
+    作者：03班14组
+    创建日期：2024年
+    
+    技术说明：
+    - 支持服务器模式和本地模式双模式运行
+    - 本地模式使用localStorage存储用户数据
+    - 预置6个演示账号，密码统一为：admin
+    - 支持"记住我"功能，自动填充用户名
+-->
 <html lang="zh-CN">
 <head>
+    <!-- 页面元数据设置 -->
     <meta charset="UTF-8">
+    <!-- 视口设置，支持移动端响应式布局 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 页面标题 -->
     <title>登录 - 中石大克校区资源共享论坛</title>
+    <!-- 引入外部样式表 -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <!-- ========================================
+         顶部导航栏
+         功能：提供网站主要导航和搜索入口
+         注意：此页面导航栏简化，不显示用户下拉菜单
+         ======================================== -->
     <nav class="navbar" id="navbar">
+        <!-- Logo和网站名称区域 -->
         <div class="nav-logo">
+            <!-- 网站主链接，点击返回入口页面 -->
             <a href="index.html" class="page-link">克校区资源共享论坛</a>
-            <a href="index.html" class="home-icon" title="返回主页">🏠</a>
+            <!-- 主页图标快捷链接，点击直接跳转首页 -->
+            <a href="home.html" class="home-icon" title="返回主页">🏠</a>
         </div>
+        
+        <!-- 搜索框区域 -->
         <div class="nav-search">
+            <!-- 搜索输入框，支持按回车键搜索 -->
             <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
         </div>
+        
+        <!-- 用户操作按钮区域 -->
         <div class="nav-actions" id="navActions">
+            <!-- 上传资料按钮 -->
             <a href="upload.html" class="btn-upload">上传资料</a>
+            <!-- 用户入口按钮 -->
             <a href="login.html" class="btn-user">用户入口</a>
         </div>
+        
+        <!-- 移动端导航菜单切换按钮 -->
         <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
     </nav>
+    
+    <!-- ========================================
+         移动端导航链接
+         功能：在移动设备上提供水平排列的快捷导航
+         ======================================== -->
     <div class="nav-links-mobile" id="navLinks">
         <a href="courses.html">课程</a>
         <a href="academics.html">学业</a>
@@ -29,54 +67,86 @@
         <a href="contribute.html">贡献</a>
         <a href="about.html">关于</a>
     </div>
+    
+    <!-- ========================================
+         登录/注册表单主区域
+         包含选项卡切换、登录表单、注册表单
+         ======================================== -->
     <main class="auth-main">
+        <!-- 表单容器，居中显示 -->
         <div class="auth-container">
+            <!-- ========================================
+                 登录/注册选项卡
+                 点击切换不同的表单视图
+                 ======================================== -->
             <div class="auth-tabs">
+                <!-- 登录选项卡，默认激活 -->
                 <button class="auth-tab active" id="loginTab" onclick="showTab('login')">登录</button>
+                <!-- 注册选项卡 -->
                 <button class="auth-tab" id="registerTab" onclick="showTab('register')">注册</button>
             </div>
             
+            <!-- ========================================
+                 登录表单
+                 功能：用户登录输入框和登录按钮
+                 ======================================== -->
             <div id="loginForm" class="auth-form">
+                <!-- 登录表单，使用HTML5原生验证 -->
                 <form name="loginFormElement" onsubmit="return validateLogin()">
+                    <!-- 用户名/邮箱输入框 -->
                     <div class="form-group">
                         <label for="loginUsername">用户名/邮箱</label>
                         <input type="text" id="loginUsername" placeholder="请输入用户名或邮箱" required>
                     </div>
+                    <!-- 密码输入框 -->
                     <div class="form-group">
                         <label for="loginPassword">密码</label>
                         <input type="password" id="loginPassword" placeholder="请输入密码" required minlength="4">
                     </div>
+                    <!-- 记住我和忘记密码选项 -->
                     <div class="form-group-inline">
                         <label class="checkbox-label">
                             <input type="checkbox" id="rememberMe">
                             <span>记住我</span>
                         </label>
+                        <!-- 忘记密码链接，发送邮件 -->
                         <a href="mailto:contact@cupk.edu.cn?subject=忘记密码" class="forgot-link">忘记密码？</a>
                     </div>
+                    <!-- 登录按钮 -->
                     <div class="form-group">
                         <button type="submit" class="btn-auth" id="loginBtn">登录</button>
                     </div>
                 </form>
             </div>
             
+            <!-- ========================================
+                 注册表单
+                 功能：新用户注册，需要填写详细信息
+                 ======================================== -->
             <div id="registerForm" class="auth-form" style="display:none;">
+                <!-- 注册表单，包含多种输入验证 -->
                 <form name="registerFormElement" onsubmit="return validateRegister()">
+                    <!-- 用户名输入框，正则验证4-20位字母数字下划线 -->
                     <div class="form-group">
                         <label for="regUsername">用户名</label>
                         <input type="text" id="regUsername" placeholder="请输入用户名（4-20位）" required pattern="[a-zA-Z0-9_]{4,20}">
                     </div>
+                    <!-- 邮箱输入框 -->
                     <div class="form-group">
                         <label for="regEmail">邮箱</label>
                         <input type="email" id="regEmail" placeholder="请输入邮箱" required>
                     </div>
+                    <!-- 密码输入框 -->
                     <div class="form-group">
                         <label for="regPassword">密码</label>
                         <input type="password" id="regPassword" placeholder="请输入密码（至少4位）" required minlength="4">
                     </div>
+                    <!-- 确认密码输入框 -->
                     <div class="form-group">
                         <label for="regPassword2">确认密码</label>
                         <input type="password" id="regPassword2" placeholder="请再次输入密码" required minlength="4">
                     </div>
+                    <!-- 学校选择下拉框 -->
                     <div class="form-group">
                         <label for="regSchool">学校</label>
                         <select id="regSchool" required>
@@ -84,6 +154,7 @@
                             <option value="cupk">中国石油大学（北京）克拉玛依校区</option>
                         </select>
                     </div>
+                    <!-- 学院选择下拉框，选择后联动更新专业选项 -->
                     <div class="form-group">
                         <label for="regCollege">学院</label>
                         <select id="regCollege" required>
@@ -94,12 +165,14 @@
                             <option value="business">工商管理学院·马克思主义学院</option>
                         </select>
                     </div>
+                    <!-- 专业选择下拉框，根据学院联动更新 -->
                     <div class="form-group">
                         <label for="regMajor">专业</label>
                         <select id="regMajor" required>
                             <option value="">请选择专业</option>
                         </select>
                     </div>
+                    <!-- 年级选择下拉框 -->
                     <div class="form-group">
                         <label for="regGrade">年级</label>
                         <select id="regGrade" required>
@@ -110,22 +183,42 @@
                             <option value="2022">2022级</option>
                         </select>
                     </div>
+                    <!-- 注册按钮 -->
                     <div class="form-group">
                         <button type="submit" class="btn-auth" id="registerBtn">注册</button>
                     </div>
                 </form>
             </div>
             
+            <!-- ========================================
+                 提示消息区域
+                 显示登录/注册成功或错误信息
+                 ======================================== -->
             <div id="formMessage" class="form-message" style="display: none;"></div>
         </div>
     </main>
+    
+    <!-- ========================================
+         页脚区域
+         包含版权声明和免责条款
+         ======================================== -->
     <footer class="footer">
         <p>Copyright &copy; 2025 中石大克校区资源共享论坛</p>
         <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
     </footer>
+    
+    <!-- ========================================
+         移动端提示栏
+         移动设备访问时显示友好提示
+         ======================================== -->
     <div class="mobile-tip-bar" id="mobileTipBar" style="display: none;">
         <span>💻 电脑访问体验更佳</span>
     </div>
+    
+    <!-- ========================================
+         移动端提示弹窗
+         首次访问时显示的引导提示
+         ======================================== -->
     <div class="mobile-tip-popup" id="mobileTipPopup" style="display: none;">
         <div class="mobile-tip-popup-content">
             <div class="mobile-tip-popup-icon">💻</div>
@@ -133,35 +226,67 @@
             <button onclick="closeMobileTipPopup()">我知道了</button>
         </div>
     </div>
+    
+    <!-- ========================================
+         JavaScript脚本
+         包含表单验证、用户认证等核心逻辑
+         ======================================== -->
+    <!-- 数据管理模块，提供数据存取接口 -->
     <script src="js/data.js"></script>
+    <!-- 主逻辑模块 -->
     <script src="js/main.js"></script>
+    <!-- 登录/注册页面专用脚本 -->
     <script>
+        /**
+         * 页面初始化函数
+         * 功能：检查登录状态、加载保存的凭据、初始化专业选项
+         */
+        // 检查用户登录状态，已登录用户直接跳转首页
         checkLoginStatus();
+        // 隐藏页面加载动画
         hideLoading();
+        // 加载上次保存的用户名（"记住我"功能）
         loadSavedCredentials();
+        // 根据学院选择初始化专业下拉选项
         updateMajorOptions();
         
+        /**
+         * 学院选择变化事件处理
+         * 功能：当用户选择不同学院时，联动更新专业下拉选项
+         */
         document.getElementById("regCollege").onchange = updateMajorOptions;
         
+        /**
+         * 选项卡切换函数
+         * 功能：切换登录和注册表单的显示
+         * @param {string} tab - 要显示的选项卡标识，"login"或"register"
+         */
         function showTab(tab) {
+            // 获取所有选项卡和表单元素
             var tabs = document.querySelectorAll(".auth-tab");
             var loginForm = document.getElementById("loginForm");
             var registerForm = document.getElementById("registerForm");
             var message = document.getElementById("formMessage");
             
+            // 隐藏提示消息
             message.style.display = "none";
             
+            // 根据tab参数切换显示对应表单
             if (tab === "login") {
+                // 显示登录选项卡，隐藏注册选项卡
                 tabs[0].classList.add("active");
                 tabs[1].classList.remove("active");
+                // 显示登录表单，隐藏注册表单
                 loginForm.style.display = "block";
                 loginForm.style.animation = "none";
                 loginForm.offsetHeight; // 触发重排以重新应用动画
                 loginForm.style.animation = "formFadeIn 0.4s ease-out";
                 registerForm.style.display = "none";
             } else {
+                // 显示注册选项卡，隐藏登录选项卡
                 tabs[0].classList.remove("active");
                 tabs[1].classList.add("active");
+                // 显示注册表单，隐藏登录表单
                 loginForm.style.display = "none";
                 registerForm.style.display = "block";
                 registerForm.style.animation = "none";
@@ -170,23 +295,37 @@
             }
         }
         
+        /**
+         * 更新专业选项函数
+         * 功能：根据选择的学院，动态更新专业下拉框的选项
+         */
         function updateMajorOptions() {
+            // 获取当前选择的学院值
             var college = document.getElementById("regCollege").value;
+            // 获取专业下拉框元素
             var majorSelect = document.getElementById("regMajor");
+            // 存储专业列表
             var majors = [];
             
+            // 先重置为默认选项
             majorSelect.innerHTML = "<option value=\"\">请选择专业</option>";
             
+            // 根据学院设置对应的专业列表
             if (college === "petroleum") {
+                // 石油学院专业列表
                 majors = ["资源勘查工程", "勘查技术与工程", "石油工程", "软件工程", "数据科学与大数据技术", "人工智能"];
             } else if (college === "engineering") {
+                // 工学院专业列表
                 majors = ["油气储运工程", "化学工程与工艺", "能源化学工程", "环境工程", "机械设计制造及其自动化", "过程装备与控制工程", "材料科学与工程", "自动化", "安全工程", "新能源科学与工程", "能源与动力工程"];
             } else if (college === "arts") {
+                // 文理学院专业列表
                 majors = ["数学与应用数学", "统计学", "俄语", "英语", "汉语言文学"];
             } else if (college === "business") {
+                // 工商管理学院专业列表
                 majors = ["经济学", "金融学", "会计学", "行政管理", "思想政治教育"];
             }
             
+            // 动态添加专业选项
             for (var i = 0; i < majors.length; i++) {
                 var option = document.createElement("option");
                 option.value = majors[i];
@@ -195,17 +334,24 @@
             }
         }
         
+        /**
+         * 登录表单验证函数
+         * 功能：验证登录表单输入，尝试登录
+         * @returns {boolean} 返回false阻止表单默认提交
+         */
         function validateLogin() {
+            // 获取表单元素
             var username = document.getElementById("loginUsername");
             var password = document.getElementById("loginPassword");
             var rememberMe = document.getElementById("rememberMe").checked;
             var message = document.getElementById("formMessage");
             var btn = document.getElementById("loginBtn");
             
-            // 清除之前的错误状态
+            // 清除之前的错误状态样式
             username.classList.remove("error");
             password.classList.remove("error");
             
+            // 验证用户名/邮箱是否为空
             if (username.value.trim() === "") {
                 message.innerHTML = "请输入用户名或邮箱";
                 message.className = "form-message error";
@@ -215,6 +361,7 @@
                 return false;
             }
             
+            // 验证密码是否为空
             if (password.value === "") {
                 message.innerHTML = "请输入密码";
                 message.className = "form-message error";
@@ -224,34 +371,41 @@
                 return false;
             }
 
-            // 添加按钮加载状态
+            // 添加按钮加载状态，提升用户体验
             btn.classList.add("loading");
             btn.textContent = "登录中...";
             
-            // 尝试使用服务器登录
+            // 尝试使用服务器登录（如果服务器模式可用）
             if (DataStore.isServerMode()) {
+                // 创建XMLHttpRequest进行服务器登录
                 var xhr = new XMLHttpRequest();
                 xhr.open('POST', '/api/users/login', true);
                 xhr.setRequestHeader('Content-Type', 'application/json');
+                // 服务器响应处理
                 xhr.onload = function() {
+                    // 移除按钮加载状态
                     btn.classList.remove("loading");
                     btn.textContent = "登录";
                     if (xhr.status === 200) {
+                        // 登录成功，保存用户信息
                         var user = JSON.parse(xhr.responseText);
                         localStorage.setItem("currentUser", JSON.stringify(user));
                         message.innerHTML = "✓ 登录成功！即将跳转到首页...";
                         message.className = "form-message success";
                         message.style.display = "flex";
+                        // 1秒后跳转到首页
                         setTimeout(function() {
-                            window.location.href = "index.html";
+                            window.location.href = "home.html";
                         }, 1000);
                     } else {
+                        // 登录失败
                         message.innerHTML = "用户名或密码错误";
                         message.className = "form-message error";
                         message.style.display = "flex";
                         password.classList.add("error");
                     }
                 };
+                // 网络错误处理，降级到本地登录
                 xhr.onerror = function() {
                     btn.classList.remove("loading");
                     btn.textContent = "登录";
@@ -260,27 +414,41 @@
                 };
                 xhr.send(JSON.stringify({ username: username.value.trim(), password: password.value }));
             } else {
-                // 使用本地登录
+                // 直接使用本地登录
                 localLogin(username.value.trim(), password.value, rememberMe, message, btn);
             }
             
+            // 阻止表单默认提交
             return false;
         }
         
+        /**
+         * 本地登录函数
+         * 功能：在本地验证用户登录，适用于离线或服务器不可用时
+         * @param {string} username - 用户名
+         * @param {string} password - 密码
+         * @param {boolean} rememberMe - 是否记住我
+         * @param {HTMLElement} message - 消息显示元素
+         * @param {HTMLElement} btn - 登录按钮元素
+         */
         function localLogin(username, password, rememberMe, message, btn) {
-            // 预置的6个演示账号
+            // 预置的7个演示账号，密码统一为：admin
+            // 注意：这是演示账号，生产环境应移除
             var presetUsers = [
                 { id: "USR_000001", username: "廖同学", password: "admin", email: "liao@cupk.edu.cn", school: "cupk", college: "石油学院", major: "软件工程", grade: "2024" },
                 { id: "USR_000002", username: "浩同学", password: "admin", email: "hao@cupk.edu.cn", school: "cupk", college: "石油学院", major: "软件工程", grade: "2024" },
                 { id: "USR_000003", username: "泽同学", password: "admin", email: "ze@cupk.edu.cn", school: "cupk", college: "石油学院", major: "软件工程", grade: "2024" },
                 { id: "USR_000004", username: "马同学", password: "admin", email: "ma@cupk.edu.cn", school: "cupk", college: "石油学院", major: "软件工程", grade: "2024" },
                 { id: "USR_000005", username: "胡同学", password: "admin", email: "hu@cupk.edu.cn", school: "cupk", college: "石油学院", major: "软件工程", grade: "2024" },
-                { id: "USR_000006", username: "高同学", password: "admin", email: "gao@cupk.edu.cn", school: "cupk", college: "石油学院", major: "软件工程", grade: "2024" }
+                { id: "USR_000006", username: "高同学", password: "admin", email: "gao@cupk.edu.cn", school: "cupk", college: "石油学院", major: "软件工程", grade: "2024" },
+                { id: "USR_000007", username: "admin", password: "admin", email: "admin@cupk.edu.cn", school: "cupk", college: "石油学院", major: "软件工程", grade: "2024" }
             ];
-            // 合并预置用户、本地注册用户
+            // 合并预置用户和本地注册用户
             var localUsers = JSON.parse(localStorage.getItem("users") || "[]");
             var users = presetUsers.concat(localUsers);
             var userFound = null;
+            
+            // 遍历用户列表查找匹配的用户
             for (var i = 0; i < users.length; i++) {
                 if (users[i].username === username) {
                     userFound = users[i];
@@ -288,7 +456,9 @@
                 }
             }
             
+            // 检查用户是否存在
             if (userFound) {
+                // 验证密码是否正确
                 if (userFound.password !== password) {
                     message.innerHTML = "密码错误";
                     message.className = "form-message error";
@@ -301,6 +471,7 @@
                     return;
                 }
             } else {
+                // 用户不存在
                 message.innerHTML = "用户不存在，请先注册";
                 message.className = "form-message error";
                 message.style.display = "flex";
@@ -311,29 +482,42 @@
                 return;
             }
             
+            // 处理"记住我"功能
             if (rememberMe) {
+                // 保存用户名到localStorage
                 localStorage.setItem("savedUsername", username);
             } else {
+                // 清除保存的用户名
                 localStorage.removeItem("savedUsername");
             }
             
+            // 保存当前用户信息到localStorage
             localStorage.setItem("currentUser", JSON.stringify(userFound));
             
+            // 显示登录成功消息
             message.innerHTML = "✓ 登录成功！即将跳转到首页...";
             message.className = "form-message success";
             message.style.display = "flex";
             
+            // 恢复按钮状态
             if (btn) {
                 btn.classList.remove("loading");
                 btn.textContent = "登录";
             }
             
+            // 1秒后跳转到首页
             setTimeout(function() {
-                window.location.href = "index.html";
+                window.location.href = "home.html";
             }, 1000);
         }
         
+        /**
+         * 注册表单验证函数
+         * 功能：验证注册表单输入，创建新用户
+         * @returns {boolean} 返回false阻止表单默认提交
+         */
         function validateRegister() {
+            // 获取表单元素
             var username = document.getElementById("regUsername").value.trim();
             var email = document.getElementById("regEmail").value.trim();
             var password = document.getElementById("regPassword").value;
@@ -344,36 +528,42 @@
             var grade = document.getElementById("regGrade").value;
             var message = document.getElementById("formMessage");
             
+            // 验证用户名格式：4-20位字母、数字或下划线
             if (username === "" || !/^[a-zA-Z0-9_]{4,20}$/.test(username)) {
                 message.innerHTML = "用户名需为4-20位字母、数字或下划线";
                 message.className = "form-message error";
                 return false;
             }
             
+            // 验证邮箱格式
             if (email === "" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
                 message.innerHTML = "请输入有效的邮箱地址";
                 message.className = "form-message error";
                 return false;
             }
             
+            // 验证密码长度
             if (password.length < 4) {
                 message.innerHTML = "密码长度至少4位";
                 message.className = "form-message error";
                 return false;
             }
 
+            // 验证两次密码是否一致
             if (password !== password2) {
                 message.innerHTML = "两次输入的密码不一致";
                 message.className = "form-message error";
                 return false;
             }
             
+            // 验证必填项是否完整
             if (school === "" || college === "" || major === "" || grade === "") {
                 message.innerHTML = "请完整填写学校、学院、专业和年级";
                 message.className = "form-message error";
                 return false;
             }
             
+            // 检查用户名是否已存在
             var users = JSON.parse(localStorage.getItem("users") || "[]");
             for (var i = 0; i < users.length; i++) {
                 if (users[i].username === username) {
@@ -383,6 +573,7 @@
                 }
             }
             
+            // 学院名称映射表
             var collegeNames = {
                 petroleum: "石油学院",
                 engineering: "工学院",
@@ -390,6 +581,7 @@
                 business: "工商管理学院·马克思主义学院"
             };
             
+            // 构建新用户对象
             var newUser = {
                 username: username,
                 email: email,
@@ -401,6 +593,7 @@
                 registerTime: new Date().toISOString()
             };
             
+            // 添加按钮加载状态
             var btn = document.getElementById("registerBtn");
             btn.classList.add("loading");
             btn.textContent = "注册中...";
@@ -410,14 +603,18 @@
                 var xhr = new XMLHttpRequest();
                 xhr.open('POST', '/api/users/register', true);
                 xhr.setRequestHeader('Content-Type', 'application/json');
+                // 服务器响应处理
                 xhr.onload = function() {
                     if (xhr.status === 200 || xhr.status === 201) {
+                        // 注册成功，切换到登录页面
                         message.innerHTML = "✓ 注册成功！即将跳转到登录...";
                         message.className = "form-message success";
                         message.style.display = "flex";
                         showTab("login");
+                        // 自动填充用户名
                         document.getElementById("loginUsername").value = username;
                     } else {
+                        // 注册失败，显示错误信息
                         try {
                             var err = JSON.parse(xhr.responseText);
                             message.innerHTML = err.error || "注册失败";
@@ -428,6 +625,7 @@
                         message.style.display = "flex";
                     }
                 };
+                // 网络错误处理，降级到本地注册
                 xhr.onerror = function() {
                     btn.classList.remove("loading");
                     btn.textContent = "注册";
@@ -436,15 +634,25 @@
                 };
                 xhr.send(JSON.stringify(newUser));
             } else {
-                // 本地注册
+                // 直接使用本地注册
                 localRegister(newUser, message);
             }
             
+            // 阻止表单默认提交
             return false;
         }
         
+        /**
+         * 本地注册函数
+         * 功能：在本地存储中创建新用户
+         * @param {Object} newUser - 新用户对象
+         * @param {HTMLElement} message - 消息显示元素
+         */
         function localRegister(newUser, message) {
+            // 从localStorage获取现有用户列表
             var users = JSON.parse(localStorage.getItem("users") || "[]");
+            
+            // 再次检查用户名是否已存在
             for (var i = 0; i < users.length; i++) {
                 if (users[i].username === newUser.username) {
                     message.innerHTML = "用户名已存在";
@@ -454,30 +662,48 @@
                 }
             }
             
+            // 将新用户添加到用户列表
             users.push(newUser);
+            // 保存到localStorage
             localStorage.setItem("users", JSON.stringify(users));
             
+            // 恢复按钮状态
             var btn = document.getElementById("registerBtn");
             if (btn) {
                 btn.classList.remove("loading");
                 btn.textContent = "注册";
             }
             
+            // 显示注册成功消息
             message.innerHTML = "✓ 注册成功！请登录";
             message.className = "form-message success";
             message.style.display = "flex";
+            // 切换到登录选项卡
             showTab("login");
+            // 自动填充用户名
             document.getElementById("loginUsername").value = newUser.username;
         }
         
+        /**
+         * 加载保存的凭据函数
+         * 功能：读取localStorage中保存的用户名，自动填充到登录表单
+         * 用于实现"记住我"功能
+         */
         function loadSavedCredentials() {
             var savedUsername = localStorage.getItem("savedUsername");
             if (savedUsername) {
+                // 自动填充用户名
                 document.getElementById("loginUsername").value = savedUsername;
+                // 自动勾选记住我复选框
                 document.getElementById("rememberMe").checked = true;
             }
         }
         
+        /**
+         * 滚动事件监听器
+         * 功能：实现导航栏滚动效果
+         * 当页面滚动超过50px时，为导航栏添加阴影效果
+         */
         window.onscroll = function() {
             var navbar = document.getElementById("navbar");
             if (navbar) {
@@ -488,7 +714,6 @@
                 }
             }
         };
-        
     </script>
 </body>
 </html>

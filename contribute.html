@@ -1,24 +1,61 @@
+<!--
+    =============================================================================
+    贡献资源页面 (contribute.html)
+    =============================================================================
+    页面功能：
+        - 展示用户向平台贡献资源的多种方式
+        - 提供贡献指南，帮助用户了解资源分享规范
+        - 介绍贡献激励措施，鼓励用户参与
+        - 包含免责声明，明确资源使用条款
+    页面结构：
+        - 顶部导航栏（Logo、搜索框、用户操作）
+        - 移动端导航菜单
+        - 主要内容区（贡献方式、指南、激励、免责）
+        - 页脚版权信息
+        - 移动端提示组件
+    依赖文件：
+        - css/style.css（样式表）
+        - js/data.js（数据存储）
+        - js/main.js（公共功能）
+    =============================================================================
+-->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <!-- 页面元数据配置 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>贡献资源 - 中石大克校区资源共享论坛</title>
+    <!-- 引入全局样式文件 -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <!--
+        ============================================================
+        顶部导航栏区域
+        ============================================================
+        包含：网站Logo、主页链接、全局搜索框、用户操作按钮（上传、用户菜单）
+        功能：提供页面导航和全局搜索能力
+    -->
     <nav class="navbar" id="navbar">
+        <!-- 左侧Logo和主页链接 -->
         <div class="nav-logo">
             <a href="index.html" class="page-link">克校区资源共享论坛</a>
-            <a href="index.html" class="home-icon" title="返回主页">🏠</a>
+            <a href="home.html" class="home-icon" title="返回主页">🏠</a>
         </div>
+        <!-- 中间搜索框，支持回车搜索 -->
         <div class="nav-search">
             <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
         </div>
+        <!-- 右侧用户操作区：上传按钮、用户下拉菜单、登录入口 -->
         <div class="nav-actions" id="navActions">
+            <!-- 上传资料入口 -->
             <a href="upload.html" class="btn-upload">上传资料</a>
+            <!-- 用户下拉菜单（头像） -->
             <div class="user-dropdown" id="userDropdown">
+                <!-- 用户头像按钮，点击展开下拉菜单 -->
                 <div class="user-avatar" id="userAvatarBtn" onclick="toggleUserMenu()">?</div>
+                <!-- 下拉菜单内容：个人中心、退出登录 -->
                 <div class="user-dropdown-menu" id="userDropdownMenu">
                     <a href="user.html" class="user-dropdown-item">
                         <span class="icon">👤</span>
@@ -30,10 +67,20 @@
                     </button>
                 </div>
             </div>
+            <!-- 未登录状态显示的登录入口 -->
             <a href="login.html" class="btn-user" id="loginLink">登录</a>
         </div>
+        <!-- 移动端导航切换按钮 -->
         <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
     </nav>
+
+    <!--
+        ============================================================
+        移动端导航菜单
+        ============================================================
+        在移动设备上显示的水平导航链接
+        通过nav-toggle按钮控制显示/隐藏
+    -->
     <div class="nav-links-mobile" id="navLinks">
         <a href="courses.html">课程</a>
         <a href="academics.html">学业</a>
@@ -42,43 +89,66 @@
         <a href="contribute.html">贡献</a>
         <a href="about.html">关于</a>
     </div>
+
+    <!--
+        ============================================================
+        主要内容区域
+        ============================================================
+        页面核心内容，包含资源贡献相关的所有信息展示
+    -->
     <main class="page-transition">
+        <!-- 页面主标题 -->
         <h1>贡献资源</h1>
 
+        <!-- 贡献方式模块：介绍用户可以采用的贡献途径 -->
         <div class="section">
             <h2>贡献方式</h2>
             <ul class="resource-list">
+                <!-- 直接上传：通过平台上传资料 -->
                 <li><a href="upload.html">上传资料</a> <span class="resource-tag">直接上传到平台</span></li>
+                <!-- 邮件联系：发送邮件给管理员 -->
                 <li><a href="mailto:contact@cupk.edu.cn">联系管理员</a> <span class="resource-tag">发送邮件</span></li>
+                <!-- GitHub协作：开源项目贡献方式 -->
                 <li><a href="https://github.com" target="_blank">GitHub提交</a> <span class="resource-tag">开源协作</span></li>
             </ul>
         </div>
 
+        <!-- 贡献指南模块：说明资源分享的规范和要求 -->
         <div class="section">
             <h2>贡献指南</h2>
             <ul>
+                <!-- 版权合规：确保有权分享资源 -->
                 <li>请确保您有权分享该资源，不侵犯他人版权</li>
+                <!-- 文件格式：推荐使用常见格式 -->
                 <li>资源文件请使用常见格式（如PDF、Word、PPT等）</li>
+                <!-- 信息完整：添加清晰标题和描述 -->
                 <li>请为资源添加清晰的标题和描述</li>
+                <!-- 分类整理：便于其他同学查找 -->
                 <li>鼓励分类整理，便于其他同学查找</li>
+                <!-- 安全检查：避免恶意文件 -->
                 <li>建议上传前检查文件内容，确保无错误或恶意代码</li>
+                <!-- 内容维护：欢迎补充完善 -->
                 <li>欢迎补充和完善现有资源内容</li>
             </ul>
         </div>
 
+        <!-- 贡献激励模块：展示平台提供的激励机制 -->
         <div class="section">
             <h2>贡献激励</h2>
             <div class="resource-grid">
+                <!-- 积分奖励：上传资料获得积分 -->
                 <div class="resource-card">
                     <div class="resource-title">积分奖励</div>
                     <div class="resource-meta">每上传一份资料获得积分</div>
                     <div class="resource-meta">可兑换精美礼品</div>
                 </div>
+                <!-- 荣誉徽章：贡献达人专属标识 -->
                 <div class="resource-card">
                     <div class="resource-title">荣誉徽章</div>
                     <div class="resource-meta">贡献达人可获得专属徽章</div>
                     <div class="resource-meta">展示在你的个人主页</div>
                 </div>
+                <!-- 年度评选：优秀贡献者表彰 -->
                 <div class="resource-card">
                     <div class="resource-title">年度评选</div>
                     <div class="resource-meta">每年评选优秀贡献者</div>
@@ -87,24 +157,45 @@
             </div>
         </div>
 
+        <!-- 免责声明模块：明确资源使用条款 -->
         <div class="section">
             <h2>免责声明</h2>
+            <!-- 使用范围限制 -->
             <p>所有贡献的资源仅供学习交流使用，请勿用于商业用途。如有版权问题，请联系我们删除。</p>
+            <!-- 准确性声明 -->
             <p>平台不对资源内容的准确性做任何保证，使用者需自行判断。详细条款请查看 <a href="about.html">关于我们</a>。</p>
         </div>
 
+        <!-- 快速开始模块：引导用户立即行动 -->
         <div class="section">
             <h2>快速开始</h2>
+            <!-- 行动入口：上传或登录 -->
             <p>想要贡献资源？立即 <a href="upload.html">上传资料</a>，或先 <a href="login.html">登录/注册</a> 账号。</p>
         </div>
     </main>
+
+    <!--
+        ============================================================
+        页脚区域
+        ============================================================
+        显示版权信息和平台声明
+    -->
     <footer class="footer">
         <p>Copyright &copy; 2025 中石大克校区资源共享论坛</p>
         <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
     </footer>
+
+    <!--
+        ============================================================
+        移动端提示组件
+        ============================================================
+        提示移动端用户使用电脑访问以获得更好体验
+    -->
+    <!-- 移动端顶部提示条（始终显示） -->
     <div class="mobile-tip-bar" id="mobileTipBar" style="display: none;">
         <span>💻 电脑访问体验更佳</span>
     </div>
+    <!-- 移动端首次访问弹窗提示（点击关闭） -->
     <div class="mobile-tip-popup" id="mobileTipPopup" style="display: none;">
         <div class="mobile-tip-popup-content">
             <div class="mobile-tip-popup-icon">💻</div>
@@ -112,17 +203,46 @@
             <button onclick="closeMobileTipPopup()">我知道了</button>
         </div>
     </div>
+
+    <!-- 引入外部脚本文件 -->
     <script src="js/data.js"></script>
     <script src="js/main.js"></script>
+
+    <!--
+        ============================================================
+        页面初始化脚本
+        ============================================================
+        功能：
+            - 检查用户登录状态
+            - 初始化页面加载状态
+            - 实现导航栏滚动效果（滚动时添加阴影）
+    -->
     <script>
+        /**
+         * 初始化页面状态
+         * 检查用户是否已登录，并更新导航栏的用户状态显示
+         */
         checkLoginStatus();
+
+        /**
+         * 隐藏页面加载动画/遮罩
+         * 在所有资源加载完成后调用
+         */
         hideLoading();
+
+        /**
+         * 导航栏滚动效果
+         * 当页面滚动超过50px时，为导航栏添加阴影效果
+         * 提升页面滚动时的视觉层次感
+         */
         window.onscroll = function() {
             var navbar = document.getElementById("navbar");
             if (navbar) {
                 if (window.pageYOffset > 50) {
+                    // 添加滚动样式（阴影效果）
                     navbar.classList.add("scrolled");
                 } else {
+                    // 移除滚动样式
                     navbar.classList.remove("scrolled");
                 }
             }

@@ -1,24 +1,65 @@
+<!--
+    =============================================================================
+    课程资源页面 (courses.html)
+    =============================================================================
+    页面功能：
+        - 展示中石大克校区所有课程资源
+        - 提供课程搜索功能
+        - 按学院和专业分类展示课程列表
+        - 展示公共基础课和各学院专业课
+        - 动态加载最新上传的资源
+    页面结构：
+        - 顶部导航栏（Logo、搜索框、用户操作）
+        - 移动端导航菜单
+        - 主要内容区（课程搜索、公共课、学院专业课、最新资源）
+        - 页脚版权信息
+        - 移动端提示组件
+    依赖文件：
+        - css/style.css（样式表）
+        - js/data.js（数据存储）
+        - js/main.js（公共功能）
+    特殊功能：
+        - loadLatestResources()：动态加载最新上传的6个资源
+        - waitForDataStore()：等待数据存储初始化完成后加载数据
+    =============================================================================
+-->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <!-- 页面元数据配置 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>课程资源 - 中石大克校区资源共享论坛</title>
+    <!-- 引入全局样式文件 -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <!--
+        ============================================================
+        顶部导航栏区域
+        ============================================================
+        包含：网站Logo、主页链接、全局搜索框、用户操作按钮（上传、用户菜单）
+        功能：提供页面导航和全局搜索能力
+    -->
     <nav class="navbar" id="navbar">
+        <!-- 左侧Logo和主页链接 -->
         <div class="nav-logo">
             <a href="index.html" class="page-link">克校区资源共享论坛</a>
-            <a href="index.html" class="home-icon" title="返回主页">🏠</a>
+            <a href="home.html" class="home-icon" title="返回主页">🏠</a>
         </div>
+        <!-- 中间搜索框，支持回车搜索 -->
         <div class="nav-search">
             <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
         </div>
+        <!-- 右侧用户操作区：上传按钮、用户下拉菜单、登录入口 -->
         <div class="nav-actions" id="navActions">
+            <!-- 上传资料入口 -->
             <a href="upload.html" class="btn-upload">上传资料</a>
+            <!-- 用户下拉菜单（头像） -->
             <div class="user-dropdown" id="userDropdown">
+                <!-- 用户头像按钮，点击展开下拉菜单 -->
                 <div class="user-avatar" id="userAvatarBtn" onclick="toggleUserMenu()">?</div>
+                <!-- 下拉菜单内容：个人中心、退出登录 -->
                 <div class="user-dropdown-menu" id="userDropdownMenu">
                     <a href="user.html" class="user-dropdown-item">
                         <span class="icon">👤</span>
@@ -30,10 +71,20 @@
                     </button>
                 </div>
             </div>
+            <!-- 未登录状态显示的登录入口 -->
             <a href="login.html" class="btn-user" id="loginLink">登录</a>
         </div>
+        <!-- 移动端导航切换按钮 -->
         <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
     </nav>
+
+    <!--
+        ============================================================
+        移动端导航菜单
+        ============================================================
+        在移动设备上显示的水平导航链接
+        通过nav-toggle按钮控制显示/隐藏
+    -->
     <div class="nav-links-mobile" id="navLinks">
         <a href="courses.html">课程</a>
         <a href="academics.html">学业</a>
@@ -42,39 +93,63 @@
         <a href="contribute.html">贡献</a>
         <a href="about.html">关于</a>
     </div>
+
+    <!--
+        ============================================================
+        主要内容区域
+        ============================================================
+        页面核心内容，展示各类课程资源
+    -->
     <main class="page-transition">
+        <!-- 页面主标题 -->
         <h1>课程资源</h1>
+
+        <!-- 课程搜索模块：快速搜索课程 -->
         <div class="search-box">
             <input type="text" id="courseSearch" placeholder="搜索课程..." onkeypress="handleKeyPress(event)">
             <button type="button" onclick="doSearch()">搜索</button>
         </div>
 
+        <!-- 公共基础课模块：所有专业都需要学习的课程 -->
         <div class="section fade-in delay-1">
             <h2>公共基础课</h2>
             <ul class="resource-list">
+                <!-- 数学类基础课 -->
                 <li><a href="search.html?q=高等数学">高等数学</a></li>
+                <!-- 英语类基础课 -->
                 <li><a href="search.html?q=大学英语">大学英语</a></li>
+                <!-- 物理类基础课 -->
                 <li><a href="search.html?q=大学物理">大学物理</a></li>
+                <!-- 计算机类基础课 -->
                 <li><a href="search.html?q=计算机基础">计算机基础</a></li>
+                <!-- 思政类基础课 -->
                 <li><a href="search.html?q=思想道德与法治">思想道德与法治</a></li>
+                <!-- 思政类理论课 -->
                 <li><a href="search.html?q=毛泽东思想">毛泽东思想和中国特色社会主义理论体系概论</a></li>
+                <!-- 历史类基础课 -->
                 <li><a href="search.html?q=中国近现代史">中国近现代史纲要</a></li>
+                <!-- 马克思主义理论课 -->
                 <li><a href="search.html?q=马克思主义">马克思主义基本原理</a></li>
+                <!-- 体育课 -->
                 <li><a href="search.html?q=大学体育">大学体育</a></li>
             </ul>
         </div>
 
+        <!-- 石油学院模块：石油学院的各专业课程 -->
         <div class="section fade-in delay-2">
             <h2>石油学院</h2>
+            <!-- 地质系专业 -->
             <h3>地质系</h3>
             <ul class="resource-list">
                 <li><a href="major.html?college=石油学院&major=资源勘查工程">资源勘查工程</a> <span class="resource-tag">查看专业课程</span></li>
                 <li><a href="major.html?college=石油学院&major=勘查技术与工程">勘查技术与工程</a> <span class="resource-tag">查看专业课程</span></li>
             </ul>
+            <!-- 石油工程系专业 -->
             <h3>石油工程系</h3>
             <ul class="resource-list">
                 <li><a href="major.html?college=石油学院&major=石油工程">石油工程</a> <span class="resource-tag">查看专业课程</span></li>
             </ul>
+            <!-- 计算机系专业 -->
             <h3>计算机系</h3>
             <ul class="resource-list">
                 <li><a href="major.html?college=石油学院&major=软件工程">软件工程</a> <span class="resource-tag">查看专业课程</span></li>
@@ -83,8 +158,10 @@
             </ul>
         </div>
 
+        <!-- 工学院模块：工学院的各专业课程 -->
         <div class="section fade-in delay-3">
             <h2>工学院</h2>
+            <!-- 化工与环境系专业 -->
             <h3>化工与环境系</h3>
             <ul class="resource-list">
                 <li><a href="major.html?college=工学院&major=油气储运工程">油气储运工程</a> <span class="resource-tag">查看专业课程</span></li>
@@ -92,12 +169,14 @@
                 <li><a href="major.html?college=工学院&major=能源化学工程">能源化学工程</a> <span class="resource-tag">查看专业课程</span></li>
                 <li><a href="major.html?college=工学院&major=环境工程">环境工程(油气生产加工环境保护)</a> <span class="resource-tag">查看专业课程</span></li>
             </ul>
+            <!-- 机械与过程系专业 -->
             <h3>机械与过程系</h3>
             <ul class="resource-list">
                 <li><a href="major.html?college=工学院&major=机械设计制造及其自动化">机械设计制造及其自动化</a> <span class="resource-tag">查看专业课程</span></li>
                 <li><a href="major.html?college=工学院&major=过程装备与控制工程">过程装备与控制工程</a> <span class="resource-tag">查看专业课程</span></li>
                 <li><a href="major.html?college=工学院&major=材料科学与工程">材料科学与工程</a> <span class="resource-tag">查看专业课程</span></li>
             </ul>
+            <!-- 储运与自动化系专业 -->
             <h3>储运与自动化系</h3>
             <ul class="resource-list">
                 <li><a href="major.html?college=工学院&major=自动化">自动化</a> <span class="resource-tag">查看专业课程</span></li>
@@ -107,17 +186,21 @@
             </ul>
         </div>
 
+        <!-- 文理学院模块：文理学院的各专业课程 -->
         <div class="section fade-in delay-4">
             <h2>文理学院·文化艺术学院</h2>
+            <!-- 数学系专业 -->
             <h3>数学系</h3>
             <ul class="resource-list">
                 <li><a href="major.html?college=文理学院&major=数学与应用数学">数学与应用数学</a> <span class="resource-tag">查看专业课程</span></li>
                 <li><a href="major.html?college=文理学院&major=统计学">统计学</a> <span class="resource-tag">查看专业课程</span></li>
             </ul>
+            <!-- 物理系（仅承担公共课） -->
             <h3>物理系</h3>
             <ul class="resource-list">
                 <li>（无本科专业，仅承担公共课教学）</li>
             </ul>
+            <!-- 语言与艺术系专业 -->
             <h3>语言与艺术系</h3>
             <ul class="resource-list">
                 <li><a href="major.html?college=文理学院&major=俄语">俄语</a> <span class="resource-tag">查看专业课程</span></li>
@@ -126,37 +209,68 @@
                 <li><a href="search.html?q=英语">英语(语言与计算科学)</a></li>
                 <li><a href="major.html?college=文理学院&major=汉语言文学">汉语言文学</a> <span class="resource-tag">查看专业课程</span></li>
             </ul>
+            <!-- 体育系（仅承担公共课） -->
             <h3>体育系</h3>
             <ul class="resource-list">
                 <li>（无本科专业，仅承担公共课教学）</li>
             </ul>
         </div>
 
+        <!-- 工商管理学院模块：工商管理学院的各专业课程 -->
         <div class="section fade-in delay-5">
             <h2>工商管理学院·马克思主义学院</h2>
+            <!-- 经济与金融系专业 -->
             <h3>经济与金融系</h3>
             <ul class="resource-list">
                 <li><a href="major.html?college=工商管理学院&major=经济学">经济学</a> <span class="resource-tag">查看专业课程</span></li>
                 <li><a href="major.html?college=工商管理学院&major=金融学">金融学</a> <span class="resource-tag">查看专业课程</span></li>
             </ul>
+            <!-- 会计与行政管理系专业 -->
             <h3>会计与行政管理系</h3>
             <ul class="resource-list">
                 <li><a href="major.html?college=工商管理学院&major=会计学">会计学</a> <span class="resource-tag">查看专业课程</span></li>
                 <li><a href="major.html?college=工商管理学院&major=行政管理">行政管理</a> <span class="resource-tag">查看专业课程</span></li>
             </ul>
+            <!-- 马克思主义系专业 -->
             <h3>马克思主义系</h3>
             <ul class="resource-list">
                 <li><a href="major.html?college=工商管理学院&major=思想政治教育">思想政治教育</a> <span class="resource-tag">查看专业课程</span></li>
             </ul>
         </div>
+
+        <!-- 最新上传资源模块：动态加载显示最新6个资源 -->
+        <div class="section fade-in" id="latestResourcesSection" style="display:none;">
+            <h2>最新上传资源</h2>
+            <!-- 资源卡片网格容器 -->
+            <div class="resource-grid" id="latestResourcesGrid">
+            </div>
+            <!-- 查看全部资源链接 -->
+            <p style="margin-top:15px;"><a href="search.html">查看全部资源 &rarr;</a></p>
+        </div>
     </main>
+
+    <!--
+        ============================================================
+        页脚区域
+        ============================================================
+        显示版权信息和平台声明
+    -->
     <footer class="footer">
         <p>Copyright &copy; 2025 中石大克校区资源共享论坛</p>
         <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
     </footer>
+
+    <!--
+        ============================================================
+        移动端提示组件
+        ============================================================
+        提示移动端用户使用电脑访问以获得更好体验
+    -->
+    <!-- 移动端顶部提示条（始终显示） -->
     <div class="mobile-tip-bar" id="mobileTipBar" style="display: none;">
         <span>💻 电脑访问体验更佳</span>
     </div>
+    <!-- 移动端首次访问弹窗提示（点击关闭） -->
     <div class="mobile-tip-popup" id="mobileTipPopup" style="display: none;">
         <div class="mobile-tip-popup-content">
             <div class="mobile-tip-popup-icon">💻</div>
@@ -164,18 +278,100 @@
             <button onclick="closeMobileTipPopup()">我知道了</button>
         </div>
     </div>
-    <script src="js/data.js" defer></script>
-    <script src="js/main.js" defer></script>
+
+    <!-- 引入外部脚本文件 -->
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+
+    <!--
+        ============================================================
+        页面初始化脚本
+        ============================================================
+        功能：
+            - 检查用户登录状态
+            - 更新导航栏用户状态显示
+            - 隐藏页面加载动画
+            - 等待数据存储初始化后加载最新资源
+            - 实现导航栏滚动效果
+    -->
     <script>
+        /**
+         * 检查用户登录状态
+         * 根据登录状态更新导航栏的显示（显示用户头像或登录按钮）
+         */
         checkLoginStatus();
+
+        /**
+         * 更新导航栏用户状态
+         * 刷新用户下拉菜单中的用户名显示
+         */
         updateNavUserState();
+
+        /**
+         * 隐藏页面加载动画/遮罩
+         * 在所有资源加载完成后调用
+         */
         hideLoading();
+
+        /**
+         * 等待 DataStore 初始化后加载最新资源
+         * 确保数据存储模块已加载完成后再获取数据
+         * @param {Function} callback - 初始化完成后执行的回调函数
+         */
+        // 等待 DataStore 初始化后加载最新资源
+        waitForDataStore(function() {
+            loadLatestResources();
+        });
+
+        /**
+         * 加载最新上传的资源
+         * 从数据存储中获取所有资源，按上传时间排序，取最新的6个
+         * 并渲染到页面的最新资源区域
+         */
+        function loadLatestResources() {
+            // 获取所有资源数据
+            var allResources = DataStore.getAllResources();
+            // 按时间排序取最新6个
+            var latest = allResources
+                .sort(function(a, b) { return new Date(b.uploadTime) - new Date(a.uploadTime); })
+                .slice(0, 6);
+
+            // 如果有资源，则渲染到页面
+            if (latest.length > 0) {
+                var container = document.getElementById('latestResourcesGrid');
+                var html = '';
+                // 遍历每个资源，生成HTML卡片
+                latest.forEach(function(r) {
+                    // 获取分类名称
+                    var categoryName = DataStore.categoryNames[r.category] || r.category;
+                    // 构建资源卡片HTML
+                    html += '<div class="resource-card">';
+                    html += '<div class="resource-title"><a href="detail.html?id=' + r.id + '">' + r.title + '</a></div>';
+                    html += '<div class="resource-meta">分类：' + categoryName + '</div>';
+                    html += '<div class="resource-meta">上传者：' + r.uploader + '</div>';
+                    html += '<div class="resource-meta">下载：' + (r.downloads || 0) + '次</div>';
+                    html += '</div>';
+                });
+                // 插入HTML到容器
+                container.innerHTML = html;
+                // 显示最新资源区域
+                document.getElementById('latestResourcesSection').style.display = 'block';
+            }
+        }
+
+        /**
+         * 导航栏滚动效果
+         * 当页面滚动超过50px时，为导航栏添加阴影效果
+         * 提升页面滚动时的视觉层次感
+         */
         window.onscroll = function() {
             var navbar = document.getElementById("navbar");
             if (navbar) {
                 if (window.pageYOffset > 50) {
+                    // 添加滚动样式（阴影效果）
                     navbar.classList.add("scrolled");
                 } else {
+                    // 移除滚动样式
                     navbar.classList.remove("scrolled");
                 }
             }

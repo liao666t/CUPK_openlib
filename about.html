@@ -1,39 +1,77 @@
 <!DOCTYPE html>
+<!--
+    关于页面
+    功能：介绍项目背景、使用说明、资源分类和联系方式
+    作者：03班14组
+    创建日期：2024年
+-->
 <html lang="zh-CN">
 <head>
+    <!-- 页面元数据设置 -->
     <meta charset="UTF-8">
+    <!-- 视口设置，支持移动端响应式布局 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 页面标题 -->
     <title>关于 - 中石大克校区资源共享论坛</title>
+    <!-- 引入外部样式表 -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <!-- ========================================
+         顶部导航栏
+         功能：提供网站主要导航、搜索和用户操作入口
+         ======================================== -->
     <nav class="navbar" id="navbar">
+        <!-- Logo和网站名称区域 -->
         <div class="nav-logo">
+            <!-- 网站主链接，点击返回入口页面 -->
             <a href="index.html" class="page-link">克校区资源共享论坛</a>
-            <a href="index.html" class="home-icon" title="返回主页">🏠</a>
+            <!-- 主页图标快捷链接，点击直接跳转首页 -->
+            <a href="home.html" class="home-icon" title="返回主页">🏠</a>
         </div>
+        
+        <!-- 搜索框区域 -->
         <div class="nav-search">
+            <!-- 搜索输入框，支持按回车键搜索 -->
             <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
         </div>
+        
+        <!-- 用户操作按钮区域 -->
         <div class="nav-actions" id="navActions">
+            <!-- 上传资料按钮，跳转到上传页面 -->
             <a href="upload.html" class="btn-upload">上传资料</a>
+            
+            <!-- 用户下拉菜单，已登录用户可见 -->
             <div class="user-dropdown" id="userDropdown">
+                <!-- 用户头像图标，点击展开下拉菜单 -->
                 <div class="user-avatar" id="userAvatarBtn" onclick="toggleUserMenu()">?</div>
+                <!-- 下拉菜单内容 -->
                 <div class="user-dropdown-menu" id="userDropdownMenu">
+                    <!-- 个人中心链接 -->
                     <a href="user.html" class="user-dropdown-item">
                         <span class="icon">👤</span>
                         <span id="dropdownUsername">个人中心</span>
                     </a>
+                    <!-- 退出登录按钮 -->
                     <button class="user-dropdown-item" onclick="logout()">
                         <span class="icon">🚪</span>
                         <span>退出登录</span>
                     </button>
                 </div>
             </div>
+            
+            <!-- 登录按钮，未登录用户可见 -->
             <a href="login.html" class="btn-user" id="loginLink">登录</a>
         </div>
+        
+        <!-- 移动端导航菜单切换按钮 -->
         <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
     </nav>
+    
+    <!-- ========================================
+         移动端导航链接
+         功能：在移动设备上提供水平排列的快捷导航
+         ======================================== -->
     <div class="nav-links-mobile" id="navLinks">
         <a href="courses.html">课程</a>
         <a href="academics.html">学业</a>
@@ -42,52 +80,103 @@
         <a href="contribute.html">贡献</a>
         <a href="about.html">关于</a>
     </div>
+    
+    <!-- ========================================
+         页面主要内容区域
+         包含：项目简介、使用说明、资源分类、联系方式
+         ======================================== -->
     <main class="page-transition">
+        <!-- 页面主标题 -->
         <h1>关于项目</h1>
 
+        <!-- ========================================
+             项目简介区域
+             介绍平台的创建目的和核心理念
+             ======================================== -->
         <div class="section">
             <h2>项目简介</h2>
+            <!-- 平台定位描述 -->
             <p>克校区资源共享论坛是一个由学生自发创建的学习资源共享平台，致力于为石大克拉玛依校区的同学们提供优质的学习资料和校园生活信息。</p>
+            <!-- 平台理念阐述 -->
             <p>我们相信知识应该自由流动，学习资料应该被更多人分享和使用。通过开源协作的模式，让每一位同学都能从社区中受益。</p>
         </div>
 
+        <!-- ========================================
+             使用说明区域
+             介绍平台的使用规则和注意事项
+             ======================================== -->
         <div class="section">
             <h2>使用说明</h2>
             <ul>
+                <!-- 规则1：免费分享 -->
                 <li>所有资源均为免费分享，请尊重上传者的劳动成果</li>
+                <!-- 规则2：侵权处理 -->
                 <li>如发现资源链接失效或有侵权问题，请联系我们删除</li>
+                <!-- 规则3：欢迎贡献 -->
                 <li>欢迎大家贡献优质学习资料，共同建设资源共享平台</li>
+                <!-- 规则4：浏览器建议 -->
                 <li>建议使用电脑端浏览器获得最佳浏览体验</li>
             </ul>
         </div>
 
+        <!-- ========================================
+             资源分类区域
+             展示平台的主要资源分类及链接
+             ======================================== -->
         <div class="section">
             <h2>资源分类</h2>
             <ul>
+                <!-- 课程资源分类 -->
                 <li><a href="courses.html">课程资源</a> - 各学科课程课件、笔记、习题</li>
+                <!-- 学业资料分类 -->
                 <li><a href="academics.html">学业资料</a> - 历年真题、复习资料</li>
+                <!-- 社团资源分类 -->
                 <li><a href="clubs.html">社团资源</a> - 社团介绍、活动策划</li>
+                <!-- 生活指南分类 -->
                 <li><a href="life.html">生活指南</a> - 校园生活、周边攻略</li>
             </ul>
         </div>
 
+        <!-- ========================================
+             联系方式区域
+             提供用户反馈和联系的渠道
+             ======================================== -->
         <div class="section">
             <h2>联系我们</h2>
+            <!-- 联系提示文字 -->
             <p>如有问题或建议，请通过以下方式联系我们：</p>
             <ul>
+                <!-- 邮箱联系方式 -->
                 <li>邮箱：contact@cupk.edu.cn</li>
+                <!-- QQ群联系方式 -->
                 <li>QQ群：123456789</li>
+                <!-- 微信公众号 -->
                 <li>微信公众号：克校区资源共享论坛</li>
             </ul>
         </div>
     </main>
+    
+    <!-- ========================================
+         页脚区域
+         包含版权声明和免责条款
+         ======================================== -->
     <footer class="footer">
         <p>Copyright &copy; 2025 中石大克校区资源共享论坛</p>
         <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
     </footer>
+    
+    <!-- ========================================
+         移动端提示栏
+         移动设备访问时显示友好提示
+         ======================================== -->
     <div class="mobile-tip-bar" id="mobileTipBar" style="display: none;">
         <span>💻 电脑访问体验更佳</span>
     </div>
+    
+    <!-- ========================================
+         移动端提示弹窗
+         首次访问时显示的引导提示
+         ======================================== -->
     <div class="mobile-tip-popup" id="mobileTipPopup" style="display: none;">
         <div class="mobile-tip-popup-content">
             <div class="mobile-tip-popup-icon">💻</div>
@@ -95,15 +184,38 @@
             <button onclick="closeMobileTipPopup()">我知道了</button>
         </div>
     </div>
+    
+    <!-- ========================================
+         JavaScript脚本
+         引入外部JS文件和页面初始化脚本
+         ======================================== -->
+    <!-- 数据管理模块 -->
     <script src="js/data.js"></script>
+    <!-- 主逻辑模块 -->
     <script src="js/main.js"></script>
+    <!-- 页面初始化脚本 -->
     <script>
+        /**
+         * 页面初始化函数
+         * 功能：检查登录状态、初始化页面
+         */
+        // 检查用户登录状态，更新UI显示
         checkLoginStatus();
+        // 根据登录状态更新导航栏用户信息
         updateNavUserState();
+        // 隐藏页面加载动画
         hideLoading();
+        
+        /**
+         * 滚动事件监听器
+         * 功能：实现导航栏滚动效果
+         * 当页面滚动超过50px时，为导航栏添加阴影效果
+         */
         window.onscroll = function() {
+            // 获取导航栏元素
             var navbar = document.getElementById("navbar");
             if (navbar) {
+                // 根据滚动位置添加/移除scrolled类
                 if (window.pageYOffset > 50) {
                     navbar.classList.add("scrolled");
                 } else {

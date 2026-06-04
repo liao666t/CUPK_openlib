@@ -1,11 +1,49 @@
+<!--
+    =============================================================================
+    转专业相关页面 (transfer.html)
+    =============================================================================
+    页面功能：
+        - 详细介绍中石大克校区转专业政策
+        - 说明转专业的基本条件和限制
+        - 提供转专业流程的时间线展示
+        - 展示历年转专业统计数据
+        - 分享学长学姐的转专业经验
+        - 提供注意事项和咨询方式
+    页面结构：
+        - 顶部导航栏（Logo、搜索框、用户操作）
+        - 移动端导航菜单
+        - 主要内容区（政策要点、条件、流程、统计、经验、注意事项）
+        - 页脚版权信息
+        - 移动端提示组件
+    依赖文件：
+        - css/style.css（样式表）
+        - js/data.js（数据存储）
+        - js/main.js（公共功能）
+    特殊样式：
+        - policy-box：政策信息展示框（渐变背景）
+        - timeline：转专业流程时间线
+        - stat-grid：统计数据网格布局
+        - experience-card：学长经验分享卡片
+        - condition-list：条件列表（带图标）
+        - notice-box：注意事项提示框
+    =============================================================================
+-->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <!-- 页面元数据配置 -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>转专业相关 - 中石大克校区资源共享论坛</title>
+    <!-- 引入全局样式文件 -->
     <link rel="stylesheet" href="css/style.css">
+    <!--
+        ============================================================
+        内联样式 - 转专业页面专用样式
+        ============================================================
+    -->
     <style>
+        /* 政策信息展示框：渐变背景，左侧强调线 */
         .policy-box {
             background: linear-gradient(135deg, #fff5f5 0%, #fff 100%);
             border-left: 4px solid var(--link-color);
@@ -17,11 +55,14 @@
             color: var(--link-color);
             margin-bottom: 10px;
         }
+
+        /* 转专业流程时间线样式 */
         .timeline {
             position: relative;
             padding-left: 30px;
             margin: 20px 0;
         }
+        /* 时间线竖线 */
         .timeline::before {
             content: '';
             position: absolute;
@@ -31,10 +72,12 @@
             width: 2px;
             background: var(--border-color);
         }
+        /* 时间线节点 */
         .timeline-item {
             position: relative;
             margin-bottom: 25px;
         }
+        /* 时间线节点圆点 */
         .timeline-item::before {
             content: '';
             position: absolute;
@@ -56,12 +99,15 @@
             margin: 0;
             font-size: 14px;
         }
+
+        /* 统计数据网格布局 */
         .stat-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 15px;
             margin-bottom: 25px;
         }
+        /* 单个统计项 */
         .stat-item {
             background: var(--bg-light);
             padding: 20px;
@@ -79,6 +125,8 @@
             color: var(--text-muted);
             margin-top: 5px;
         }
+
+        /* 学长学姐经验分享卡片 */
         .experience-card {
             background: var(--bg-light);
             border-radius: 8px;
@@ -101,6 +149,8 @@
             line-height: 1.8;
             color: var(--text-secondary);
         }
+
+        /* 返回按钮样式 */
         .back-btn {
             display: inline-block;
             background-color: var(--bg-light);
@@ -116,6 +166,8 @@
             color: #fff;
             text-decoration: none;
         }
+
+        /* 条件列表样式（带图标） */
         .condition-list {
             list-style: none;
             margin: 0;
@@ -135,6 +187,8 @@
             color: var(--link-color);
             flex-shrink: 0;
         }
+
+        /* 注意事项提示框（黄色警告） */
         .notice-box {
             background: #fffbe6;
             border-left: 4px solid #faad14;
@@ -145,18 +199,32 @@
     </style>
 </head>
 <body>
+    <!--
+        ============================================================
+        顶部导航栏区域
+        ============================================================
+        包含：网站Logo、主页链接、全局搜索框、用户操作按钮（上传、用户菜单）
+        功能：提供页面导航和全局搜索能力
+    -->
     <nav class="navbar" id="navbar">
+        <!-- 左侧Logo和主页链接 -->
         <div class="nav-logo">
             <a href="index.html" class="page-link">克校区资源共享论坛</a>
-            <a href="index.html" class="home-icon" title="返回主页">🏠</a>
+            <a href="home.html" class="home-icon" title="返回主页">🏠</a>
         </div>
+        <!-- 中间搜索框，支持回车搜索 -->
         <div class="nav-search">
             <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
         </div>
+        <!-- 右侧用户操作区：上传按钮、用户下拉菜单、登录入口 -->
         <div class="nav-actions" id="navActions">
+            <!-- 上传资料入口 -->
             <a href="upload.html" class="btn-upload">上传资料</a>
+            <!-- 用户下拉菜单（头像） -->
             <div class="user-dropdown" id="userDropdown">
+                <!-- 用户头像按钮，点击展开下拉菜单 -->
                 <div class="user-avatar" id="userAvatarBtn" onclick="toggleUserMenu()">?</div>
+                <!-- 下拉菜单内容：个人中心、退出登录 -->
                 <div class="user-dropdown-menu" id="userDropdownMenu">
                     <a href="user.html" class="user-dropdown-item">
                         <span class="icon">👤</span>
@@ -168,10 +236,20 @@
                     </button>
                 </div>
             </div>
+            <!-- 未登录状态显示的登录入口 -->
             <a href="login.html" class="btn-user" id="loginLink">登录</a>
         </div>
+        <!-- 移动端导航切换按钮 -->
         <button class="nav-toggle" onclick="toggleNav()">&#9776;</button>
     </nav>
+
+    <!--
+        ============================================================
+        移动端导航菜单
+        ============================================================
+        在移动设备上显示的水平导航链接
+        通过nav-toggle按钮控制显示/隐藏
+    -->
     <div class="nav-links-mobile" id="navLinks">
         <a href="courses.html">课程</a>
         <a href="academics.html">学业</a>
@@ -180,33 +258,50 @@
         <a href="contribute.html">贡献</a>
         <a href="about.html">关于</a>
     </div>
+
+    <!--
+        ============================================================
+        主要内容区域
+        ============================================================
+        页面核心内容，详细展示转专业相关信息
+    -->
     <main class="page-transition">
+        <!-- 返回上一页链接 -->
         <a href="academics.html" class="back-btn">&larr; 返回学业指导</a>
-        
+
+        <!-- 页面主标题 -->
         <h1>转专业相关</h1>
 
+        <!-- 政策要点模块：简要介绍转专业政策 -->
         <div class="policy-box">
             <h4>转专业政策要点</h4>
+            <!-- 政策核心内容 -->
             <p>根据《中国石油大学（北京）克拉玛依校区本科生转专业管理办法》，学生在学习期间对其他专业有兴趣和专长，或因身体原因不适合在原专业学习的，可以申请转专业。</p>
         </div>
 
+        <!-- 转专业条件模块：详细说明申请条件 -->
         <div class="section fade-in">
             <h2>转专业条件</h2>
             <div class="guide-card">
+                <!-- 基本条件列表 -->
                 <h3>基本条件</h3>
                 <ul class="condition-list">
+                    <!-- 无违纪记录 -->
                     <li>
                         <span class="icon">✓</span>
                         <span>在校期间无违法违纪行为，未受过任何处分</span>
                     </li>
+                    <!-- 成绩要求：全部合格 -->
                     <li>
                         <span class="icon">✓</span>
                         <span>第一学期所有课程成绩须全部合格（无补考记录）</span>
                     </li>
+                    <!-- 绩点要求 -->
                     <li>
                         <span class="icon">✓</span>
                         <span>必修课成绩平均学分绩点达到2.0以上</span>
                     </li>
+                    <!-- 身体条件 -->
                     <li>
                         <span class="icon">✓</span>
                         <span>身体条件符合转入专业的要求</span>
@@ -214,41 +309,54 @@
                 </ul>
             </div>
 
+            <!-- 不允许转专业的情况 -->
             <div class="notice-box">
                 <strong>注意：</strong>以下情况不允许转专业：
                 <ul style="margin: 10px 0 0 20px;">
+                    <!-- 休学或保留学籍状态 -->
                     <li>正在休学或保留学籍的</li>
+                    <!-- 艺术体育类限制 -->
                     <li>艺术类、体育类专业与非艺术类、体育类专业互转</li>
+                    <!-- 国家规定限制 -->
                     <li>国家有相关规定或录取时确定不能转专业的</li>
+                    <!-- 文科理科互转限制 -->
                     <li>高考文科类与理科类互转（部分专业限制）</li>
                 </ul>
             </div>
         </div>
 
+        <!-- 转专业流程模块：时间线展示 -->
         <div class="section fade-in delay-1">
             <h2>转专业流程</h2>
             <div class="guide-card">
+                <!-- 时间线容器 -->
                 <div class="timeline">
+                    <!-- 第一步：发布通知 -->
                     <div class="timeline-item">
                         <h4>第一学期末 - 发布通知</h4>
                         <p>教务处发布转专业工作通知，公布各专业接收名额</p>
                     </div>
+                    <!-- 第二步：学生申请 -->
                     <div class="timeline-item">
                         <h4>第二学期第一周 - 学生申请</h4>
                         <p>学生向所在学院提交转专业申请，填写申请表</p>
                     </div>
+                    <!-- 第三步：学院审核 -->
                     <div class="timeline-item">
                         <h4>第二学期第二周 - 学院审核</h4>
                         <p>转出学院对学生申请进行资格审核</p>
                     </div>
+                    <!-- 第四步：转入考核 -->
                     <div class="timeline-item">
                         <h4>第二学期第三周 - 转入考核</h4>
                         <p>转入学院组织考核（笔试/面试/综合考察）</p>
                     </div>
+                    <!-- 第五步：结果公示 -->
                     <div class="timeline-item">
                         <h4>第二学期第四周 - 结果公示</h4>
                         <p>公示转专业学生名单，无异议后办理学籍异动</p>
                     </div>
+                    <!-- 第六步：学籍变动 -->
                     <div class="timeline-item">
                         <h4>第二学期末 - 学籍变动</h4>
                         <p>获准转专业的学生正式办理学籍变动手续</p>
@@ -257,42 +365,54 @@
             </div>
         </div>
 
+        <!-- 历年转专业情况模块：统计数据展示 -->
         <div class="section fade-in delay-2">
+            <!-- id="stats" 用于页面内锚点跳转 -->
             <h2 id="stats">历年转专业情况</h2>
+            <!-- 统计数据网格 -->
             <div class="stat-grid">
+                <!-- 申请成功率 -->
                 <div class="stat-item">
                     <div class="number">85%</div>
                     <div class="label">申请成功率</div>
                 </div>
+                <!-- 每年转专业人数 -->
                 <div class="stat-item">
                     <div class="number">30+</div>
                     <div class="label">每年转专业人数</div>
                 </div>
+                <!-- 可转入专业数 -->
                 <div class="stat-item">
                     <div class="number">15</div>
                     <div class="label">可转入专业数</div>
                 </div>
+                <!-- 转专业机会次数 -->
                 <div class="stat-item">
                     <div class="number">2次</div>
                     <div class="label">转专业机会</div>
                 </div>
             </div>
 
+            <!-- 热门转入专业列表 -->
             <div class="guide-card">
                 <h3>热门转入专业（近三年）</h3>
                 <ul class="condition-list">
+                    <!-- 计算机类 -->
                     <li>
                         <span class="icon">🔥</span>
                         <span>计算机类 - 转入竞争激烈，需绩点3.5以上</span>
                     </li>
+                    <!-- 软件工程 -->
                     <li>
                         <span class="icon">🔥</span>
                         <span>软件工程 - 名额有限，考核难度较大</span>
                     </li>
+                    <!-- 数据科学 -->
                     <li>
                         <span class="icon">📊</span>
                         <span>数据科学与大数据技术 - 转入要求较高</span>
                     </li>
+                    <!-- 自动化 -->
                     <li>
                         <span class="icon">📊</span>
                         <span>自动化 - 转入人数稳定</span>
@@ -301,9 +421,12 @@
             </div>
         </div>
 
+        <!-- 学长学姐经验分享模块 -->
         <div class="section fade-in delay-3">
+            <!-- id="experience" 用于页面内锚点跳转 -->
             <h2 id="experience">学长学姐经验分享</h2>
-            
+
+            <!-- 经验分享卡片1：计算机转软件工程 -->
             <div class="experience-card">
                 <div class="author">张同学（计算机→软件工程）</div>
                 <div class="meta">转专业时间：2023年 | 绩点：3.8</div>
@@ -312,6 +435,7 @@
                 </div>
             </div>
 
+            <!-- 经验分享卡片2：机械转经济学 -->
             <div class="experience-card">
                 <div class="author">李同学（机械→经济学）</div>
                 <div class="meta">转专业时间：2024年 | 绩点：3.6</div>
@@ -320,6 +444,7 @@
                 </div>
             </div>
 
+            <!-- 经验分享卡片3：资源勘查转数据科学 -->
             <div class="experience-card">
                 <div class="author">王同学（资源勘查→数据科学）</div>
                 <div class="meta">转专业时间：2024年 | 绩点：3.9</div>
@@ -329,22 +454,27 @@
             </div>
         </div>
 
+        <!-- 注意事项模块 -->
         <div class="section fade-in delay-4">
             <h2>注意事项</h2>
             <div class="guide-card">
                 <ul class="condition-list">
+                    <!-- 学分认定说明 -->
                     <li>
                         <span class="icon">⚠️</span>
                         <span><strong>学分认定：</strong>转专业后，原专业修读的课程学分可认定为通识选修课学分，部分专业课可申请免修</span>
                     </li>
+                    <!-- 学制延长说明 -->
                     <li>
                         <span class="icon">⚠️</span>
                         <span><strong>学制延长：</strong>部分转专业学生可能需要延长学制1-2学期来完成培养方案要求</span>
                     </li>
+                    <!-- 宿舍调整说明 -->
                     <li>
                         <span class="icon">⚠️</span>
                         <span><strong>宿舍调整：</strong>转专业后如需更换宿舍，可向学生工作办公室申请</span>
                     </li>
+                    <!-- 补修课程说明 -->
                     <li>
                         <span class="icon">⚠️</span>
                         <span><strong>补修课程：</strong>需补修转入专业的专业基础课，建议提前了解并做好准备</span>
@@ -353,25 +483,46 @@
             </div>
         </div>
 
+        <!-- 咨询方式模块 -->
         <div class="section">
+            <!-- 绿色主题的政策框 -->
             <div class="policy-box" style="background: #f6ffed; border-left-color: #52c41a;">
                 <h4 style="color: #52c41a;">咨询方式</h4>
                 <p>如有更多疑问，请咨询：</p>
                 <ul style="margin: 10px 0 0 20px;">
+                    <!-- 教务处咨询 -->
                     <li>教务处：转专业政策咨询</li>
+                    <!-- 学院教务办公室 -->
                     <li>各学院教务办公室：专业课程咨询</li>
+                    <!-- 学生工作办公室 -->
                     <li>学生工作办公室：生活适应咨询</li>
                 </ul>
             </div>
         </div>
     </main>
+
+    <!--
+        ============================================================
+        页脚区域
+        ============================================================
+        显示版权信息和平台声明
+    -->
     <footer class="footer">
         <p>Copyright &copy; 2025 中石大克校区资源共享论坛</p>
         <p>非盈利性质 | 开源免费 | 如有侵权请联系删除</p>
     </footer>
+
+    <!--
+        ============================================================
+        移动端提示组件
+        ============================================================
+        提示移动端用户使用电脑访问以获得更好体验
+    -->
+    <!-- 移动端顶部提示条（始终显示） -->
     <div class="mobile-tip-bar" id="mobileTipBar" style="display: none;">
         <span>💻 电脑访问体验更佳</span>
     </div>
+    <!-- 移动端首次访问弹窗提示（点击关闭） -->
     <div class="mobile-tip-popup" id="mobileTipPopup" style="display: none;">
         <div class="mobile-tip-popup-content">
             <div class="mobile-tip-popup-icon">💻</div>
@@ -379,22 +530,64 @@
             <button onclick="closeMobileTipPopup()">我知道了</button>
         </div>
     </div>
-    <script src="js/data.js" defer></script>
-    <script src="js/main.js" defer></script>
+
+    <!-- 引入外部脚本文件 -->
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+
+    <!--
+        ============================================================
+        页面初始化脚本
+        ============================================================
+        功能：
+            - DOM加载完成后初始化页面
+            - 检查用户登录状态
+            - 更新导航栏用户状态显示
+            - 隐藏页面加载动画
+            - 实现导航栏滚动效果
+    -->
     <script>
-        checkLoginStatus();
-        updateNavUserState();
-        hideLoading();
-        window.onscroll = function() {
-            var navbar = document.getElementById("navbar");
-            if (navbar) {
-                if (window.pageYOffset > 50) {
-                    navbar.classList.add("scrolled");
-                } else {
-                    navbar.classList.remove("scrolled");
+        /**
+         * DOM加载完成后执行初始化
+         * 确保所有DOM元素都已渲染后再进行操作
+         */
+        document.addEventListener('DOMContentLoaded', function() {
+            /**
+             * 检查用户登录状态
+             * 根据登录状态更新导航栏的显示（显示用户头像或登录按钮）
+             */
+            checkLoginStatus();
+
+            /**
+             * 更新导航栏用户状态
+             * 刷新用户下拉菜单中的用户名显示
+             */
+            updateNavUserState();
+
+            /**
+             * 隐藏页面加载动画/遮罩
+             * 在所有资源加载完成后调用
+             */
+            hideLoading();
+
+            /**
+             * 导航栏滚动效果
+             * 当页面滚动超过50px时，为导航栏添加阴影效果
+             * 提升页面滚动时的视觉层次感
+             */
+            window.onscroll = function() {
+                var navbar = document.getElementById("navbar");
+                if (navbar) {
+                    if (window.pageYOffset > 50) {
+                        // 添加滚动样式（阴影效果）
+                        navbar.classList.add("scrolled");
+                    } else {
+                        // 移除滚动样式
+                        navbar.classList.remove("scrolled");
+                    }
                 }
-            }
-        };
+            };
+        });
     </script>
 </body>
 </html>

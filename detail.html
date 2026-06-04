@@ -532,7 +532,7 @@
     <nav class="navbar" id="navbar">
         <div class="nav-logo">
             <a href="index.html" class="page-link">克校区资源共享论坛</a>
-            <a href="index.html" class="home-icon" title="返回主页">🏠</a>
+            <a href="home.html" class="home-icon" title="返回主页">🏠</a>
         </div>
         <div class="nav-search">
             <input type="text" id="searchInput" placeholder="搜索课程、资料、学长经验..." onkeypress="handleKeyPress(event)">
@@ -614,6 +614,13 @@
                     </div>
                 </div>
 
+                <div class="detail-section" id="contentPreviewSection" style="display:none;">
+                    <h2>资料内容预览</h2>
+                    <div class="content-preview" id="contentPreview" style="background:#f8f9fa;padding:20px;border-radius:8px;max-height:400px;overflow-y:auto;">
+                    </div>
+                    <p style="text-align:center;margin-top:10px;color:#666;font-size:13px;">下载文件查看完整内容</p>
+                </div>
+
                 <div class="detail-section">
                     <h2>文件预览</h2>
                     <div class="preview-area" id="previewArea">
@@ -621,10 +628,10 @@
                         <div class="preview-info">
                             <p id="fileName">暂无文件</p>
                             <p id="fileSize"></p>
-                            <p class="preview-hint" onclick="togglePreview()">点击在线预览</p>
+                            <p class="preview-hint" onclick="togglePreview()">点击查看详情</p>
                         </div>
                         <div class="preview-controls">
-                            <button onclick="togglePreview()">在线预览</button>
+                            <button onclick="showResourceInfo()">查看资料信息</button>
                             <button onclick="downloadFile()">下载文件</button>
                         </div>
                     </div>
@@ -689,8 +696,8 @@
         </div>
     </div>
 
-    <script src="js/data.js" defer></script>
-    <script src="js/main.js" defer></script>
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
     <script>
         var isPreviewVisible = false;
         var isFavoriteActive = false;
@@ -723,7 +730,7 @@
                 var comments = DataStore.getComments(id);
                 // 获取相关资源
                 var related = DataStore.getRelatedResources(id);
-                
+
                 // 找到资源，使用 DataStore 中的数据
                 mockData = {
                     id: resource.id,
@@ -743,6 +750,8 @@
                     fileName: resource.fileName || '',
                     filePath: resource.filePath || '',
                     file: resource.filePath ? { name: resource.fileName, path: resource.filePath } : null,
+                    fileSize: resource.fileSize || 0,
+                    content: resource.content || '',
                     rating: null,
                     comments: comments,
                     related: related
@@ -808,9 +817,19 @@
             // 文件信息
             if (data.file) {
                 document.getElementById('fileName').textContent = data.file.name || '未知文件';
-                document.getElementById('fileSize').textContent = data.file.size ? '文件大小：' + formatFileSize(data.file.size) : '';
+                document.getElementById('fileSize').textContent = data.fileSize ? '文件大小：' + formatFileSize(data.fileSize) : '';
             }
-            
+
+            // 内容预览
+            var contentSection = document.getElementById('contentPreviewSection');
+            var contentPreview = document.getElementById('contentPreview');
+            if (data.content && data.content.trim()) {
+                contentSection.style.display = 'block';
+                contentPreview.innerHTML = data.content;
+            } else {
+                contentSection.style.display = 'none';
+            }
+
             // 检查是否已收藏
             checkFavoriteStatus();
             
@@ -903,14 +922,15 @@
         }
 
         function togglePreview() {
+            if (!currentResource || !currentResource.file) {
+                // 没有文件时显示资料信息
+                showResourceInfo();
+                return;
+            }
+
             var previewArea = document.getElementById('previewArea');
             var pdfEmbed = document.getElementById('pdfEmbed');
             var imagePreview = document.getElementById('imagePreview');
-
-            if (!currentResource || !currentResource.file) {
-                alert('暂无文件可预览');
-                return;
-            }
 
             isPreviewVisible = !isPreviewVisible;
 
@@ -982,7 +1002,7 @@
                 alert('暂无文件可下载');
                 return;
             }
-            
+
             var resourceId = getResourceId();
             DataStore.incrementDownloads(resourceId, function(result) {
                 if (result && result.downloads) {
@@ -991,19 +1011,55 @@
                         dlCount.textContent = result.downloads;
                     }
                 }
-                
+
                 // 获取文件路径
                 var resource = DataStore.getResourceByAnyId(resourceId);
                 if (resource && resource.filePath) {
-                    // 实际下载文件
-                    var link = document.createElement('a');
-                    link.href = resource.filePath;
-                    link.download = resource.fileName || resource.title;
-                    link.click();
+                    // 优先在新标签页中打开文件（兼容 file:// 协议）
+                    var fileUrl = resource.filePath;
+                    // 对路径进行编码处理
+                    var encodedUrl = encodeURI(fileUrl);
+                    window.open(encodedUrl, '_blank');
                 } else {
-                    alert('下载已开始：' + (currentResource.file ? currentResource.file.name : 'file'));
+                    // 演示模式：显示详细的资料信息弹窗
+                    showDownloadModal(currentResource);
                 }
             });
+        }
+
+        function showDownloadModal(resource) {
+            // 创建模态框
+            var modal = document.createElement('div');
+            modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:10000;';
+            modal.onclick = function(e) { if(e.target===modal) document.body.removeChild(modal); };
+
+            var box = document.createElement('div');
+            box.style.cssText = 'background:#fff;border-radius:12px;padding:30px;max-width:500px;width:90%;max-height:80vh;overflow-y:auto;';
+
+            var sizeStr = resource.fileSize ? formatFileSize(resource.fileSize) : '未知';
+            var tagsStr = resource.tags ? resource.tags.join('、') : '无';
+
+            box.innerHTML = '<div style="text-align:center;margin-bottom:20px;"><div style="font-size:48px;">📄</div></div>' +
+                '<h2 style="margin:0 0 20px 0;color:#C8102E;text-align:center;">' + (resource.title || '资料详情') + '</h2>' +
+                '<div style="background:#f8f9fa;padding:20px;border-radius:8px;">' +
+                '<table style="width:100%;border-collapse:collapse;">' +
+                '<tr><td style="padding:8px 0;color:#666;width:80px;">文件名称</td><td style="padding:8px 0;font-weight:bold;">' + (resource.fileName || '未知') + '</td></tr>' +
+                '<tr><td style="padding:8px 0;color:#666;">文件大小</td><td style="padding:8px 0;">' + sizeStr + '</td></tr>' +
+                '<tr><td style="padding:8px 0;color:#666;">上传者</td><td style="padding:8px 0;">' + (resource.author ? resource.author.name : '未知') + '</td></tr>' +
+                '<tr><td style="padding:8px 0;color:#666;">上传时间</td><td style="padding:8px 0;">' + (resource.uploadTime || '-') + '</td></tr>' +
+                '<tr><td style="padding:8px 0;color:#666;">分类标签</td><td style="padding:8px 0;">' + tagsStr + '</td></tr>' +
+                '<tr><td style="padding:8px 0;color:#666;vertical-align:top;">简介</td><td style="padding:8px 0;">' + (resource.description || '暂无') + '</td></tr>' +
+                '</table></div>' +
+                '<div style="margin-top:20px;padding:15px;background:#fff3cd;border-radius:8px;text-align:center;color:#856404;font-size:14px;">' +
+                '📌 演示环境下文件暂不可用<br>实际部署后点击即可下载真实文件' +
+                '</div>' +
+                '<div style="display:flex;gap:10px;margin-top:20px;">' +
+                '<button onclick="document.body.removeChild(document.querySelector(\'[style*=\\\"position:fixed\\\"]\'))" style="flex:1;padding:12px;border:1px solid #ddd;border-radius:6px;background:#f8f9fa;cursor:pointer;">关闭</button>' +
+                '<button onclick="document.body.removeChild(document.querySelector(\'[style*=\\\"position:fixed\\\"]\'));alert(\'文件已添加到下载队列！\');" style="flex:1;padding:12px;border:none;border-radius:6px;background:#C8102E;color:#fff;cursor:pointer;font-weight:bold;">确认下载</button>' +
+                '</div>';
+
+            modal.appendChild(box);
+            document.body.appendChild(modal);
         }
 
         function reportResource() {
@@ -1075,6 +1131,32 @@
             alert('回复功能开发中...');
         }
 
+        function showResourceInfo() {
+            if (!currentResource) {
+                alert('暂无资料信息');
+                return;
+            }
+            var sizeStr = currentResource.fileSize ? formatFileSize(currentResource.fileSize) : '未知';
+            var tagsStr = currentResource.tags ? currentResource.tags.join('、') : '无';
+
+            var info = '【资料信息】\n';
+            info += '━━━━━━━━━━━━━━━━\n';
+            info += '资料名称：' + (currentResource.title || '未知') + '\n';
+            info += '资料分类：' + tagsStr + '\n';
+            info += '上传者：' + (currentResource.author ? currentResource.author.name : '未知') + '\n';
+            info += '上传时间：' + (currentResource.uploadTime || '-') + '\n';
+            info += '浏览次数：' + (currentResource.viewCount || '0') + '\n';
+            info += '下载次数：' + (currentResource.downloadCount || '0') + '\n';
+            info += '收藏次数：' + (currentResource.favoriteCount || '0') + '\n';
+            if (currentResource.fileName) {
+                info += '文件名：' + currentResource.fileName + '\n';
+                info += '文件大小：' + sizeStr + '\n';
+            }
+            info += '━━━━━━━━━━━━━━━━\n';
+            info += '资料简介：\n' + (currentResource.description || '暂无简介');
+            alert(info);
+        }
+
         // 评分交互
         var ratingStars = document.querySelectorAll('#ratingInput span');
         ratingStars.forEach(function(star) {
@@ -1108,12 +1190,14 @@
         });
 
         // 页面加载时获取数据
-        checkLoginStatus();
-        hideLoading();
-        
-        // 等待 DataStore 初始化完成后再加载资源
-        waitForDataStore(function() {
-            loadResource();
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLoginStatus();
+            hideLoading();
+
+            // 等待 DataStore 初始化完成后再加载资源
+            waitForDataStore(function() {
+                loadResource();
+            });
         });
     </script>
 </body>
