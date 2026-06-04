@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>高等数学笔记 - 中石大克校区资源共享论坛</title>
+    <style>
+        body { font-family: "Microsoft YaHei", sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; line-height: 1.8; }
+        h1 { color: #C8102E; border-bottom: 2px solid #C8102E; padding-bottom: 10px; }
+        h3 { color: #333; margin-top: 30px; }
+        h4 { color: #666; margin-top: 20px; }
+        ul { padding-left: 30px; }
+        pre { background: #f5f5f5; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        .footer { margin-top: 50px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <h1>高等数学笔记</h1>
+    <p><strong>整理者：</strong>廖同学 | <strong>上传时间：</strong>2025-06-10</p>
+
+    <h3>第一章 函数与极限</h3>
+    <p>本章主要介绍了函数的基本概念、极限的定义与性质，以及连续函数的特性。</p>
+    <h4>重点公式：</h4>
+    <ul>
+        <li>极限的运算法则：若lim f(x)=A, lim g(x)=B，则lim [f(x)±g(x)]=A±B</li>
+        <li>两个重要极限：lim(x→0) sinx/x=1, lim(x→∞) (1+1/x)^x=e</li>
+        <li>夹逼准则：若f(x)≤g(x)≤h(x)且lim f(x)=lim h(x)=A，则lim g(x)=A</li>
+    </ul>
+
+    <h3>第二章 导数与微分</h3>
+    <p>导数是微分学的核心概念，本章详细讲解了导数的定义、几何意义以及各种求导法则。</p>
+    <h4>常用求导公式：</h4>
+    <ul>
+        <li>(x^n)' = nx^(n-1)</li>
+        <li>(sinx)' = cosx, (cosx)' = -sinx</li>
+        <li>(e^x)' = e^x, (lnx)' = 1/x</li>
+        <li>(a^x)' = a^x·lna, (log_a x)' = 1/(x·lna)</li>
+    </ul>
+    <h4>求导法则：</h4>
+    <ul>
+        <li>[u±v]' = u'±v'</li>
+        <li>[u·v]' = u'v + uv'</li>
+        <li>[u/v]' = (u'v - uv')/v²</li>
+        <li>链式法则：dy/dx = dy/du · du/dx</li>
+    </ul>
+
+    <h3>第三章 微分中值定理</h3>
+    <p>费马定理、罗尔定理、拉格朗日中值定理、柯西中值定理构成了微分学的基本定理体系。</p>
+    <ul>
+        <li><strong>费马定理：</strong>若f(x)在x₀处取得极值且可导，则f'(x₀)=0</li>
+        <li><strong>罗尔定理：</strong>若f(x)在[a,b]连续，在(a,b)可导且f(a)=f(b)，则∃ξ∈(a,b)使f'(ξ)=0</li>
+        <li><strong>拉格朗日中值定理：</strong>若f(x)在[a,b]连续，在(a,b)可导，则∃ξ∈(a,b)使f'(ξ)=[f(b)-f(a)]/(b-a)</li>
+    </ul>
+
+    <h3>第四章 不定积分</h3>
+    <p>不定积分是求导的逆运算，本章总结了换元积分法和分部积分法两大基本技巧。</p>
+    <h4>基本积分公式：</h4>
+    <ul>
+        <li>∫x^n dx = x^(n+1)/(n+1) + C (n≠-1)</li>
+        <li>∫1/x dx = ln|x| + C</li>
+        <li>∫e^x dx = e^x + C</li>
+        <li>∫sinx dx = -cosx + C, ∫cosx dx = sinx + C</li>
+    </ul>
+    <h4>换元积分法：</h4>
+    <p>第一换元法（凑微分法）：∫f(g(x))g'(x)dx = ∫f(u)du, u=g(x)</p>
+    <p>第二换元法：令x=φ(t)，将复杂积分化为简单积分</p>
+
+    <h3>第五章 定积分</h3>
+    <p>定积分的几何意义是曲边梯形的面积，微积分基本定理建立了定积分与原函数的联系。</p>
+    <ul>
+        <li><strong>牛顿-莱布尼茨公式：</strong>∫[a,b]f(x)dx = F(b) - F(a)，其中F'(x)=f(x)</li>
+        <li>定积分分部积分法：∫[a,b]uv'dx = [uv]|(a,b) - ∫[a,b]u'vdx</li>
+    </ul>
+
+    <h3>典型例题精选</h3>
+    <p>本笔记包含各章节典型例题50余道，附详细解题步骤，涵盖极限计算、导数应用、积分求解等高频考点。</p>
+    <p><em>（完整版请下载PDF文件，包含所有例题详细解答）</em></p>
+
+    <div class="footer">
+        <p>来源：中石大克校区资源共享论坛 | 仅供学习交流使用</p>
+        <p>如需删除请联系：contact@cupk.edu.cn</p>
+    </div>
+</body>
+</html>
